@@ -4,9 +4,20 @@ import React, { useState } from 'react';
 export default function Header() {
   const [query, setQuery] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(`Query: ${query}`);
+  const handleSubmit = async (e) => {
+    const res = await (
+      await fetch(
+        'http://localhost/upei-library-journal-project/server/routes/search',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            query: query,
+          }),
+        }
+      )
+    ).json();
+
+    console.log(res);
   };
 
   return (
