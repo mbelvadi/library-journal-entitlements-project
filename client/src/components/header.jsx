@@ -1,6 +1,6 @@
 import { Form, Input, PageHeader, Row } from 'antd';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Header(props) {
   const [query, setQuery] = useState('');
@@ -15,11 +15,13 @@ export default function Header(props) {
   return (
     <PageHeader style={{ boxShadow: '0 4px 2px -2px gray', padding: 0 }}>
       <Row style={{ alignItems: 'center', paddingBottom: '12px' }}>
-        <img
-          src='https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg'
-          alt='university logo'
-          style={{ width: 60, marginRight: 10 }}
-        />
+        <Link to='/'>
+          <img
+            src='https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg'
+            alt='university logo'
+            style={{ width: 60, marginRight: 10 }}
+          />
+        </Link>
         <Form onSubmit={handleSubmit}>
           <Input
             placeholder='Search...'
