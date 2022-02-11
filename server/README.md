@@ -27,3 +27,9 @@ The following steps outline how to set up the PHP server on windows using XAMPP 
    <image src="./assets/apache-server.png" alt="XAMPP explorer button">
 
 Congrats! You have now set up the PHP server in your dev environment.
+
+### Composer
+
+Composer is a dependency management tool for PHP. As of (Feb 10th) we are using it to install a dependency to help read excel files. You can follow these [instructions](https://getcomposer.org/doc/00-intro.md#introduction) to download Composer.
+
+The actual dependencies are not committed to the repo so to download them you will need to run the following command `php composer.phar install`
