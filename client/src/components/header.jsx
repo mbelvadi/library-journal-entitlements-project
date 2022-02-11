@@ -2,7 +2,7 @@ import { Form, Input, PageHeader, Row } from 'antd';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function Header(props) {
+export default function Header() {
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
