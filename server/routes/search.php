@@ -2,7 +2,7 @@
   $DEFAULT_PAGE_LENGTH = 20;
 
   $data = json_decode(file_get_contents("php://input"));
-  $page = (property_exists($data, "page")) ? $data->page : -1;
+  $page = (property_exists($data, "page")) ? $data->page : 1;
   $pageLength = (property_exists($data, "pageLength")) ? $data->pageLength: $DEFAULT_PAGE_LENGTH;
 
   // perform actual search here and get results
