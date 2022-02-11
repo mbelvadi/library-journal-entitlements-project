@@ -1,12 +1,15 @@
-import { Col, Form, Input, PageHeader, Row } from 'antd';
+import { Form, Input, PageHeader, Row } from 'antd';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function Header() {
+export default function Header(props) {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(`Query: ${query}`);
+  const handleSubmit = async (e) => {
+    e.target.parentElement.children[0].blur();
+    navigate(`/search?query=${query}`);
+    setQuery('');
   };
 
   return (
@@ -22,6 +25,7 @@ export default function Header() {
             placeholder='Search...'
             size='large'
             style={{ maxWidth: 300 }}
+            value={query}
             onChange={(e) => setQuery(e.target.value)}
           ></Input>
           <button
