@@ -14,7 +14,17 @@ export default function Home() {
       ).json();
       setFileLinks(data);
     };
+
+    const setupTestDB = async () => {
+      const res = await (
+        await fetch(
+          'http://localhost/upei-library-journal-project/server/routes/create-db'
+        )
+      ).json();
+      console.log(res);
+    };
     getFileLinks();
+    setupTestDB();
   }, []);
 
   function downloadFileToClient(blob, filename) {
