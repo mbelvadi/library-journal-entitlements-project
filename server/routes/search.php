@@ -1,27 +1,19 @@
 <?php
-  require '../vendor/autoload.php';
-  use PhpOffice\PhpSpreadsheet\Spreadsheet;
-  use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
-  $DEFAULT_PAGE_LENGTH = 20;
+  $DEFAULT_PAGE_LENGTH = -1; // CLient doesn't want pagination
 
   $data = json_decode(file_get_contents("php://input"));
   $page = (property_exists($data, "page")) ? $data->page : 1;
   $pageLength = (property_exists($data, "pageLength")) ? $data->pageLength: $DEFAULT_PAGE_LENGTH;
 
-  $inputFileName = "../PAR-files/CRKN_PARightsTracking_ACS_2021_12_07_01_0.xlsx";
-  $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($inputFileName);
-  $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
-  $spreadsheet = $reader->load($inputFileName);
+  $db = new SQLite3('../database/ljp.db');
 
-  $sheetCount = $spreadsheet->getSheetCount();
-  $sheets = array("");
-  for ($i = 0; $i < $sheetCount; $i++) {
-      $sheet = $spreadsheet->getSheet($i);
-      $sheetData = $sheet->toArray(null, true, true, true);
-      array_push($sheets, $sheetData);
+  $results = $db->query("SELECT * from PA_RIGHTS WHERE title LIKE '%$data->query%' OR print_issn LIKE '%$data->query%' OR online_issn LIKE '%$data->query%'");
+  $resultsArray = array();
+  while ($res= $results->fetchArray(1)) {
+    array_push($resultsArray, $res);
   }
+  $db->close();
 
   http_response_code(200);
-  echo json_encode(array("results" => $sheets, "query" => $data->query, "pagination" => array("currentPage" => $page, "totalPages" => 11, "pageLength" => $pageLength) ));
+  echo json_encode(array("results" => $resultsArray, "query" => $data->query, "pagination" => array("currentPage" => $page, "totalPages" => 1) ));
 ?>
