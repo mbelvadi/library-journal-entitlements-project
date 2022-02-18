@@ -1,9 +1,5 @@
 <?php
-  class OpenDB extends SQLite3 {
-    function __construct() {
-      $this->open('../database/ljp.db');
-    }
-  }
+  require '../util/index.php';
 
   function createPARightsTable($db) {
     $sql =<<<EOF
@@ -31,6 +27,6 @@
   }
 
   function runMigration() {
-    createPARightsTable(new OpenDB());
+    createPARightsTable(new OpenPARightsDB());
   }
 ?>
