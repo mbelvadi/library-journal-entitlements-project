@@ -5,7 +5,7 @@
     }
   }
 
-  function createTestTable($db) {
+  function createPARightsTable($db) {
     $sql =<<<EOF
       CREATE TABLE IF NOT EXISTS PA_RIGHTS
       (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -30,25 +30,7 @@
     $db->close();
   }
 
-  function insertTestData($db) {
-    $sql =<<<EOF
-      INSERT OR REPLACE INTO PA_RIGHTS (id, title, title_id, print_issn, online_issn, former_title, succeeding_title, agreement_code, year, collection_name, title_metadata_last_modified, filename, has_rights)
-      VALUES (1, 'Accounts of Chemical Research', 'achre4', '0001-4842', '1520-4898', 'N', 'N', 'CRKN_ACS_LIC_2001', 2001, 'CRKN Custom Package', '#########', 'CRKN_PARightsTracking_ACS_2021_12_07_01_0.xlsx', 'Y');
-    EOF;
-
-    $ret = $db->exec($sql);
-    if(!$ret) {
-        echo $db->lastErrorMsg();
-    } 
-    $db->close();
+  function runMigration() {
+    createPARightsTable(new OpenDB());
   }
-
-  function initDB() {
-    createTestTable(new OpenDB());
-    insertTestData(new OpenDB());
-
-    echo json_encode("Succesfully initialized test db");
-  }
-
-  initDB();
 ?>
