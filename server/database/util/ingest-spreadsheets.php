@@ -1,5 +1,4 @@
 <?php
-  require './index.php';
   require '../../vendor/autoload.php';
   use PhpOffice\PhpSpreadsheet\Spreadsheet;
   use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -39,7 +38,7 @@
     }
   }
 
-  $db = new OpenPARightsDB();
+  $db = new SQLite3('../ljp.db');
 
   // Rights will ALWAYS start on row 4
   for ($i = 4; $i <= count($paRightSheetData); $i++) {

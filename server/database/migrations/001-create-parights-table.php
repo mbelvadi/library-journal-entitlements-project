@@ -1,6 +1,4 @@
 <?php
-  require '../util/index.php';
-
   function createPARightsTable($db) {
     $sql =<<<EOF
       CREATE TABLE IF NOT EXISTS PA_RIGHTS
@@ -27,6 +25,7 @@
   }
 
   function runMigration() {
-    createPARightsTable(new OpenPARightsDB());
+    createPARightsTable(new SQLite3('../ljp.db'));
   }
+  runMigration();
 ?>
