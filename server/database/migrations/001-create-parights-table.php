@@ -1,10 +1,4 @@
 <?php
-  class OpenDB extends SQLite3 {
-    function __construct() {
-      $this->open('../database/ljp.db');
-    }
-  }
-
   function createPARightsTable($db) {
     $sql =<<<EOF
       CREATE TABLE IF NOT EXISTS PA_RIGHTS
@@ -31,6 +25,7 @@
   }
 
   function runMigration() {
-    createPARightsTable(new OpenDB());
+    createPARightsTable(new SQLite3('../ljp.db'));
   }
+  runMigration();
 ?>

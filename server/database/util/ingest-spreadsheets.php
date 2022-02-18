@@ -1,11 +1,11 @@
 <?php
-  require '../vendor/autoload.php';
+  require '../../vendor/autoload.php';
   use PhpOffice\PhpSpreadsheet\Spreadsheet;
   use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-  $config = json_decode(file_get_contents("../config.json"));
+  $config = json_decode(file_get_contents("../../config.json"));
 
-  $inputFileName = "../PAR-files/CRKN_PARightsTracking_ACS_2021_12_07_01_0.xlsx";
+  $inputFileName = "../../PAR-files/CRKN_PARightsTracking_ACS_2021_12_07_01_0.xlsx";
   $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($inputFileName);
   $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
   $spreadsheet = $reader->load($inputFileName);
@@ -38,13 +38,7 @@
     }
   }
 
-  class OpenDB extends SQLite3 {
-    function __construct() {
-      $this->open('../database/ljp.db');
-    }
-  }
-
-  $db = new OpenDB();
+  $db = new SQLite3('../ljp.db');
 
   // Rights will ALWAYS start on row 4
   for ($i = 4; $i <= count($paRightSheetData); $i++) {
