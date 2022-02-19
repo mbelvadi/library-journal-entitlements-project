@@ -1,29 +1,24 @@
 # UPEI Library Journal Project
 
-Dreamteam unite :)
+## Overview
 
-## Dev Section
+The Library subscribes to several packages of electronic journals to which it is given "perpetual access rights" (PAR) to each journal title for each year it subscribes. Often, library staff and sometimes even patrons need to be able to quickly determine if a particular year of a particular journal is "owned" by the institution. They might look for it by its title or one of its two "ISSN" numbers (print and online).
 
-### Branch naming
+A central organization called CRKN manages many of these subscriptions/licenses for its members, including UPEI. CRKN has recently started creating spreadsheets that include for each member the "entitlement" list of what titles/years that institution has PAR for.
+
+Each package has a separate spreadsheet file - there are about 10 or so of these from CRKN.
+
+Each spreadsheet has all of the data for all approximately 75 members, of which UPEI is one "column" in one of the tabs. They are all in exactly the same format, just different data for different publisher-packages.
+
+The spreadsheets are updated a couple of times per year each and are made available on a public website managed by CRKN.
+
+**The goal of this project** is to create a public-facing web front end that each institution can easily copy/configure to just their own PAR, to:
+
+- generate a report by package/title/year of all entitlements
+- allow the website user to search through all of the spreadsheets by title or issn to find all of the PAR years that institution has
+
+# Dev Section
+
+## Branch naming
 
 When branching off use the following format to name your branch: `FIRST_NAME_INTIAL/branch-task`. So if I (Cal) was working on adding a search endpoint, I would create a branch called `C/search-endpoint`
-
-### Prettier
-
-Prettier is a code formatter that works with most frontend languages. It is used to keep the look of code consistent across multiple developers. To install prettier and get it working in your local environment see the following steps (assuming your using VSCode):
-
-1. Install [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) from the VSCode extensions marketplace.
-
-2. Add the following to your VSCode settings file:
-
-   ```json
-   "editor.defaultFormatter": "esbenp.prettier-vscode",
-   "prettier.requireConfig": true,
-   ```
-
-3. Optionally add the following to your VSCode settings file if you prefer to only format on save:
-   ```json
-     "editor.formatOnSave": true,
-   ```
-
-Prettier should now be formatting your code! Note in the root of the project your will find a `.prettierrc` file. This is the config file prettier will use to style the code in this project.
