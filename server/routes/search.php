@@ -10,7 +10,12 @@
 
   $db = new SQLite3('../database/ljp.db');
 
-  $results = $db->query("SELECT * from PA_RIGHTS WHERE title LIKE '%$data->query%' OR print_issn LIKE '%$data->query%' OR online_issn LIKE '%$data->query%'");
+  $filterSQL = '';
+  if (isset($data->year)) {
+    $filterSQL .= "AND year = $data->year";
+  }
+
+  $results = $db->query("SELECT * from PA_RIGHTS WHERE (title LIKE '%$data->query%' OR print_issn LIKE '%$data->query%' OR online_issn LIKE '%$data->query%') $filterSQL");
   $resultsArray = array();
   while ($res= $results->fetchArray(1)) {
     array_push($resultsArray, $res);
@@ -18,5 +23,5 @@
   $db->close();
 
   http_response_code(200);
-  echo json_encode(array("results" => $resultsArray, "query" => $data->query, "pagination" => array("currentPage" => $page, "totalPages" => 1) ));
+  echo json_encode(array("numResults" => count($resultsArray), "results" => $resultsArray, "query" => $data->query, "pagination" => array("currentPage" => $page, "totalPages" => 1) ));
 ?>
