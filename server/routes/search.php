@@ -1,4 +1,7 @@
 <?php
+  require('../util/error-handling.php');
+  set_error_handler('apiErrorHandler', E_ALL);
+
   $DEFAULT_PAGE_LENGTH = -1; // CLient doesn't want pagination
 
   $data = json_decode(file_get_contents("php://input"));
