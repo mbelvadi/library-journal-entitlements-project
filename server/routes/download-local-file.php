@@ -1,4 +1,7 @@
 <?php
+  require('../util/error-handling.php');
+  set_error_handler('apiErrorHandler', E_ALL);
+  
   $data = json_decode(file_get_contents("php://input"));
   $file = (property_exists($data, "file")) ? $data->file : "";
   $filepath = "../PAR-files/{$file}";

@@ -1,4 +1,7 @@
 <?php
+  require('../util/error-handling.php');
+  set_error_handler('apiErrorHandler', E_ALL);
+  
   function getXLSXFiles($path) {
     if (is_dir($path)) {
         $res = array();
