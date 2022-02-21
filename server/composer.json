@@ -1,5 +1,6 @@
 {
   "require": {
-    "phpoffice/phpspreadsheet": "^1.21"
+    "phpoffice/phpspreadsheet": "^1.21",
+    "simplehtmldom/simplehtmldom": "V2.0-RC2"
   }
 }
