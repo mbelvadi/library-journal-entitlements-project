@@ -2,8 +2,7 @@
   function createPARightsTable($db) {
     $sql =<<<EOF
       CREATE TABLE IF NOT EXISTS PA_RIGHTS
-      (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-      title VARCHAR(255) NOT NULL,
+      (title VARCHAR(255) NOT NULL,
       title_id CHARACTER(20) NOT NULL,
       print_issn CHARACTER(20),
       online_issn CHARACTER(20),
@@ -14,7 +13,9 @@
       collection_name VARCHAR(255),
       title_metadata_last_modified VARCHAR(255),
       filename VARCHAR(255) NOT NULL,
-      has_rights CHARACTER(20) NOT NULL);
+      has_rights CHARACTER(20) NOT NULL,
+      is_crkn_record BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at DATETIME NOT NULL DEFAULT (strftime('%s', 'now', 'localtime')));
     EOF;
 
     $ret = $db->exec($sql);
