@@ -15,7 +15,7 @@
       filename VARCHAR(255) NOT NULL,
       has_rights CHARACTER(20) NOT NULL,
       is_crkn_record BOOLEAN NOT NULL DEFAULT FALSE,
-      created_at DATETIME NOT NULL DEFAULT (strftime('%s', 'now', 'localtime')));
+      created_at DATETIME NOT NULL DEFAULT (strftime('%s', 'now')));
     EOF;
 
     $ret = $db->exec($sql);
