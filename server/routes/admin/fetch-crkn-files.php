@@ -1,16 +1,19 @@
 <?php
-  require('../../util/simple_html_dom.php');
   require('../../database/util/ingest-spreadsheets.php');
   require('../../database/util/delete-crkn-data.php');
   require('../../util/error-handling.php');
+  require '../../vendor/autoload.php';
+
+  use simplehtmldom\HtmlWeb;
 	set_error_handler('apiErrorHandler', E_ALL);
 
   // 1. Fetch new files from CRKN site and put them in temp directory
   $crkn_website_url = 'https://www.crkn-rcdr.ca';
   $crkn_files_page_path = '/en/PA-TEST';
 
-  $html_dom = file_get_html("{$crkn_website_url}{$crkn_files_page_path}"); // We retrieve the contents using file_get_html from simple_html_dom
-  $links = $html_dom->find('a[title*=CRKN_PARightsTracking]'); // Getting all of the links
+  $client = new HtmlWeb();
+  $html = $client->load("{$crkn_website_url}{$crkn_files_page_path}");
+  $links = $html->find('a[title*=CRKN_PARightsTracking]');
 
   foreach($links as $link) {
     $url = "{$crkn_website_url}{$link->href}";
