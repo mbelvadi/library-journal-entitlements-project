@@ -4,7 +4,6 @@ import { Table, Input, Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
 export default class DataTable extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -110,36 +109,86 @@ export default class DataTable extends React.Component {
     this.setState({ searchText: '' });
   };
 
-  capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+  replaceDelimiters = (string, char) => {
+    const delimeters = ['_', '-'];
+    for (const delimeter of delimeters) {
+      string = string.replaceAll(delimeter, char);
+    }
+    return string;
+  };
+
+  capitalizeWords = (string) => {
+    let finalString = '';
+    const splitString = string.split(' ');
+
+    for (const word in splitString) {
+      finalString += word.charAt(0).toUpperCase() + word.slice(1);
+    }
+    return finalString;
+  };
+
+  // should make configurable
+  crknColumnsTitles = [
+    'Has_Rights',
+    'Title',
+    'Collection_Name',
+    'Year',
+    'Title_ID',
+    'Print_ISSN',
+    'Online_ISSN',
+    'Former_Title',
+    'Succeeding_Title',
+    'Agreement_Code',
+  ];
 
   extractColumnsFromProps = (element) => {
     const columns = [];
+    let properties = [];
+    let title = '';
 
-    for(const property in element) {
+    const isCRKN = element.filename.toLowerCase().includes('crkn');
+
+    if (isCRKN) {
+      properties = this.crknColumnsTitles;
+    } else {
+      properties = Object.keys(element);
+    }
+
+    for (const property of properties) {
+      title = this.replaceDelimiters(property, ' ');
+      if (!isCRKN) {
+        title = this.capitalizeWords(title);
+      }
+
       columns.push({
-        title: this.capitalizeFirstLetter(property),
+        title: title,
         dataIndex: property.toLowerCase(),
         key: property.toLowerCase(),
-        ...this.getColumnSearchProps(property)
+        ...this.getColumnSearchProps(property.toLowerCase()),
       });
     }
 
     return columns;
   };
 
-  render()
-  {
-    const dataSource = this.props.data ? this.props.data.results : [];
+  render() {
+    let dataSource = [];
+    let columns = [];
 
-    const columns = this.extractColumnsFromProps(dataSource[0]);
+    if (this.props.data) {
+      dataSource = this.props.data.results;
+      columns = this.extractColumnsFromProps(dataSource[0]);
+    }
 
-    // add issn as unique key to each element for React purposes
+    // add a unique key to each element for React purposes
     dataSource.forEach(function (element) {
-      element.key = element.online_issn;
+      element.key =
+        element.online_issn +
+        element.title_id +
+        element.year +
+        element.agreement_code;
     });
 
-    return <Table columns={columns} dataSource={dataSource} />;
+    return <Table columns={columns} dataSource={dataSource} bordered={true} />;
   }
 }
