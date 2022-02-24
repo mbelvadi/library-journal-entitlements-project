@@ -110,36 +110,36 @@ export default class DataTable extends React.Component {
     this.setState({ searchText: '' });
   };
 
+  capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  extractColumnsFromProps = (element) => {
+    const columns = [];
+
+    for(const property in element) {
+      columns.push({
+        title: this.capitalizeFirstLetter(property),
+        dataIndex: property.toLowerCase(),
+        key: property.toLowerCase(),
+        ...this.getColumnSearchProps(property)
+      });
+    }
+
+    return columns;
+  };
+
   render()
   {
-    const columns = [
-      {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        width: '30%',
-        ...this.getColumnSearchProps('name'),
-      },
-      {
-        title: 'Age',
-        dataIndex: 'age',
-        key: 'age',
-        width: '20%',
-        ...this.getColumnSearchProps('age'),
-      },
-      {
-        title: 'Address',
-        dataIndex: 'address',
-        key: 'address',
-        ...this.getColumnSearchProps('address'),
-        sorter: (a, b) => a.address.length - b.address.length,
-        sortDirections: ['descend', 'ascend'],
-      },
-    ];
-    let dataSource = [];
-    if (this.props.data) {
-      dataSource = this.props.data.results
-    }
+    const dataSource = this.props.data ? this.props.data.results : [];
+
+    const columns = this.extractColumnsFromProps(dataSource[0]);
+
+    // add issn as unique key to each element for React purposes
+    dataSource.forEach(function (element) {
+      element.key = element.online_issn;
+    });
+
     return <Table columns={columns} dataSource={dataSource} />;
   }
 }
