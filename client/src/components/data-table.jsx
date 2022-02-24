@@ -141,7 +141,7 @@ export default class DataTable extends React.Component {
     'Agreement_Code',
   ];
 
-  extractColumnsFromProps = (element) => {
+  getColumns = (element) => {
     const columns = [];
     let properties = [];
     let title = '';
@@ -177,7 +177,7 @@ export default class DataTable extends React.Component {
 
     if (this.props.data) {
       dataSource = this.props.data.results;
-      columns = this.extractColumnsFromProps(dataSource[0]);
+      columns = this.getColumns(dataSource[0]);
     }
 
     // add a unique key to each element for React purposes
