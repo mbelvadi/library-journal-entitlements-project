@@ -180,13 +180,8 @@ export default class DataTable extends React.Component {
       columns = this.getColumns(dataSource[0]);
     }
 
-    // add a unique key to each element for React purposes
-    dataSource.forEach(function (element) {
-      element.key =
-        element.online_issn +
-        element.title_id +
-        element.year +
-        element.agreement_code;
+    dataSource.forEach(function (element, i) {
+      element.key = i;
     });
 
     return <Table columns={columns} dataSource={dataSource} bordered={true} />;
