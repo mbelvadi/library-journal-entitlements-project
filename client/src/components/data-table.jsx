@@ -184,6 +184,13 @@ export default class DataTable extends React.Component {
       element.key = i;
     });
 
-    return <Table columns={columns} dataSource={dataSource} bordered={true} />;
+    return (
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        bordered={true}
+        pagination={{ defaultPageSize: 100 }}
+      />
+    );
   }
 }
