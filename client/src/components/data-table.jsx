@@ -189,7 +189,10 @@ export default class DataTable extends React.Component {
         columns={columns}
         dataSource={dataSource}
         bordered={true}
-        pagination={{ defaultPageSize: 100 }}
+        pagination={{
+          defaultPageSize: 100,
+          pageSizeOptions: [100, 250, 500]
+        }}
       />
     );
   }
