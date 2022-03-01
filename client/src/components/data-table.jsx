@@ -175,7 +175,7 @@ export default class DataTable extends React.Component {
     let dataSource = [];
     let columns = [];
 
-    if (this.props.data) {
+    if (this.props.data?.results?.length > 0) {
       dataSource = this.props.data.results;
       columns = this.getColumns(dataSource[0]);
     }
