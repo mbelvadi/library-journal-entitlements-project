@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import DataTable from '../components/data-table';
 
 const parseParams = (querystring) => {
   const params = new URLSearchParams(querystring);
@@ -48,7 +49,7 @@ export default function SearchResults() {
           ''
         )}
       </h1>
-      <div>{JSON.stringify(searchResults)}</div>
+      <div><DataTable data={searchResults}/></div>
     </>
   );
 }
