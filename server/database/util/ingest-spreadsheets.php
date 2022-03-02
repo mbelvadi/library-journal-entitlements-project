@@ -14,8 +14,8 @@
       'title_id' => '',
       'print_issn' => '',
       'online_issn' => '',
-      'former_title' => '',
-      'succeeding_title' => '',
+      'has_former_title' => '',
+      'has_succeeding_title' => '',
       'agreement_code' => '',
       'year' => '',
       'collection_name' => '',
@@ -47,18 +47,18 @@
       }
 
       $sqlStatement = $db->prepare("INSERT OR REPLACE INTO PA_RIGHTS (title, 
-      title_id, print_issn, online_issn, former_title, succeeding_title, 
+      title_id, print_issn, online_issn, has_former_title, has_succeeding_title, 
       agreement_code, year, collection_name, title_metadata_last_modified,
       filename, has_rights, is_crkn_record) VALUES (:title, :title_id, :print_issn, :online_issn, 
-      :former_title, :succeeding_title, :agreement_code, :year, :collection_name, :title_metadata_last_modified, 
+      :has_former_title, :has_succeeding_title, :agreement_code, :year, :collection_name, :title_metadata_last_modified, 
       :filename, :has_rights, :is_crkn_record)");
 
       $sqlStatement->bindParam(':title', $row[$dbProperties->title]);
       $sqlStatement->bindParam(':title_id', $row[$dbProperties->title_id]);
       $sqlStatement->bindParam(':print_issn', $row[$dbProperties->print_issn]);
       $sqlStatement->bindParam(':online_issn', $row[$dbProperties->online_issn]);
-      $sqlStatement->bindParam(':former_title', $row[$dbProperties->former_title]);
-      $sqlStatement->bindParam(':succeeding_title', $row[$dbProperties->succeeding_title]);
+      $sqlStatement->bindParam(':has_former_title', $row[$dbProperties->has_former_title]);
+      $sqlStatement->bindParam(':has_succeeding_title', $row[$dbProperties->has_succeeding_title]);
       $sqlStatement->bindParam(':agreement_code', $row[$dbProperties->agreement_code]);
       $sqlStatement->bindParam(':year', $row[$dbProperties->year]);
       $sqlStatement->bindParam(':collection_name', $row[$dbProperties->collection_name]);
