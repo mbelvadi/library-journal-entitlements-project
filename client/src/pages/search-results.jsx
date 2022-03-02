@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import DataTable from '../components/data-table';
+import { API_URL } from '../util';
 
 const parseParams = (querystring) => {
   const params = new URLSearchParams(querystring);
@@ -24,17 +25,15 @@ export default function SearchResults() {
     const fetchSearchResults = async () => {
       if (!searchParams.query) return;
       const res = await (
-        await fetch(
-          'http://localhost/upei-library-journal-project/server/routes/search',
-          {
-            method: 'POST',
-            body: JSON.stringify(searchParams),
-          }
-        )
+        await fetch(`${API_URL}/search`, {
+          method: 'POST',
+          body: JSON.stringify(searchParams),
+        })
       ).json();
       setSearchResults(res);
     };
     fetchSearchResults().catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   return (
@@ -49,7 +48,9 @@ export default function SearchResults() {
           ''
         )}
       </h1>
-      <div><DataTable data={searchResults}/></div>
+      <div>
+        <DataTable data={searchResults} />
+      </div>
     </>
   );
 }
