@@ -24,7 +24,16 @@
     );
 
     $sheetNames = $spreadsheet->getSheetNames();
-    $paRightSheet = $spreadsheet->getSheetByName('PA-rights'); // sheet we are concerned with will ALWAYS be called 'PA-rights'
+    $paRightsSheetIndex = -1;
+    for($i = 0; $i < count($sheetNames); $i++) {
+      if (strtolower($sheetNames[$i]) === 'pa-rights') {
+        $paRightsSheetIndex = $i;
+        break;
+      }
+    }
+    if ($paRightsSheetIndex === -1) return;
+
+    $paRightSheet = $spreadsheet->getSheet($paRightsSheetIndex); // sheet we are concerned with will ALWAYS be called 'PA-rights'
     $paRightSheetData = $paRightSheet->toArray(null, true, true, true);
 
     // 3rd Row of PA-rights sheet will ALWAYS contain headers
