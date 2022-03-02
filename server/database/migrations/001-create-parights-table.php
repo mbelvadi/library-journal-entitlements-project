@@ -3,11 +3,11 @@
     $sql =<<<EOF
       CREATE TABLE IF NOT EXISTS PA_RIGHTS
       (title VARCHAR(255) NOT NULL,
-      title_id CHARACTER(20) NOT NULL,
+      title_id CHARACTER(20),
       print_issn CHARACTER(20),
       online_issn CHARACTER(20),
-      former_title CHARACTER(20),
-      succeeding_title CHARACTER(20),
+      has_former_title CHARACTER(20),
+      has_succeeding_title CHARACTER(20),
       agreement_code VARCHAR(255) NOT NULL,
       year INT NOT NULL,
       collection_name VARCHAR(255),
