@@ -22,7 +22,7 @@
     $filterSQL .= "AND year = $data->year";
   }
 
-  $results = $db->query("SELECT * from PA_RIGHTS WHERE (title LIKE '%$data->query%' OR print_issn LIKE '%$data->query%' OR online_issn LIKE '%$data->query%') $filterSQL");
+  $results = $db->query("SELECT * from PA_RIGHTS WHERE (title LIKE '%$data->query%' OR print_issn LIKE '%$data->query%' OR online_issn LIKE '%$data->query%') AND (has_rights = 'Y' OR has_rights = 'YBUT') $filterSQL");
   $resultsArray = array();
   while ($res= $results->fetchArray(1)) {
     array_push($resultsArray, $res);
