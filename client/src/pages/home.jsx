@@ -1,5 +1,6 @@
 import { Button } from 'antd';
 import React from 'react';
+import { API_URL } from '../util';
 
 export default function Home() {
   const [randomNumber, setRandomNumber] = React.useState(null);
@@ -7,11 +8,7 @@ export default function Home() {
 
   React.useEffect(() => {
     const getFileLinks = async () => {
-      const data = await (
-        await fetch(
-          'http://localhost/upei-library-journal-project/server/routes/list-files'
-        )
-      ).json();
+      const data = await (await fetch(`${API_URL}/list-files`)).json();
       setFileLinks(data);
     };
     getFileLinks();
@@ -30,22 +27,17 @@ export default function Home() {
   }
 
   const downloadFile = async (file) => {
-    const res = await fetch(
-      'http://localhost/upei-library-journal-project/server/routes/download-local-file',
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          file: file,
-        }),
-      }
-    );
+    const res = await fetch(`${API_URL}/download-local-file`, {
+      method: 'POST',
+      body: JSON.stringify({
+        file: file,
+      }),
+    });
     res.blob().then((blob) => downloadFileToClient(blob, file));
   };
 
   const getRandomNumber = async () => {
-    const res = await fetch(
-      'http://localhost/upei-library-journal-project/server/routes/random-number'
-    );
+    const res = await fetch(`${API_URL}/random-number`);
     const data = await res.json();
     setRandomNumber(data.randomNumber);
   };
