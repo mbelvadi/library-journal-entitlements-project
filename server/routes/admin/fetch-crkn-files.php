@@ -9,7 +9,7 @@
 
   // 1. Fetch new files from CRKN site and put them in temp directory
   $crkn_website_url = 'https://www.crkn-rcdr.ca';
-  $crkn_files_page_path = '/en/PA-TEST';
+  $crkn_files_page_path = '/en/perpetual-access-rights-reports-storage';
 
   $client = new HtmlWeb();
   $html = $client->load("{$crkn_website_url}{$crkn_files_page_path}");
@@ -59,6 +59,7 @@
   }
 
   // 4. Ingest new data into DB
+  ini_set('memory_limit', '1G');
   $crknFiles = glob($crknFilesPath);
   $uploadStartTime = time();
   foreach($crknFiles as $file) {
