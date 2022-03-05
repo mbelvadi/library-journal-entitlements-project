@@ -54,7 +54,7 @@ export default function Home() {
     <>
       <Layout>
         <Layout.Content style={{ padding: '0 2vw' }}>
-      <h1>Home</h1>
+          <SearchBar></SearchBar>
           <div>{fileLinkElements}</div>
         </Layout.Content>
       </Layout>
