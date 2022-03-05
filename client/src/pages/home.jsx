@@ -2,6 +2,7 @@ import React from 'react';
 import { Layout, Button, Col, Row, List } from 'antd';
 import { API_URL } from '../util';
 import SearchBar from '../components/search-bar';
+import downloadFileToClient from '../functions/downloadFileToClient';
 
 export default function Home() {
   const [fileLinks, setFileLinks] = React.useState([]);
@@ -13,18 +14,6 @@ export default function Home() {
     };
     getFileLinks();
   }, []);
-
-  function downloadFileToClient(blob, filename) {
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-  }
 
   const downloadFile = async (file) => {
     const res = await fetch(`${API_URL}/download-local-file`, {
