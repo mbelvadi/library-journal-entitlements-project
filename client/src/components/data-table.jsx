@@ -2,6 +2,7 @@ import React from 'react';
 import Highlighter from 'react-highlight-words';
 import { Table, Input, Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import downloadFileToClient from '../functions/downloadFileToClient';
 
 export default class DataTable extends React.Component {
   constructor(props) {
@@ -10,6 +11,7 @@ export default class DataTable extends React.Component {
     this.state = {
       searchText: '',
       searchedColumn: '',
+      filteredData: [],
     };
   }
 
@@ -171,6 +173,30 @@ export default class DataTable extends React.Component {
     return columns;
   };
 
+  onChange = (pagination, filters, sorter, extra) => {
+    this.setState({ filteredData: extra.currentDataSource });
+  };
+
+  resultsToTSV = () => {
+    const resultsToExport = this.state.filteredData.map(
+      ({ key, ...keepAttrs }) => keepAttrs
+    );
+    const replacer = (key, value) => (value === null ? '' : value); //TODO: how to handle nulls?
+    const delimeter = '\t'; //TODO: can easily change to CSV
+    const fileExtension = 'tsv'
+    const header = Object.keys(resultsToExport[0]);
+    let tsv = [
+      header.join(delimeter),
+      ...resultsToExport.map((row) =>
+        header
+          .map((fieldName) => JSON.stringify(row[fieldName], replacer))
+          .join(delimeter)
+      ),
+    ].join('\r\n').replaceAll('"', '');
+
+    downloadFileToClient(new Blob([tsv], { type: 'text/'+fileExtension }), 'report.'+fileExtension); //TODO: come up with a useful filename template
+  };
+
   render() {
     let dataSource = [];
     let columns = [];
@@ -191,8 +217,9 @@ export default class DataTable extends React.Component {
         bordered={true}
         pagination={{
           defaultPageSize: 100,
-          pageSizeOptions: [100, 250, 500]
+          pageSizeOptions: [100, 250, 500],
         }}
+        onChange={this.onChange}
       />
     );
   }
