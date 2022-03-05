@@ -178,12 +178,12 @@ export default class DataTable extends React.Component {
   };
 
   resultsToTSV = () => {
-    const resultsToExport = this.state.filteredData.map(
+    const resultsToExport = this.filteredData.map(
       ({ key, ...keepAttrs }) => keepAttrs
     );
     const replacer = (key, value) => (value === null ? '' : value); //TODO: how to handle nulls?
     const delimeter = '\t'; //TODO: can easily change to CSV
-    const fileExtension = 'tsv'
+    const fileExtension = 'tsv';
     const header = Object.keys(resultsToExport[0]);
     let tsv = [
       header.join(delimeter),
@@ -192,9 +192,14 @@ export default class DataTable extends React.Component {
           .map((fieldName) => JSON.stringify(row[fieldName], replacer))
           .join(delimeter)
       ),
-    ].join('\r\n').replaceAll('"', '');
+    ]
+      .join('\r\n')
+      .replaceAll('"', '');
 
-    downloadFileToClient(new Blob([tsv], { type: 'text/'+fileExtension }), 'report.'+fileExtension); //TODO: come up with a useful filename template
+    downloadFileToClient(
+      new Blob([tsv], { type: 'text/' + fileExtension }),
+      'report.' + fileExtension
+    ); //TODO: come up with a useful filename template
   };
 
   render() {
