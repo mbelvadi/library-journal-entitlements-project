@@ -1,9 +1,9 @@
-import { Button } from 'antd';
 import React from 'react';
+import { Layout, Button } from 'antd';
 import { API_URL } from '../util';
+import SearchBar from '../components/search-bar';
 
 export default function Home() {
-  const [randomNumber, setRandomNumber] = React.useState(null);
   const [fileLinks, setFileLinks] = React.useState([]);
 
   React.useEffect(() => {
@@ -36,12 +36,6 @@ export default function Home() {
     res.blob().then((blob) => downloadFileToClient(blob, file));
   };
 
-  const getRandomNumber = async () => {
-    const res = await fetch(`${API_URL}/random-number`);
-    const data = await res.json();
-    setRandomNumber(data.randomNumber);
-  };
-
   const fileLinkElements = fileLinks.map((link) => {
     return (
       <Button
@@ -58,12 +52,12 @@ export default function Home() {
 
   return (
     <>
+      <Layout>
+        <Layout.Content style={{ padding: '0 2vw' }}>
       <h1>Home</h1>
-      <div>{fileLinkElements}</div>
-      <Button type='primary' onClick={getRandomNumber}>
-        Get Random Number
-      </Button>
-      <div>Random number: {randomNumber}</div>
+          <div>{fileLinkElements}</div>
+        </Layout.Content>
+      </Layout>
     </>
   );
 }
