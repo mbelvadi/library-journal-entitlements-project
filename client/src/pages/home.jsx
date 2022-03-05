@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Button } from 'antd';
+import { Layout, Button, Col, Row, List } from 'antd';
 import { API_URL } from '../util';
 import SearchBar from '../components/search-bar';
 
@@ -36,26 +36,54 @@ export default function Home() {
     res.blob().then((blob) => downloadFileToClient(blob, file));
   };
 
-  const fileLinkElements = fileLinks.map((link) => {
+  const mapLinkToListItem = (link) => {
     return (
-      <Button
-        type='link'
-        key={link}
-        onClick={() => {
-          downloadFile(link);
-        }}
-      >
-        {link}
-      </Button>
+      <List.Item>
+        <Button
+          type='link'
+          key={link}
+          onClick={() => {
+            downloadFile(link);
+          }}
+        >
+          {link}
+        </Button>
+      </List.Item>
     );
-  });
+  };
 
   return (
     <>
       <Layout>
-        <Layout.Content style={{ padding: '0 2vw' }}>
-          <SearchBar></SearchBar>
-          <div>{fileLinkElements}</div>
+        <Layout.Content>
+          <Row
+            type='flex'
+            justify='center'
+            align='middle'
+            style={{ minHeight: '100vh', alignItems: 'center' }}
+          >
+            <Col
+              span={8}
+              type='flex'
+              justify='center'
+              align='middle'
+              style={{ minHeight: '50vh', alignItems: 'center' }}
+            >
+              <img //TODO: replace with configurable logo
+                src='https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg'
+                alt='university logo'
+                style={{ width: 160 }}
+              />
+              <SearchBar />
+              <List
+              style={{ marginTop: '50px' }}
+                header={<h3>Files Being Searched</h3>}
+                bordered={true}
+                dataSource={fileLinks}
+                renderItem={mapLinkToListItem}
+              ></List>
+            </Col>
+          </Row>
         </Layout.Content>
       </Layout>
     </>
