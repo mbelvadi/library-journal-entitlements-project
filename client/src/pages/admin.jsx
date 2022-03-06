@@ -14,6 +14,9 @@ export default function Admin() {
       const res = await fetch(`${API_URL}/admin/setup`);
       if (res.status === 200) {
         setAdminSetup(true);
+        if (sessionStorage.getItem('adminKey')) {
+          setLoggedIn(true);
+        }
       }
       setLoadingPage(false);
     };
@@ -22,54 +25,118 @@ export default function Admin() {
 
   return (
     <Row>
-      <Col
-        span={12}
-        offset={6}
-        style={{ display: 'flex', justifyContent: 'center', marginTop: '10vh' }}
-      >
-        {loadingPage && <Spin tip='Loading...' size='large' />}
-        {!loadingPage && !loggedIn && (
-          <Card
-            style={{
-              boxShadow: '5px 8px 24px 5px rgba(208, 216, 243, 0.6)',
-              maxWidth: '700px',
-              minWidth: '300px',
-              width: '50vw',
-            }}
-          >
-            <div
+      <Col md={{ span: 12, offset: 6 }} style={{ display: 'flex' }}>
+        <div style={{ justifyContent: 'center', marginTop: '10vh' }}>
+          {loadingPage && <Spin tip='Loading...' size='large' />}
+          {!loadingPage && !loggedIn && (
+            <Card
               style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                marginBottom: '20px',
+                boxShadow: '5px 8px 24px 5px rgba(208, 216, 243, 0.6)',
+                maxWidth: '700px',
+                minWidth: '300px',
+                width: '50vw',
               }}
             >
-              <Avatar
-                style={{ backgroundColor: '#1890ff', marginBottom: '20px' }}
-                size={100}
-                icon={<UserOutlined />}
-              />
-              <h1>{adminSetup ? 'Admin Login' : 'Admin Setup'}</h1>
-            </div>
-            {adminSetup ? (
-              <AdminLoginForm
-                loginMessage={loginMessage}
-                setLoginMessage={setLoginMessage}
-                setLoggedIn={setLoggedIn}
-              />
-            ) : (
-              <AdminSetupForm
-                setAdminSetup={setAdminSetup}
-                setLoginMessage={setLoginMessage}
-              />
-            )}
-          </Card>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                  marginBottom: '20px',
+                }}
+              >
+                <Avatar
+                  style={{ backgroundColor: '#1890ff', marginBottom: '20px' }}
+                  size={100}
+                  icon={<UserOutlined />}
+                />
+                <h1>{adminSetup ? 'Admin Login' : 'Admin Setup'}</h1>
+              </div>
+              {adminSetup ? (
+                <AdminLoginForm
+                  loginMessage={loginMessage}
+                  setLoginMessage={setLoginMessage}
+                  setLoggedIn={setLoggedIn}
+                />
+              ) : (
+                <AdminSetupForm
+                  setAdminSetup={setAdminSetup}
+                  setLoginMessage={setLoginMessage}
+                />
+              )}
+            </Card>
+          )}
+        </div>
+        {loggedIn && (
+          <AdminControls
+            setLoggedIn={setLoggedIn}
+            setLoginMessage={setLoginMessage}
+          />
         )}
-        {loggedIn && <h1>Logged In!</h1>}
       </Col>
     </Row>
+  );
+}
+
+function AdminControls(props) {
+  const { setLoggedIn, setLoginMessage } = props;
+  const [error, setError] = React.useState(undefined);
+  const [successMsg, setSuccessMsg] = React.useState(undefined);
+  const [crknRefreshing, setCrknRefreshing] = React.useState(false);
+
+  const refreshCrknData = async () => {
+    setError(undefined);
+    setSuccessMsg(undefined);
+    setCrknRefreshing(true);
+    const res = await fetch(
+      `${API_URL}/admin/fetch-crkn-files?adminKey=${sessionStorage.getItem(
+        'adminKey'
+      )}`
+    );
+
+    setCrknRefreshing(false);
+    if (res.status === 200) {
+      setSuccessMsg('Succesfully updated CRKN sheets');
+    } else if (res.status === 401) {
+      sessionStorage.removeItem('adminKey');
+      setLoginMessage('Admin session has expired. Please login again.');
+      setLoggedIn(false);
+    } else {
+      setError(
+        'An unexpected error occurred when refreshing the CRKN spreadsheet data.'
+      );
+    }
+  };
+
+  return (
+    <div style={{ marginTop: '30px' }}>
+      <h1>Admin Page</h1>
+      {error && (
+        <Alert
+          type='error'
+          message={error}
+          showIcon
+          style={{ marginBottom: '10px' }}
+        />
+      )}
+      {successMsg && (
+        <Alert
+          type='success'
+          message={successMsg}
+          showIcon
+          style={{ marginBottom: '10px' }}
+        />
+      )}
+      <Button
+        type='primary'
+        size='large'
+        onClick={refreshCrknData}
+        loading={crknRefreshing}
+      >
+        Refresh CRKN data
+      </Button>
+    </div>
   );
 }
 
@@ -161,6 +228,7 @@ function AdminLoginForm(props) {
 
     setSubmitting(false);
     if (res.status === 200) {
+      sessionStorage.setItem('adminKey', data.adminKey);
       setLoggedIn(true);
     } else {
       setError(data.error);
@@ -179,7 +247,7 @@ function AdminLoginForm(props) {
       )}
       {loginMessage && (
         <Alert
-          type='success'
+          type='info'
           message={loginMessage}
           showIcon
           style={{ marginBottom: '10px' }}
