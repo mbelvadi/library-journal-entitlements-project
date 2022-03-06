@@ -23,8 +23,8 @@
     return;
   }
   
-  // TODO 2. encrypt password
-  $encryptedPassword = $data->password;
+  // 2. encrypt password
+  $encryptedPassword = password_hash($data->password, PASSWORD_BCRYPT);
 
   // 3. update config file
   $config->adminSetup = true;
