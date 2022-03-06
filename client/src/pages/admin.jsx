@@ -4,6 +4,7 @@ import { Row, Col, Card, Spin, Form, Input, Button, Avatar, Alert } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 export default function Admin() {
+  const [loggedIn, setLoggedIn] = React.useState(false);
   const [adminSetup, setAdminSetup] = React.useState(false);
   const [loadingPage, setLoadingPage] = React.useState(true);
   const [loginMessage, setLoginMessage] = React.useState('');
@@ -27,7 +28,7 @@ export default function Admin() {
         style={{ display: 'flex', justifyContent: 'center', marginTop: '10vh' }}
       >
         {loadingPage && <Spin tip='Loading...' size='large' />}
-        {!loadingPage && (
+        {!loadingPage && !loggedIn && (
           <Card
             style={{
               boxShadow: '5px 8px 24px 5px rgba(208, 216, 243, 0.6)',
@@ -53,7 +54,11 @@ export default function Admin() {
               <h1>{adminSetup ? 'Admin Login' : 'Admin Setup'}</h1>
             </div>
             {adminSetup ? (
-              <AdminLoginForm loginMessage={loginMessage} />
+              <AdminLoginForm
+                loginMessage={loginMessage}
+                setLoginMessage={setLoginMessage}
+                setLoggedIn={setLoggedIn}
+              />
             ) : (
               <AdminSetupForm
                 setAdminSetup={setAdminSetup}
@@ -62,6 +67,7 @@ export default function Admin() {
             )}
           </Card>
         )}
+        {loggedIn && <h1>Logged In!</h1>}
       </Col>
     </Row>
   );
@@ -139,14 +145,38 @@ function AdminSetupForm(props) {
 }
 
 function AdminLoginForm(props) {
-  const { loginMessage } = props;
+  const { loginMessage, setLoginMessage, setLoggedIn } = props;
+  const [submitting, setSubmitting] = React.useState(false);
+  const [error, setError] = React.useState(undefined);
 
   const handleSubmit = async (values) => {
-    console.log('SUBMITTING', values);
+    setLoginMessage('');
+    setError(undefined);
+    setSubmitting(true);
+    const res = await fetch(`${API_URL}/admin/login`, {
+      method: 'POST',
+      body: JSON.stringify(values),
+    });
+    const data = await res.json();
+
+    setSubmitting(false);
+    if (res.status === 200) {
+      setLoggedIn(true);
+    } else {
+      setError(data.error);
+    }
   };
 
   return (
     <Form onFinish={handleSubmit} layout='vertical'>
+      {error && (
+        <Alert
+          type='error'
+          message={error}
+          showIcon
+          style={{ marginBottom: '10px' }}
+        />
+      )}
       {loginMessage && (
         <Alert
           type='success'
@@ -167,6 +197,7 @@ function AdminLoginForm(props) {
         <Button
           type='primary'
           size='large'
+          loading={submitting}
           htmlType='submit'
           style={{ width: '100px' }}
         >
