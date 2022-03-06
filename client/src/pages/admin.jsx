@@ -14,6 +14,9 @@ export default function Admin() {
       const res = await fetch(`${API_URL}/admin/setup`);
       if (res.status === 200) {
         setAdminSetup(true);
+        if (sessionStorage.getItem('adminKey')) {
+          setLoggedIn(true);
+        }
       }
       setLoadingPage(false);
     };
@@ -161,6 +164,7 @@ function AdminLoginForm(props) {
 
     setSubmitting(false);
     if (res.status === 200) {
+      sessionStorage.setItem('adminKey', data.adminKey);
       setLoggedIn(true);
     } else {
       setError(data.error);
