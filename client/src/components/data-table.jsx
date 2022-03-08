@@ -10,6 +10,7 @@ export default class DataTable extends React.Component {
     this.state = {
       searchText: '',
       searchedColumn: '',
+      filteredData: [],
     };
   }
 
@@ -171,6 +172,10 @@ export default class DataTable extends React.Component {
     return columns;
   };
 
+  onTableChange = (pagination, filters, sorter, extra) => {
+    this.props.setDisplayedData(extra.currentDataSource)
+  };
+
   render() {
     let dataSource = [];
     let columns = [];
@@ -191,8 +196,9 @@ export default class DataTable extends React.Component {
         bordered={true}
         pagination={{
           defaultPageSize: 100,
-          pageSizeOptions: [100, 250, 500]
+          pageSizeOptions: [100, 250, 500],
         }}
+        onChange={this.onTableChange}
       />
     );
   }
