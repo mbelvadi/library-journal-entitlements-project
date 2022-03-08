@@ -110,22 +110,23 @@ function AdminControls(props) {
 
     setCrknRefreshing(false);
     if (res.status === 200) {
-      setSuccessMsg('Succesfully updated CRKN sheets');
+      setSuccessMsg('Succesfully updated CRKN sheets.');
     } else if (res.status === 401) {
       sessionStorage.removeItem('adminKey');
       setLoginMessage('Admin session has expired. Please login again.');
       setLoggedIn(false);
     } else {
-      setError(
-        'An unexpected error occurred when refreshing the CRKN spreadsheet data.'
-      );
+      setError('An unexpected error occurred.');
     }
   };
 
   const uploadFile = async () => {
+    setError(undefined);
+    setSuccessMsg(undefined);
     setUploadingFile(true);
     const formData = new FormData();
     formData.append('file', uploadedFile);
+    formData.append('adminKey', sessionStorage.getItem('adminKey'));
     const res = await fetch(`${API_URL}/admin/upload`, {
       method: 'Post',
       body: formData,
@@ -133,6 +134,16 @@ function AdminControls(props) {
     const data = await res.json();
     console.log(data);
     setUploadingFile(false);
+
+    if (res.status === 200) {
+      setSuccessMsg('Succesfully uploaded spreadsheet.');
+    } else if (res.status === 401) {
+      sessionStorage.removeItem('adminKey');
+      setLoginMessage('Admin session has expired. Please login again.');
+      setLoggedIn(false);
+    } else {
+      setError('An unexpected error occurred.');
+    }
   };
 
   return (
