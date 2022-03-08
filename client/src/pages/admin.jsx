@@ -1,6 +1,17 @@
 import React from 'react';
 import { API_URL } from '../util';
-import { Row, Col, Card, Spin, Form, Input, Button, Avatar, Alert } from 'antd';
+import {
+  Row,
+  Col,
+  Card,
+  Spin,
+  Form,
+  Input,
+  Button,
+  Avatar,
+  Alert,
+  Divider,
+} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 export default function Admin() {
@@ -84,6 +95,8 @@ function AdminControls(props) {
   const [error, setError] = React.useState(undefined);
   const [successMsg, setSuccessMsg] = React.useState(undefined);
   const [crknRefreshing, setCrknRefreshing] = React.useState(false);
+  const [uploadedFile, setUploadedFile] = React.useState(null);
+  const [uploadingFile, setUploadingFile] = React.useState(false);
 
   const refreshCrknData = async () => {
     setError(undefined);
@@ -109,8 +122,23 @@ function AdminControls(props) {
     }
   };
 
+  const uploadFile = async () => {
+    setUploadingFile(true);
+    const formData = new FormData();
+    formData.append('file', uploadedFile);
+    const res = await fetch(`${API_URL}/admin/upload`, {
+      method: 'Post',
+      body: formData,
+    });
+    const data = await res.json();
+    console.log(data);
+    setUploadingFile(false);
+  };
+
   return (
-    <div style={{ marginTop: '30px' }}>
+    <div
+      style={{ marginTop: '30px', display: 'flex', flexDirection: 'column' }}
+    >
       <h1>Admin Page</h1>
       {error && (
         <Alert
@@ -135,6 +163,22 @@ function AdminControls(props) {
         loading={crknRefreshing}
       >
         Refresh CRKN data
+      </Button>
+      <Divider />
+      <input
+        type='file'
+        accept='.xlsx, .csv, .tsv'
+        onChange={(e) => setUploadedFile(e.target.files[0])}
+      />
+      <Button
+        type='primary'
+        size='large'
+        onClick={uploadFile}
+        disabled={!uploadedFile}
+        loading={uploadingFile}
+        style={{ marginTop: '10px' }}
+      >
+        Upload file
       </Button>
     </div>
   );
