@@ -1,9 +1,9 @@
-import { Button } from 'antd';
 import React from 'react';
+import { Layout, Button, Col, Row, List } from 'antd';
 import { API_URL } from '../util';
+import SearchBar from '../components/search-bar';
 
 export default function Home() {
-  const [randomNumber, setRandomNumber] = React.useState(null);
   const [fileLinks, setFileLinks] = React.useState([]);
 
   React.useEffect(() => {
@@ -36,34 +36,56 @@ export default function Home() {
     res.blob().then((blob) => downloadFileToClient(blob, file));
   };
 
-  const getRandomNumber = async () => {
-    const res = await fetch(`${API_URL}/random-number`);
-    const data = await res.json();
-    setRandomNumber(data.randomNumber);
-  };
-
-  const fileLinkElements = fileLinks.map((link) => {
+  const mapLinkToListItem = (link) => {
     return (
-      <Button
-        type='link'
-        key={link}
-        onClick={() => {
-          downloadFile(link);
-        }}
-      >
-        {link}
-      </Button>
+      <List.Item>
+        <Button
+          type='link'
+          key={link}
+          onClick={() => {
+            downloadFile(link);
+          }}
+        >
+          {link}
+        </Button>
+      </List.Item>
     );
-  });
+  };
 
   return (
     <>
-      <h1>Home</h1>
-      <div>{fileLinkElements}</div>
-      <Button type='primary' onClick={getRandomNumber}>
-        Get Random Number
-      </Button>
-      <div>Random number: {randomNumber}</div>
+      <Layout>
+        <Layout.Content>
+          <Row
+            type='flex'
+            justify='center'
+            align='middle'
+            style={{ minHeight: '100vh', alignItems: 'center' }}
+          >
+            <Col
+              span={8}
+              type='flex'
+              justify='center'
+              align='middle'
+              style={{ minHeight: '50vh', alignItems: 'center' }}
+            >
+              <img //TODO: replace with configurable logo
+                src='https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg'
+                alt='university logo'
+                style={{ width: 160 }}
+              />
+              <SearchBar />
+              <List
+              style={{ marginTop: '50px' }}
+                header={<h3>Files Being Searched</h3>}
+                bordered={true}
+                dataSource={fileLinks}
+                renderItem={mapLinkToListItem}
+              ></List>
+            </Col>
+          </Row>
+        </Layout.Content>
+      </Layout>
     </>
   );
 }

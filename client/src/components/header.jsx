@@ -1,61 +1,52 @@
-import { Button, Form, Input, PageHeader, Row } from 'antd';
-import React, { useState } from 'react';
+import { PageHeader, Row, Col, Button } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import SearchBar from './search-bar';
 
-export default function Header() {
-  const [query, setQuery] = useState('');
+export default function Header(props) {
   const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
-    e.target.parentElement.children[0].blur();
-    navigate(`/search?query=${query}`);
-    setQuery('');
-  };
 
   return (
     <PageHeader style={{ boxShadow: '0 4px 2px -2px gray', padding: 0 }}>
-      <Row
-        style={{
-          alignItems: 'center',
-          paddingBottom: '12px',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Row style={{ alignItems: 'center' }}>
+      <Row style={{ alignItems: 'center', paddingBottom: '12px' }}>
+        <Col>
           <Link to='/'>
-            <img
+            <img //TODO: replace with configurable logo
               src='https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg'
               alt='university logo'
-              style={{ width: 60, marginRight: 10 }}
+              style={{ width: 60 }}
             />
           </Link>
-          <Form onSubmit={handleSubmit}>
-            <Input
-              placeholder='Search...'
-              size='large'
-              style={{ maxWidth: 300 }}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            ></Input>
-            <button
-              type='submit'
-              onClick={handleSubmit}
-              style={{ display: 'none' }}
-            ></button>
-          </Form>
-        </Row>
-        <Button
-          type='primary'
-          size='large'
-          onClick={() => {
-            navigate('/admin');
-          }}
-          style={{
-            marginRight: '20px',
-          }}
-        >
-          Admin
-        </Button>
+        </Col>
+        <Col span={12}>
+          <SearchBar />
+        </Col>
+        <Col span={2} offset={8}>
+          <Button
+            size='large'
+            type='primary'
+            shape='round'
+            icon={<DownloadOutlined />}
+            onClick={props.onClickDownload}
+          >
+            TSV
+          </Button>
+        </Col>
+        <Col>
+          <Button
+            type='primary'
+            size='large'
+            onClick={() => {
+              navigate('/admin');
+            }}
+            style={{
+              marginRight: '20px',
+            }}
+          >
+            Admin
+          </Button>
+        </Col>
       </Row>
     </PageHeader>
   );

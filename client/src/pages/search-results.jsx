@@ -1,7 +1,10 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import DataTable from '../components/data-table';
+import { Layout } from 'antd';
 import { API_URL } from '../util';
+import DataTable from '../components/data-table';
+import Header from '../components/header';
+
 
 const parseParams = (querystring) => {
   const params = new URLSearchParams(querystring);
@@ -38,19 +41,24 @@ export default function SearchResults() {
 
   return (
     <>
-      <h1>
-        Search Results{' '}
-        {searchParams?.query ? (
-          <>
-            for <i>{searchParams.query}</i>
-          </>
-        ) : (
-          ''
-        )}
-      </h1>
-      <div>
-        <DataTable data={searchResults} />
-      </div>
+      <Layout>
+        <Header />
+        <Layout.Content style={{ padding: '0 2vw' }}>
+          <h1>
+            Search Results{' '}
+            {searchParams?.query ? (
+              <>
+                for <i>{searchParams.query}</i>
+              </>
+            ) : (
+              ''
+            )}
+          </h1>
+          <div>
+            <DataTable data={searchResults} />
+          </div>
+        </Layout.Content>
+      </Layout>
     </>
   );
 }
