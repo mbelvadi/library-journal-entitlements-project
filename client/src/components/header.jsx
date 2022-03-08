@@ -7,6 +7,22 @@ import SearchBar from './search-bar';
 export default function Header(props) {
   const navigate = useNavigate();
 
+  let tsvButton = <></>;
+
+  if (props.onClickDownload) {
+    tsvButton = (
+      <Button
+        size='large'
+        type='primary'
+        shape='round'
+        icon={<DownloadOutlined />}
+        onClick={props.onClickDownload}
+      >
+        TSV
+      </Button>
+    );
+  }
+
   return (
     <PageHeader style={{ boxShadow: '0 4px 2px -2px gray', padding: 0 }}>
       <Row style={{ alignItems: 'center', paddingBottom: '12px' }}>
@@ -23,15 +39,7 @@ export default function Header(props) {
           <SearchBar />
         </Col>
         <Col span={2} offset={8}>
-          <Button
-            size='large'
-            type='primary'
-            shape='round'
-            icon={<DownloadOutlined />}
-            onClick={props.onClickDownload}
-          >
-            TSV
-          </Button>
+          {tsvButton}
         </Col>
         <Col>
           <Button
