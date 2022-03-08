@@ -38,8 +38,13 @@ export default function Admin() {
   return (
     <Layout>
       <Layout.Content style={{ padding: '0 2vw' }}>
-        <Row>
-          <Col md={{ span: 12, offset: 6 }} style={{ display: 'flex' }}>
+        <Row
+          type='flex'
+          justify='center'
+          align='middle'
+          style={{ minHeight: '80vh', alignItems: 'center' }}
+        >
+          <Col style={{ display: 'flex' }}>
             <div style={{ justifyContent: 'center', marginTop: '10vh' }}>
               {loadingPage && <Spin tip='Loading...' size='large' />}
               {!loadingPage && !loggedIn && (
