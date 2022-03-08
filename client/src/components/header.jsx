@@ -1,10 +1,12 @@
 import { PageHeader, Row, Col, Button } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from './search-bar';
 
 export default function Header(props) {
+  const navigate = useNavigate();
+
   return (
     <PageHeader style={{ boxShadow: '0 4px 2px -2px gray', padding: 0 }}>
       <Row style={{ alignItems: 'center', paddingBottom: '12px' }}>
@@ -20,7 +22,7 @@ export default function Header(props) {
         <Col span={12}>
           <SearchBar />
         </Col>
-        <Col span={2} offset={9}>
+        <Col span={2} offset={8}>
           <Button
             size='large'
             type='primary'
@@ -29,6 +31,20 @@ export default function Header(props) {
             onClick={props.onClickDownload}
           >
             TSV
+          </Button>
+        </Col>
+        <Col>
+          <Button
+            type='primary'
+            size='large'
+            onClick={() => {
+              navigate('/admin');
+            }}
+            style={{
+              marginRight: '20px',
+            }}
+          >
+            Admin
           </Button>
         </Col>
       </Row>
