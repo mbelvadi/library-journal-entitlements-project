@@ -1,6 +1,7 @@
 import React from 'react';
 import { API_URL } from '../util';
 import {
+  Layout,
   Row,
   Col,
   Card,
@@ -35,58 +36,65 @@ export default function Admin() {
   }, []);
 
   return (
-    <Row>
-      <Col md={{ span: 12, offset: 6 }} style={{ display: 'flex' }}>
-        <div style={{ justifyContent: 'center', marginTop: '10vh' }}>
-          {loadingPage && <Spin tip='Loading...' size='large' />}
-          {!loadingPage && !loggedIn && (
-            <Card
-              style={{
-                boxShadow: '5px 8px 24px 5px rgba(208, 216, 243, 0.6)',
-                maxWidth: '700px',
-                minWidth: '300px',
-                width: '50vw',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  flexDirection: 'column',
-                  marginBottom: '20px',
-                }}
-              >
-                <Avatar
-                  style={{ backgroundColor: '#1890ff', marginBottom: '20px' }}
-                  size={100}
-                  icon={<UserOutlined />}
-                />
-                <h1>{adminSetup ? 'Admin Login' : 'Admin Setup'}</h1>
-              </div>
-              {adminSetup ? (
-                <AdminLoginForm
-                  loginMessage={loginMessage}
-                  setLoginMessage={setLoginMessage}
-                  setLoggedIn={setLoggedIn}
-                />
-              ) : (
-                <AdminSetupForm
-                  setAdminSetup={setAdminSetup}
-                  setLoginMessage={setLoginMessage}
-                />
+    <Layout>
+      <Layout.Content style={{ padding: '0 2vw' }}>
+        <Row>
+          <Col md={{ span: 12, offset: 6 }} style={{ display: 'flex' }}>
+            <div style={{ justifyContent: 'center', marginTop: '10vh' }}>
+              {loadingPage && <Spin tip='Loading...' size='large' />}
+              {!loadingPage && !loggedIn && (
+                <Card
+                  style={{
+                    boxShadow: '5px 8px 24px 5px rgba(208, 216, 243, 0.6)',
+                    maxWidth: '700px',
+                    minWidth: '300px',
+                    width: '50vw',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'column',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    <Avatar
+                      style={{
+                        backgroundColor: '#1890ff',
+                        marginBottom: '20px',
+                      }}
+                      size={100}
+                      icon={<UserOutlined />}
+                    />
+                    <h1>{adminSetup ? 'Admin Login' : 'Admin Setup'}</h1>
+                  </div>
+                  {adminSetup ? (
+                    <AdminLoginForm
+                      loginMessage={loginMessage}
+                      setLoginMessage={setLoginMessage}
+                      setLoggedIn={setLoggedIn}
+                    />
+                  ) : (
+                    <AdminSetupForm
+                      setAdminSetup={setAdminSetup}
+                      setLoginMessage={setLoginMessage}
+                    />
+                  )}
+                </Card>
               )}
-            </Card>
-          )}
-        </div>
-        {loggedIn && (
-          <AdminControls
-            setLoggedIn={setLoggedIn}
-            setLoginMessage={setLoginMessage}
-          />
-        )}
-      </Col>
-    </Row>
+            </div>
+            {loggedIn && (
+              <AdminControls
+                setLoggedIn={setLoggedIn}
+                setLoginMessage={setLoginMessage}
+              />
+            )}
+          </Col>
+        </Row>
+      </Layout.Content>
+    </Layout>
   );
 }
 
