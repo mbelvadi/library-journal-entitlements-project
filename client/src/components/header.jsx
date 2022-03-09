@@ -36,7 +36,7 @@ export default function Header(props) {
           </Link>
         </Col>
         <Col span={12}>
-          <SearchBar />
+          <SearchBar query={props.query} />
         </Col>
         <Col span={2} offset={8}>
           {tsvButton}

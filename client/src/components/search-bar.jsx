@@ -3,8 +3,7 @@ import { FilterOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function SearchBar() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(props.query);
   const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
 
