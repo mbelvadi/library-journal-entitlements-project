@@ -51,7 +51,7 @@
 
     for ($i = 4; $i <= count($paRightSheetData); $i++) { // Rights will ALWAYS start on row 4
       $row = $paRightSheetData[$i];
-      if (!isset($row[$dbProperties->title]) || !isset($row[$dbProperties->agreement_code]) || !isset($row[$dbProperties->year]) || !isset($row[$dbProperties->has_rights])) {
+      if (!isset($row[$dbProperties->title]) || !isset($row[$dbProperties->year]) || !isset($row[$dbProperties->has_rights])) {
         continue;
       }
 
