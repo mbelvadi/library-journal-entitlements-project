@@ -28,7 +28,7 @@ export default function Header(props) {
                 style={{ width: 60 }}
               />
             </Link>
-            <SearchBar />
+            <SearchBar query={props.query} />
           </Row>
         </Col>
         <Col
