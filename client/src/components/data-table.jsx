@@ -40,7 +40,9 @@ export default function DataTable(props) {
             Search
           </Button>
           <Button
-            onClick={() => handleReset(clearFilters, selectedKeys, confirm, dataIndex)}
+            onClick={() =>
+              handleReset(clearFilters, selectedKeys, confirm, dataIndex)
+            }
             size='small'
             style={{ width: 90 }}
           >
@@ -108,7 +110,8 @@ export default function DataTable(props) {
   };
 
   // should make configurable
-  const crknColumnsTitles = [
+  // order of this list is reflected in the table
+  const crknColumnNames = [
     'Has_Rights',
     'Title',
     'Collection_Name',
@@ -123,28 +126,34 @@ export default function DataTable(props) {
 
   const getColumns = (element) => {
     const columns = [];
-    let properties = [];
-    let title = '';
 
-    const isCRKN = element.filename.toLowerCase().includes('crkn');
-
-    if (isCRKN) {
-      properties = crknColumnsTitles;
-    } else {
-      properties = Object.keys(element);
-    }
-
-    for (const property of properties) {
-      title = replaceDelimiters(property, ' ');
-      if (!isCRKN) {
-        title = capitalizeWords(title);
-      }
+    for (const columnName of crknColumnNames) {
+      let key = columnName.toLowerCase();
 
       columns.push({
-        title: title,
-        dataIndex: property.toLowerCase(),
-        key: property.toLowerCase(),
-        ...getColumnSearchProps(property.toLowerCase()),
+        title: replaceDelimiters(columnName, ' '),
+        dataIndex: key,
+        key: key,
+        ...getColumnSearchProps(key),
+        sorter: (a, b) => {
+          if (a[key]) {
+            if (b[key]) {
+              if (typeof a[key] === 'string') {
+                return a[key].localeCompare(b[key]);
+              } else {
+                return a[key] - b[key];
+              }
+            } else {
+              return -1;
+            }
+          } else {
+            if (b[key]) {
+              return 1;
+            } else {
+              return 0;
+            }
+          }
+        },
       });
     }
 
