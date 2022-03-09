@@ -3,18 +3,12 @@ import Highlighter from 'react-highlight-words';
 import { Table, Input, Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
-export default class DataTable extends React.Component {
-  constructor(props) {
-    super(props);
+export default function DataTable(props) {
+  const { data, setDisplayedData } = props;
+  const [searchText, setSearchText] = React.useState('');
+  const [searchedColumn, setSearchedColumn] = React.useState('');
 
-    this.state = {
-      searchText: '',
-      searchedColumn: '',
-      filteredData: [],
-    };
-  }
-
-  getColumnSearchProps = (dataIndex) => ({
+  const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -31,15 +25,13 @@ export default class DataTable extends React.Component {
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
-          onPressEnter={() =>
-            this.handleSearch(selectedKeys, confirm, dataIndex)
-          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{ marginBottom: 8, display: 'block' }}
         />
         <Space>
           <Button
             type='primary'
-            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
             size='small'
             style={{ width: 90 }}
@@ -47,7 +39,7 @@ export default class DataTable extends React.Component {
             Search
           </Button>
           <Button
-            onClick={() => this.handleReset(clearFilters)}
+            onClick={() => handleReset(clearFilters)}
             size='small'
             style={{ width: 90 }}
           >
@@ -58,10 +50,8 @@ export default class DataTable extends React.Component {
             size='small'
             onClick={() => {
               confirm({ closeDropdown: false });
-              this.setState({
-                searchText: selectedKeys[0],
-                searchedColumn: dataIndex,
-              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
             }}
           >
             Filter
@@ -85,10 +75,10 @@ export default class DataTable extends React.Component {
       }
     },
     render: (text) =>
-      this.state.searchedColumn === dataIndex ? (
+      searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-          searchWords={[this.state.searchText]}
+          searchWords={[searchText]}
           autoEscape
           textToHighlight={text ? text.toString() : ''}
         />
@@ -97,20 +87,18 @@ export default class DataTable extends React.Component {
       ),
   });
 
-  handleSearch = (selectedKeys, confirm, dataIndex) => {
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    this.setState({
-      searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
-    });
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
   };
 
-  handleReset = (clearFilters) => {
+  const handleReset = (clearFilters) => {
     clearFilters();
-    this.setState({ searchText: '' });
+    setSearchText('');
   };
 
-  replaceDelimiters = (string, char) => {
+  const replaceDelimiters = (string, char) => {
     const delimeters = ['_', '-'];
     for (const delimeter of delimeters) {
       string = string.replaceAll(delimeter, char);
@@ -118,7 +106,7 @@ export default class DataTable extends React.Component {
     return string;
   };
 
-  capitalizeWords = (string) => {
+  const capitalizeWords = (string) => {
     let finalString = '';
     const splitString = string.split(' ');
 
@@ -129,7 +117,7 @@ export default class DataTable extends React.Component {
   };
 
   // should make configurable
-  crknColumnsTitles = [
+  const crknColumnsTitles = [
     'Has_Rights',
     'Title',
     'Collection_Name',
@@ -142,7 +130,7 @@ export default class DataTable extends React.Component {
     'Agreement_Code',
   ];
 
-  getColumns = (element) => {
+  const getColumns = (element) => {
     const columns = [];
     let properties = [];
     let title = '';
@@ -150,56 +138,54 @@ export default class DataTable extends React.Component {
     const isCRKN = element.filename.toLowerCase().includes('crkn');
 
     if (isCRKN) {
-      properties = this.crknColumnsTitles;
+      properties = crknColumnsTitles;
     } else {
       properties = Object.keys(element);
     }
 
     for (const property of properties) {
-      title = this.replaceDelimiters(property, ' ');
+      title = replaceDelimiters(property, ' ');
       if (!isCRKN) {
-        title = this.capitalizeWords(title);
+        title = capitalizeWords(title);
       }
 
       columns.push({
         title: title,
         dataIndex: property.toLowerCase(),
         key: property.toLowerCase(),
-        ...this.getColumnSearchProps(property.toLowerCase()),
+        ...getColumnSearchProps(property.toLowerCase()),
       });
     }
 
     return columns;
   };
 
-  onTableChange = (pagination, filters, sorter, extra) => {
-    this.props.setDisplayedData(extra.currentDataSource)
+  const onTableChange = (pagination, filters, sorter, extra) => {
+    setDisplayedData(extra.currentDataSource);
   };
 
-  render() {
-    let dataSource = [];
-    let columns = [];
+  let dataSource = [];
+  let columns = [];
 
-    if (this.props.data?.results?.length > 0) {
-      dataSource = this.props.data.results;
-      columns = this.getColumns(dataSource[0]);
-    }
-
-    dataSource.forEach(function (element, i) {
-      element.key = i;
-    });
-
-    return (
-      <Table
-        columns={columns}
-        dataSource={dataSource}
-        bordered={true}
-        pagination={{
-          defaultPageSize: 100,
-          pageSizeOptions: [100, 250, 500],
-        }}
-        onChange={this.onTableChange}
-      />
-    );
+  if (data?.results?.length > 0) {
+    dataSource = data.results;
+    columns = getColumns(dataSource[0]);
   }
+
+  dataSource.forEach(function (element, i) {
+    element.key = i;
+  });
+
+  return (
+    <Table
+      columns={columns}
+      dataSource={dataSource}
+      bordered={true}
+      pagination={{
+        defaultPageSize: 100,
+        pageSizeOptions: [100, 250, 500],
+      }}
+      onChange={onTableChange}
+    />
+  );
 }
