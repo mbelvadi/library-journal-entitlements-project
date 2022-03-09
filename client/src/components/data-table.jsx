@@ -47,24 +47,11 @@ export default class DataTable extends React.Component {
             Search
           </Button>
           <Button
-            onClick={() => this.handleReset(clearFilters)}
+            onClick={() => this.handleReset(clearFilters, selectedKeys, confirm, dataIndex)}
             size='small'
             style={{ width: 90 }}
           >
             Reset
-          </Button>
-          <Button
-            type='link'
-            size='small'
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              this.setState({
-                searchText: selectedKeys[0],
-                searchedColumn: dataIndex,
-              });
-            }}
-          >
-            Filter
           </Button>
         </Space>
       </div>
@@ -105,9 +92,10 @@ export default class DataTable extends React.Component {
     });
   };
 
-  handleReset = (clearFilters) => {
+  handleReset = (clearFilters, selectedKeys, confirm, dataIndex) => {
     clearFilters();
     this.setState({ searchText: '' });
+    this.handleSearch(selectedKeys, confirm, dataIndex);
   };
 
   replaceDelimiters = (string, char) => {
