@@ -88,7 +88,7 @@
   }
 
   // 5. Remove old DB entries
-  deleteOldCrknData($uploadStartTime);
+  deleteOldCrknData('time', $uploadStartTime, null);
 
   echo json_encode(array("message" => "Successfully updated crkn files."));
 ?>

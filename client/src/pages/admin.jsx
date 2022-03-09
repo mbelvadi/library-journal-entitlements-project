@@ -14,6 +14,7 @@ import {
   Divider,
 } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import Header from '../components/header';
 
 export default function Admin() {
   const [loggedIn, setLoggedIn] = React.useState(false);
@@ -37,14 +38,10 @@ export default function Admin() {
 
   return (
     <Layout>
+      <Header />
       <Layout.Content style={{ padding: '0 2vw' }}>
-        <Row
-          type='flex'
-          justify='center'
-          align='middle'
-          style={{ minHeight: '80vh', alignItems: 'center' }}
-        >
-          <Col style={{ display: 'flex' }}>
+        <Row>
+          <Col md={{ span: 12, offset: 6 }} style={{ display: 'flex' }}>
             <div style={{ justifyContent: 'center', marginTop: '10vh' }}>
               {loadingPage && <Spin tip='Loading...' size='large' />}
               {!loadingPage && !loggedIn && (

@@ -8,7 +8,7 @@
       online_issn CHARACTER(20),
       has_former_title CHARACTER(20),
       has_succeeding_title CHARACTER(20),
-      agreement_code VARCHAR(255) NOT NULL,
+      agreement_code VARCHAR(255),
       year INT NOT NULL,
       collection_name VARCHAR(255),
       title_metadata_last_modified VARCHAR(255),
