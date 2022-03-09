@@ -44,19 +44,21 @@ export default function Home() {
   return (
     <>
       <Layout>
-        <Layout.Content>
+        <Layout.Content style={{ padding: '0 2vw' }}>
           <Row
             type='flex'
             justify='center'
             align='middle'
-            style={{ minHeight: '100vh', alignItems: 'center' }}
+            style={{ minHeight: '100vh' }}
           >
             <Col
-              span={8}
+              md={12}
+              span={24}
+              offset={{ md: 6 }}
               type='flex'
               justify='center'
               align='middle'
-              style={{ minHeight: '50vh', alignItems: 'center' }}
+              style={{ minHeight: '50vh' }}
             >
               <img //TODO: replace with configurable logo
                 src='https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg'
@@ -65,7 +67,7 @@ export default function Home() {
               />
               <SearchBar />
               <List
-              style={{ marginTop: '50px' }}
+                style={{ marginTop: '50px' }}
                 header={<h3>Files Being Searched</h3>}
                 bordered={true}
                 dataSource={fileLinks}

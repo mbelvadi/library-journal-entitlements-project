@@ -1,4 +1,4 @@
-import { Form, Input, Col, Dropdown, DatePicker, Card } from 'antd';
+import { Form, Input, Col, Row, Dropdown, DatePicker, Card } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -44,44 +44,43 @@ export default function SearchBar() {
   );
 
   return (
-    <Form
-      onSubmit={handleSubmitSearch}
-      layout='inline'
-      style={{ marginLeft: 50 }}
-    >
-      <Col span={18}>
-        <Input
-          placeholder='Search...'
-          size='large'
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        ></Input>
-        <button
-          type='submit'
-          onClick={handleSubmitSearch}
-          style={{ display: 'none' }}
-        ></button>
-      </Col>
-      <Col
-        span={6}
+    <Row justify='center'>
+      <Form
+        onSubmit={handleSubmitSearch}
+        layout='inline'
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          width: '100%',
+          maxWidth: '700px',
         }}
       >
-        <Dropdown.Button
-          type='primary'
-          overlay={filterForm}
-          icon={<FilterOutlined />}
-          trigger={['click']}
-          onVisibleChange={handleVisibleChange}
-          visible={visible}
-          onClick={handleSubmitSearch}
-        >
-          Search
-        </Dropdown.Button>
-      </Col>
-    </Form>
+        <Col span={17}>
+          <Input
+            placeholder='Search...'
+            size='large'
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <button
+            type='submit'
+            onClick={handleSubmitSearch}
+            style={{ display: 'none' }}
+          ></button>
+        </Col>
+        <Col span={6} offset={1}>
+          <Dropdown.Button
+            type='primary'
+            size='large'
+            overlay={filterForm}
+            icon={<FilterOutlined />}
+            trigger={['click']}
+            onVisibleChange={handleVisibleChange}
+            visible={visible}
+            onClick={handleSubmitSearch}
+          >
+            Search
+          </Dropdown.Button>
+        </Col>
+      </Form>
+    </Row>
   );
 }
