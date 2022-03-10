@@ -143,7 +143,9 @@ function AdminControls(props) {
 
         setCrknRefreshing(false);
         if (res.status === 200) {
+          const data = await res.json();
           setSuccessMsg('Succesfully updated CRKN sheets.');
+          if (data.files) setServerFiles(data.files);
         } else if (res.status === 401) {
           sessionStorage.removeItem('adminKey');
           setLoginMessage('Admin session has expired. Please login again.');
@@ -174,7 +176,9 @@ function AdminControls(props) {
 
         setUploadingFile(false);
         if (res.status === 200) {
+          const data = await res.json();
           setSuccessMsg('Succesfully uploaded spreadsheet.');
+          if (data.files) setServerFiles(data.files);
         } else if (res.status === 401) {
           sessionStorage.removeItem('adminKey');
           setLoginMessage('Admin session has expired. Please login again.');
@@ -212,12 +216,12 @@ function AdminControls(props) {
           body: formData,
         });
 
-        const data = await res.json();
-        console.log(data);
-
         setDeletingFiles(false);
         if (res.status === 200) {
-          setSuccessMsg('Succesfully uploaded spreadsheet.');
+          const data = await res.json();
+          setSuccessMsg('Succesfully deleted spreadsheet(s).');
+          setFilesToDelete([]);
+          if (data.files) setServerFiles(data.files);
         } else if (res.status === 401) {
           sessionStorage.removeItem('adminKey');
           setLoginMessage('Admin session has expired. Please login again.');
@@ -279,6 +283,7 @@ function AdminControls(props) {
       </Button>
       <Divider />
       <Checkbox.Group
+        value={filesToDelete}
         onChange={(checkedValues) => setFilesToDelete(checkedValues)}
       >
         <Space direction='vertical'>
