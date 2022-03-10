@@ -3,9 +3,11 @@ import { Layout, Button, Col, Row, List } from 'antd';
 import { API_URL } from '../util';
 import SearchBar from '../components/search-bar';
 import downloadFileToClient from '../functions/downloadFileToClient';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const [fileLinks, setFileLinks] = React.useState([]);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const getFileLinks = async () => {
@@ -51,6 +53,20 @@ export default function Home() {
             align='middle'
             style={{ minHeight: '100vh' }}
           >
+            <Button
+              type='default'
+              shape='round'
+              onClick={() => {
+                navigate('/admin');
+              }}
+              style={{
+                position: 'absolute',
+                right: '1vh',
+                top: '1vh',
+              }}
+            >
+              Admin
+            </Button>
             <Col
               md={12}
               span={24}
