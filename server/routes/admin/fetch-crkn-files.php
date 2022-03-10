@@ -3,6 +3,7 @@
   require('../../database/util/delete-crkn-data.php');
   require('../../util/error-handling.php');
   require '../../vendor/autoload.php';
+  require('../../util/index.php');
 
   use simplehtmldom\HtmlWeb;
 	set_error_handler('apiErrorHandler', E_ALL);
@@ -13,20 +14,8 @@
     return;
   }
 
-  $adminKey = $_GET["adminKey"];
-
-  $db = new SQLite3('../../database/ljp.db');
-  $results = $db->query("SELECT * FROM ADMIN_TOKENS WHERE token = '$adminKey' AND valid_till >= strftime('%s', 'now')");
-  $resultsArray = array();
-  while ($res= $results->fetchArray(1)) {
-    array_push($resultsArray, $res);
-  }
-
-  if(count($resultsArray) !== 1) {
-    http_response_code(401);
-    echo json_encode(array("error" => "invalid admin key. Please login again."));
-    return;
-  }
+  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/ljp.db');
+  if(!$isValidAdmin) return;
 
   // 1. Fetch new files from CRKN site and put them in temp directory
   $crkn_website_url = 'https://www.crkn-rcdr.ca';
@@ -90,5 +79,6 @@
   // 5. Remove old DB entries
   deleteOldCrknData('time', $uploadStartTime, null);
 
-  echo json_encode(array("message" => "Successfully updated crkn files."));
+  $serverFiles = getXLSXFiles('../../PAR-files/');
+  echo json_encode(array("files" => $serverFiles));
 ?>

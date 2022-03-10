@@ -12,9 +12,16 @@ import {
   Avatar,
   Alert,
   Divider,
+  Modal,
+  Radio,
+  Space,
+  Checkbox,
+  List,
 } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import Header from '../components/header';
+import AdminSetupForm from '../components/admin/setup-form';
+import AdminLoginForm from '../components/admin/login-form';
 
 export default function Admin() {
   const [loggedIn, setLoggedIn] = React.useState(false);
@@ -107,53 +114,123 @@ function AdminControls(props) {
   const [crknRefreshing, setCrknRefreshing] = React.useState(false);
   const [uploadedFile, setUploadedFile] = React.useState(null);
   const [uploadingFile, setUploadingFile] = React.useState(false);
+  const [serverFiles, setServerFiles] = React.useState([]);
+  const [filesToDelete, setFilesToDelete] = React.useState([]);
+  const [deletingFiles, setDeletingFiles] = React.useState(false);
 
-  const refreshCrknData = async () => {
-    setError(undefined);
-    setSuccessMsg(undefined);
-    setCrknRefreshing(true);
-    const res = await fetch(
-      `${API_URL}/admin/fetch-crkn-files?adminKey=${sessionStorage.getItem(
-        'adminKey'
-      )}`
-    );
+  React.useEffect(() => {
+    const getFileLinks = async () => {
+      const data = await (await fetch(`${API_URL}/list-files`)).json();
+      setServerFiles(data);
+    };
+    getFileLinks();
+  }, []);
 
-    setCrknRefreshing(false);
-    if (res.status === 200) {
-      setSuccessMsg('Succesfully updated CRKN sheets.');
-    } else if (res.status === 401) {
-      sessionStorage.removeItem('adminKey');
-      setLoginMessage('Admin session has expired. Please login again.');
-      setLoggedIn(false);
-    } else {
-      setError('An unexpected error occurred.');
-    }
+  const confirmRefreshCrknData = () => {
+    Modal.confirm({
+      title: 'Are you sure you want to update the CRKN data?',
+      icon: <ExclamationCircleOutlined />,
+      content: 'This process can take some time.',
+      async onOk() {
+        setError(undefined);
+        setSuccessMsg(undefined);
+        setCrknRefreshing(true);
+        const res = await fetch(
+          `${API_URL}/admin/fetch-crkn-files?adminKey=${sessionStorage.getItem(
+            'adminKey'
+          )}`
+        );
+
+        setCrknRefreshing(false);
+        if (res.status === 200) {
+          const data = await res.json();
+          setSuccessMsg('Succesfully updated CRKN sheets.');
+          if (data.files) setServerFiles(data.files);
+        } else if (res.status === 401) {
+          sessionStorage.removeItem('adminKey');
+          setLoginMessage('Admin session has expired. Please login again.');
+          setLoggedIn(false);
+        } else {
+          setError('An unexpected error occurred.');
+        }
+      },
+    });
   };
 
-  const uploadFile = async () => {
-    setError(undefined);
-    setSuccessMsg(undefined);
-    setUploadingFile(true);
-    const formData = new FormData();
-    formData.append('file', uploadedFile);
-    formData.append('adminKey', sessionStorage.getItem('adminKey'));
-    const res = await fetch(`${API_URL}/admin/upload`, {
-      method: 'Post',
-      body: formData,
-    });
-    const data = await res.json();
-    console.log(data);
-    setUploadingFile(false);
+  const confirmUploadFile = () => {
+    Modal.confirm({
+      title: `Are you sure you want to upload: "${uploadedFile.name}"?`,
+      icon: <ExclamationCircleOutlined />,
+      content: `This process can take some time. Any file with the same name as "${uploadedFile.name}" will be overwritten.`,
+      async onOk() {
+        setError(undefined);
+        setSuccessMsg(undefined);
+        setUploadingFile(true);
+        const formData = new FormData();
+        formData.append('file', uploadedFile);
+        formData.append('adminKey', sessionStorage.getItem('adminKey'));
+        const res = await fetch(`${API_URL}/admin/upload`, {
+          method: 'Post',
+          body: formData,
+        });
 
-    if (res.status === 200) {
-      setSuccessMsg('Succesfully uploaded spreadsheet.');
-    } else if (res.status === 401) {
-      sessionStorage.removeItem('adminKey');
-      setLoginMessage('Admin session has expired. Please login again.');
-      setLoggedIn(false);
-    } else {
-      setError('An unexpected error occurred.');
-    }
+        setUploadingFile(false);
+        if (res.status === 200) {
+          const data = await res.json();
+          setSuccessMsg('Succesfully uploaded spreadsheet.');
+          if (data.files) setServerFiles(data.files);
+        } else if (res.status === 401) {
+          sessionStorage.removeItem('adminKey');
+          setLoginMessage('Admin session has expired. Please login again.');
+          setLoggedIn(false);
+        } else {
+          setError('An unexpected error occurred.');
+        }
+      },
+    });
+  };
+
+  const confirmDeleteFiles = () => {
+    Modal.confirm({
+      title: `Are you sure you want to delete files?"`,
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <>
+          <h4>The following files will be deleted:</h4>
+          <ul style={{ listStyle: 'none', paddingLeft: '0' }}>
+            {filesToDelete.map((f) => (
+              <li key={f}>{f}</li>
+            ))}
+          </ul>
+        </>
+      ),
+      async onOk() {
+        setError(undefined);
+        setSuccessMsg(undefined);
+        setDeletingFiles(true);
+        const formData = new FormData();
+        formData.append('filesToDelete', JSON.stringify(filesToDelete));
+        formData.append('adminKey', sessionStorage.getItem('adminKey'));
+        const res = await fetch(`${API_URL}/admin/delete-files`, {
+          method: 'Post',
+          body: formData,
+        });
+
+        setDeletingFiles(false);
+        if (res.status === 200) {
+          const data = await res.json();
+          setSuccessMsg('Succesfully deleted spreadsheet(s).');
+          setFilesToDelete([]);
+          if (data.files) setServerFiles(data.files);
+        } else if (res.status === 401) {
+          sessionStorage.removeItem('adminKey');
+          setLoginMessage('Admin session has expired. Please login again.');
+          setLoggedIn(false);
+        } else {
+          setError('An unexpected error occurred.');
+        }
+      },
+    });
   };
 
   return (
@@ -180,7 +257,7 @@ function AdminControls(props) {
       <Button
         type='primary'
         size='large'
-        onClick={refreshCrknData}
+        onClick={confirmRefreshCrknData}
         loading={crknRefreshing}
       >
         Refresh CRKN data
@@ -189,154 +266,47 @@ function AdminControls(props) {
       <input
         type='file'
         accept='.xlsx, .csv, .tsv'
-        onChange={(e) => setUploadedFile(e.target.files[0])}
+        onChange={(e) => {
+          setUploadedFile(e.target.files[0]);
+          console.log(e.target.files[0]);
+        }}
       />
       <Button
         type='primary'
         size='large'
-        onClick={uploadFile}
+        onClick={confirmUploadFile}
         disabled={!uploadedFile}
         loading={uploadingFile}
         style={{ marginTop: '10px' }}
       >
         Upload file
       </Button>
+      <Divider />
+      <Checkbox.Group
+        value={filesToDelete}
+        onChange={(checkedValues) => setFilesToDelete(checkedValues)}
+      >
+        <Space direction='vertical'>
+          {serverFiles.map((f) => {
+            return (
+              <Checkbox key={f} value={f}>
+                {f}
+              </Checkbox>
+            );
+          })}
+        </Space>
+      </Checkbox.Group>
+      <Button
+        type='primary'
+        size='large'
+        danger
+        onClick={confirmDeleteFiles}
+        disabled={filesToDelete.length === 0}
+        loading={deletingFiles}
+        style={{ marginTop: '10px' }}
+      >
+        Delete files
+      </Button>
     </div>
-  );
-}
-
-function AdminSetupForm(props) {
-  const { setLoginMessage, setAdminSetup } = props;
-  const [submitting, setSubmitting] = React.useState(false);
-  const [error, setError] = React.useState(undefined);
-
-  const handleSubmit = async (values) => {
-    setError(undefined);
-    setSubmitting(true);
-    const res = await fetch(`${API_URL}/admin/create`, {
-      method: 'POST',
-      body: JSON.stringify(values),
-    });
-    const data = await res.json();
-
-    setSubmitting(false);
-    if (res.status === 200) {
-      setLoginMessage(data.message);
-      setAdminSetup(true);
-    } else {
-      setError(data.error);
-    }
-  };
-
-  return (
-    <Form onFinish={handleSubmit} layout='vertical'>
-      {error && (
-        <Alert
-          type='error'
-          message={error}
-          showIcon
-          style={{ marginBottom: '10px' }}
-        />
-      )}
-      <Form.Item
-        name='adminCode'
-        label='Admin Code'
-        rules={[{ required: true, message: 'This field is required' }]}
-        messageVariables='test'
-      >
-        <Input size='large' placeholder='Admin Code' type='password' />
-      </Form.Item>
-      <Form.Item
-        name='password'
-        label='Password'
-        rules={[{ required: true, message: 'This field is required' }]}
-      >
-        <Input size='large' placeholder='Password' type='password' />
-      </Form.Item>
-      <Form.Item
-        name='confirmPassword'
-        label='Confirm password'
-        rules={[{ required: true, message: 'This field is required' }]}
-      >
-        <Input size='large' placeholder='Confirm Password' type='password' />
-      </Form.Item>
-
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button
-          type='primary'
-          size='large'
-          loading={submitting}
-          htmlType='submit'
-          style={{ width: '100px' }}
-        >
-          Submit
-        </Button>
-      </div>
-    </Form>
-  );
-}
-
-function AdminLoginForm(props) {
-  const { loginMessage, setLoginMessage, setLoggedIn } = props;
-  const [submitting, setSubmitting] = React.useState(false);
-  const [error, setError] = React.useState(undefined);
-
-  const handleSubmit = async (values) => {
-    setLoginMessage('');
-    setError(undefined);
-    setSubmitting(true);
-    const res = await fetch(`${API_URL}/admin/login`, {
-      method: 'POST',
-      body: JSON.stringify(values),
-    });
-    const data = await res.json();
-
-    setSubmitting(false);
-    if (res.status === 200) {
-      sessionStorage.setItem('adminKey', data.adminKey);
-      setLoggedIn(true);
-    } else {
-      setError(data.error);
-    }
-  };
-
-  return (
-    <Form onFinish={handleSubmit} layout='vertical'>
-      {error && (
-        <Alert
-          type='error'
-          message={error}
-          showIcon
-          style={{ marginBottom: '10px' }}
-        />
-      )}
-      {loginMessage && (
-        <Alert
-          type='info'
-          message={loginMessage}
-          showIcon
-          style={{ marginBottom: '10px' }}
-        />
-      )}
-      <Form.Item
-        name='password'
-        label='Password'
-        rules={[{ required: true, message: 'This field is required' }]}
-      >
-        <Input size='large' placeholder='Password' type='password' />
-      </Form.Item>
-
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button
-          type='primary'
-          size='large'
-          loading={submitting}
-          htmlType='submit'
-          style={{ width: '100px' }}
-        >
-          Submit
-        </Button>
-      </div>
-    </Form>
   );
 }
