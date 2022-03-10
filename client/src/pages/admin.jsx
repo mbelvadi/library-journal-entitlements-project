@@ -13,6 +13,10 @@ import {
   Alert,
   Divider,
   Modal,
+  Radio,
+  Space,
+  Checkbox,
+  List,
 } from 'antd';
 import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import Header from '../components/header';
@@ -110,6 +114,17 @@ function AdminControls(props) {
   const [crknRefreshing, setCrknRefreshing] = React.useState(false);
   const [uploadedFile, setUploadedFile] = React.useState(null);
   const [uploadingFile, setUploadingFile] = React.useState(false);
+  const [serverFiles, setServerFiles] = React.useState([]);
+  const [filesToDelete, setFilesToDelete] = React.useState([]);
+  const [deletingFiles, setDeletingFiles] = React.useState(false);
+
+  React.useEffect(() => {
+    const getFileLinks = async () => {
+      const data = await (await fetch(`${API_URL}/list-files`)).json();
+      setServerFiles(data);
+    };
+    getFileLinks();
+  }, []);
 
   const confirmRefreshCrknData = () => {
     Modal.confirm({
@@ -142,7 +157,7 @@ function AdminControls(props) {
 
   const confirmUploadFile = () => {
     Modal.confirm({
-      title: `Are you sure you want to upload: "${uploadedFile.name}"`,
+      title: `Are you sure you want to upload: "${uploadedFile.name}"?`,
       icon: <ExclamationCircleOutlined />,
       content: `This process can take some time. Any file with the same name as "${uploadedFile.name}" will be overwritten.`,
       async onOk() {
@@ -156,10 +171,48 @@ function AdminControls(props) {
           method: 'Post',
           body: formData,
         });
-        const data = await res.json();
-        console.log(data);
-        setUploadingFile(false);
 
+        setUploadingFile(false);
+        if (res.status === 200) {
+          setSuccessMsg('Succesfully uploaded spreadsheet.');
+        } else if (res.status === 401) {
+          sessionStorage.removeItem('adminKey');
+          setLoginMessage('Admin session has expired. Please login again.');
+          setLoggedIn(false);
+        } else {
+          setError('An unexpected error occurred.');
+        }
+      },
+    });
+  };
+
+  const confirmDeleteFiles = () => {
+    Modal.confirm({
+      title: `Are you sure you want to delete files?"`,
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <>
+          <h4>The following files will be deleted:</h4>
+          <ul style={{ listStyle: 'none', paddingLeft: '0' }}>
+            {filesToDelete.map((f) => (
+              <li key={f}>{f}</li>
+            ))}
+          </ul>
+        </>
+      ),
+      async onOk() {
+        setError(undefined);
+        setSuccessMsg(undefined);
+        setDeletingFiles(true);
+        const res = await fetch(`${API_URL}/admin/delete-files`, {
+          method: 'Post',
+          body: {
+            filesToDelete: filesToDelete,
+            adminKey: sessionStorage.getItem('adminKey'),
+          },
+        });
+
+        setDeletingFiles(false);
         if (res.status === 200) {
           setSuccessMsg('Succesfully uploaded spreadsheet.');
         } else if (res.status === 401) {
@@ -220,6 +273,31 @@ function AdminControls(props) {
         style={{ marginTop: '10px' }}
       >
         Upload file
+      </Button>
+      <Divider />
+      <Checkbox.Group
+        onChange={(checkedValues) => setFilesToDelete(checkedValues)}
+      >
+        <Space direction='vertical'>
+          {serverFiles.map((f) => {
+            return (
+              <Checkbox key={f} value={f}>
+                {f}
+              </Checkbox>
+            );
+          })}
+        </Space>
+      </Checkbox.Group>
+      <Button
+        type='primary'
+        size='large'
+        danger
+        onClick={confirmDeleteFiles}
+        disabled={filesToDelete.length === 0}
+        loading={deletingFiles}
+        style={{ marginTop: '10px' }}
+      >
+        Delete files
       </Button>
     </div>
   );
