@@ -46,7 +46,7 @@ export default function Header(props) {
               type='primary'
               shape='round'
               icon={<DownloadOutlined />}
-              onClick={props.onClickDownload}
+              onClick={onClickDownload}
             >
               TSV
             </Button>
