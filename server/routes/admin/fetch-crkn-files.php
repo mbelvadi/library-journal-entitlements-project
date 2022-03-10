@@ -79,5 +79,6 @@
   // 5. Remove old DB entries
   deleteOldCrknData('time', $uploadStartTime, null);
 
-  echo json_encode(array("message" => "Successfully updated crkn files."));
+  $serverFiles = getXLSXFiles('../../PAR-files/');
+  echo json_encode(array("files" => $serverFiles));
 ?>

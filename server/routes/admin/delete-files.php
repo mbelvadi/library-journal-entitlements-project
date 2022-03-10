@@ -22,5 +22,6 @@
     }
   }
 
-  echo json_encode(array("message" => "Successfully deleted files", "files" => $filesToDelete));
+  $remainingFiles = getXLSXFiles('../../PAR-files/');
+  echo json_encode(array("files" => $remainingFiles));
 ?>

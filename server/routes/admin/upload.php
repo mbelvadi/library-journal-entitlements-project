@@ -29,5 +29,6 @@
   ingestSpreadsheet($newFilePath, basename($newFilePath), 0);
   deleteOldCrknData('filename', $uploadStartTime, basename($newFilePath));
 
-  echo json_encode(array("message" => "Successfully uploaded file.", "time" => $uploadStartTime));
+  $serverFiles = getXLSXFiles('../../PAR-files/');
+  echo json_encode(array("files" => $serverFiles));
 ?>
