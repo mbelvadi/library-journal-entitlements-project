@@ -3,25 +3,40 @@ import { FilterOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function SearchBar() {
-  const [query, setQuery] = useState('');
+export default function SearchBar(props) {
+  const [query, setQuery] = useState(props.query);
+  const [filters, setFilters] = useState({});
   const [visible, setVisible] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmitSearch = async (e) => {
+    // remove focus from search bar
     e.target.parentElement.children[0].blur();
-    navigate(`/search?query=${query}`);
-    setQuery('');
+
+    // get rid of empty string form items
+    let nonEmptyFilters = {};
+    for (const property in filters) {
+      if(filters[property] != '') {
+        nonEmptyFilters[property] = filters[property];
+      }
+    }
+
+    let filterURLPart = new URLSearchParams(nonEmptyFilters).toString();
+
+    if (filterURLPart) {
+      filterURLPart = '&'+filterURLPart;
+    }
+
+    navigate(`/search?query=${query}${filterURLPart}`);
   };
 
   const handleVisibleChange = (flag) => {
     setVisible(flag);
   };
 
-  const { RangePicker } = DatePicker;
-
   const filterFormItem = (name, title, content) => (
-    <Form.Item name={name}>
+    <Form.Item name={name} style={{ marginBottom: 0 }}>
       <Card title={title} size='small'>
         {content}
       </Card>
@@ -29,18 +44,44 @@ export default function SearchBar() {
   );
 
   const filterForm = (
-    <Form layout='vertical'>
+    <>
       {filterFormItem(
         'yearFilter',
         'Specific Year',
-        <DatePicker picker='year' bordered={false} />
+        <DatePicker
+          picker='year'
+          bordered={false}
+          value={filters.specificYearFilter}
+          onChange={(moment, value) => {
+            setFilters({ ...filters, 'year': value });
+          }}
+        />
       )}
       {filterFormItem(
-        'yearRangeFilter',
-        'Year Range',
-        <RangePicker picker='year' bordered={false} />
+        'startYearFilter',
+        'Start Year',
+        <DatePicker
+          picker='year'
+          bordered={false}
+          value={filters.startYearFilter}
+          onChange={(moment, value) => {
+            setFilters({ ...filters, 'startYear': value });
+          }}
+        />
       )}
-    </Form>
+      {filterFormItem(
+        'endYearFilter',
+        'End Year',
+        <DatePicker
+          picker='year'
+          bordered={false}
+          value={filters.endYearFilter}
+          onChange={(moment, value) => {
+            setFilters({ ...filters, 'endYear': value });
+          }}
+        />
+      )}
+    </>
   );
 
   return (

@@ -70,7 +70,7 @@ export default function SearchResults() {
   return (
     <>
       <Layout>
-        <Header onClickDownload={onClickDownload}/>
+        <Header onClickDownload={onClickDownload} query={searchParams.query} />
         <Layout.Content style={{ padding: '0 2vw' }}>
           <h1>
             Search Results{' '}

@@ -6,6 +6,7 @@ import { SearchOutlined } from '@ant-design/icons';
 export default function DataTable(props) {
   const { data, setDisplayedData } = props;
   const [searchText, setSearchText] = React.useState('');
+  const [searchInput, setSearchInput] = React.useState({});
   const [searchedColumn, setSearchedColumn] = React.useState('');
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -18,7 +19,7 @@ export default function DataTable(props) {
       <div style={{ padding: 8 }}>
         <Input
           ref={(node) => {
-            this.searchInput = node;
+            setSearchInput(node);
           }}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
@@ -39,22 +40,13 @@ export default function DataTable(props) {
             Search
           </Button>
           <Button
-            onClick={() => handleReset(clearFilters)}
+            onClick={() =>
+              handleReset(clearFilters, selectedKeys, confirm, dataIndex)
+            }
             size='small'
             style={{ width: 90 }}
           >
             Reset
-          </Button>
-          <Button
-            type='link'
-            size='small'
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              setSearchText(selectedKeys[0]);
-              setSearchedColumn(dataIndex);
-            }}
-          >
-            Filter
           </Button>
         </Space>
       </div>
@@ -71,7 +63,7 @@ export default function DataTable(props) {
         : '',
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
-        setTimeout(() => this.searchInput.select(), 100);
+        setTimeout(() => searchInput.select(), 100);
       }
     },
     render: (text) =>
@@ -93,9 +85,10 @@ export default function DataTable(props) {
     setSearchedColumn(dataIndex);
   };
 
-  const handleReset = (clearFilters) => {
+  const handleReset = (clearFilters, selectedKeys, confirm, dataIndex) => {
     clearFilters();
     setSearchText('');
+    handleSearch(selectedKeys, confirm, dataIndex);
   };
 
   const replaceDelimiters = (string, char) => {
@@ -117,7 +110,8 @@ export default function DataTable(props) {
   };
 
   // should make configurable
-  const crknColumnsTitles = [
+  // order of this list is reflected in the table
+  const crknColumnNames = [
     'Has_Rights',
     'Title',
     'Collection_Name',
@@ -132,28 +126,34 @@ export default function DataTable(props) {
 
   const getColumns = (element) => {
     const columns = [];
-    let properties = [];
-    let title = '';
 
-    const isCRKN = element.filename.toLowerCase().includes('crkn');
-
-    if (isCRKN) {
-      properties = crknColumnsTitles;
-    } else {
-      properties = Object.keys(element);
-    }
-
-    for (const property of properties) {
-      title = replaceDelimiters(property, ' ');
-      if (!isCRKN) {
-        title = capitalizeWords(title);
-      }
+    for (const columnName of crknColumnNames) {
+      let key = columnName.toLowerCase();
 
       columns.push({
-        title: title,
-        dataIndex: property.toLowerCase(),
-        key: property.toLowerCase(),
-        ...getColumnSearchProps(property.toLowerCase()),
+        title: replaceDelimiters(columnName, ' '),
+        dataIndex: key,
+        key: key,
+        ...getColumnSearchProps(key),
+        sorter: (a, b) => {
+          if (a[key]) {
+            if (b[key]) {
+              if (typeof a[key] === 'string') {
+                return a[key].localeCompare(b[key]);
+              } else {
+                return a[key] - b[key];
+              }
+            } else {
+              return -1;
+            }
+          } else {
+            if (b[key]) {
+              return 1;
+            } else {
+              return 0;
+            }
+          }
+        },
       });
     }
 
