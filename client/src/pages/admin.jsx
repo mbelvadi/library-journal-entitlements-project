@@ -204,13 +204,16 @@ function AdminControls(props) {
         setError(undefined);
         setSuccessMsg(undefined);
         setDeletingFiles(true);
+        const formData = new FormData();
+        formData.append('filesToDelete', JSON.stringify(filesToDelete));
+        formData.append('adminKey', sessionStorage.getItem('adminKey'));
         const res = await fetch(`${API_URL}/admin/delete-files`, {
           method: 'Post',
-          body: {
-            filesToDelete: filesToDelete,
-            adminKey: sessionStorage.getItem('adminKey'),
-          },
+          body: formData,
         });
+
+        const data = await res.json();
+        console.log(data);
 
         setDeletingFiles(false);
         if (res.status === 200) {
