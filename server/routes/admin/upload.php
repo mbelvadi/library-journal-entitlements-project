@@ -4,8 +4,6 @@
   require('../../util/error-handling.php');
   set_error_handler('apiErrorHandler', E_ALL);
 
-  $data = json_decode(file_get_contents("php://input"));
-
   if(!isset($_POST["adminKey"])) {
     http_response_code(401);
     echo json_encode(array("error" => "admin key is required."));
