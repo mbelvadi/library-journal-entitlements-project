@@ -2,7 +2,7 @@ name: Node Build
 
 env:
   ZIP_NAME: frontend
-  CI: ""
+  CI: "false"
 
 on:
   push:

@@ -1,7 +1,7 @@
 name: Node Test
 
 env:
-  CI: ""
+  CI: "false"
 
 on:
   push:
