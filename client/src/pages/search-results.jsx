@@ -29,8 +29,8 @@ export default function SearchResults() {
     const resultsToExport = displayedData.map(
       ({ key, ...keepAttrs }) => keepAttrs
     );
-    const replacer = (key, value) => (value === null ? '' : value); //TODO: how to handle nulls?
-    const delimeter = '\t'; //TODO: can easily change to CSV or add as an option
+    const replacer = (key, value) => (value === null ? '' : value);
+    const delimeter = '\t';
     const fileExtension = 'tsv';
     const header = Object.keys(resultsToExport[0]);
     let tsv = [
@@ -46,8 +46,8 @@ export default function SearchResults() {
 
     downloadFileToClient(
       new Blob([tsv], { type: 'text/' + fileExtension }),
-      'report.' + fileExtension
-    ); //TODO: come up with a useful filename template
+      'LJEP-PAR-Report-' + new Date().toISOString().substring(0, 19) + 'Z.' + fileExtension
+    );
   };
 
   React.useEffect(() => {
@@ -64,7 +64,6 @@ export default function SearchResults() {
     };
     fetchSearchResults().catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-
   }, [search]);
 
   return (
