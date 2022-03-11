@@ -1,0 +1,52 @@
+name: PHP Build
+
+env:
+  ZIP_PREFIX: LJEP-COMPLETE-
+
+on:
+  workflow_run:
+    workflows: [Node Build]
+    types: [completed]
+
+defaults:
+  run:
+    working-directory: server
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}/server/vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run test suite
+      run: composer run-script test
+
+    - name: Download frontend artifact
+      uses: dawidd6/action-download-artifact@v2.17.0
+      with:
+        workflow: node.js-build.yml
+        branch: release
+        path: ${{ github.workspace }}/server
+
+    - name: Get date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H')"
+
+    - name: Upload server root to create drag-and-drop zip artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.ZIP_PREFIX }}${{ steps.date.outputs.date }}
+        path: ${{ github.workspace }}/server/
