@@ -182,6 +182,7 @@ export default function DataTable(props) {
       dataSource={dataSource}
       bordered={true}
       pagination={{
+        position: [ 'topRight', 'bottomRight'],
         defaultPageSize: 100,
         pageSizeOptions: [100, 250, 500],
       }}
