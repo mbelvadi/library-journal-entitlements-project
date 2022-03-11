@@ -27,7 +27,7 @@ export default function SearchResults() {
 
   const onClickDownload = () => {
     const resultsToExport = displayedData.map(
-      ({ key, ...keepAttrs }) => keepAttrs
+      ({ key, created_at, ...keepAttrs }) => keepAttrs
     );
     const replacer = (key, value) => (value === null ? '' : value);
     const delimeter = '\t';
