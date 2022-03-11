@@ -1,10 +1,13 @@
-name: PHP Composer
+name: PHP Test
+
+env:
+  BRANCH: main
 
 on:
   push:
-    branches: [ main ]
+    branches: [ ${{ env.BRANCH }} ]
   pull_request:
-    branches: [ main ]
+    branches: [ ${{ env.BRANCH }} ]
 
 defaults:
   run:
@@ -30,20 +33,3 @@ jobs:
 
     - name: Run test suite
       run: composer run-script test
-
-    - name: Download frontend artifact
-      uses: dawidd6/action-download-artifact@v2.17.0
-      with:
-        workflow: node.js.yml
-        branch: main
-        path: ${{ github.workspace }}/server
-
-    - name: Get date
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H')"
-
-    - name: Upload server root to create drag-and-drop zip artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: LJEP-COMPLETE-${{ steps.date.outputs.date }}
-        path: ${{ github.workspace }}/server/
