@@ -52,9 +52,7 @@ export default function Header(props) {
           <Button
             type='default'
             shape='round'
-            onClick={() => {
-              navigate('/admin');
-            }}
+            onClick={() => navigate('/admin')}
             style={{
               marginRight: '20px',
               marginLeft: '10px',

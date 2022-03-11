@@ -17,7 +17,7 @@ export default function SearchBar(props) {
     // get rid of empty string form items
     let nonEmptyFilters = {};
     for (const property in filters) {
-      if(filters[property] != '') {
+      if (filters[property] != '') {
         nonEmptyFilters[property] = filters[property];
       }
     }
@@ -25,15 +25,13 @@ export default function SearchBar(props) {
     let filterURLPart = new URLSearchParams(nonEmptyFilters).toString();
 
     if (filterURLPart) {
-      filterURLPart = '&'+filterURLPart;
+      filterURLPart = '&' + filterURLPart;
     }
 
     navigate(`/search?query=${query}${filterURLPart}`);
   };
 
-  const handleVisibleChange = (flag) => {
-    setVisible(flag);
-  };
+  const handleVisibleChange = (flag) => setVisible(flag);
 
   const filterFormItem = (name, title, content) => (
     <Form.Item name={name} style={{ marginBottom: 0 }}>
@@ -52,9 +50,7 @@ export default function SearchBar(props) {
           picker='year'
           bordered={false}
           value={filters.specificYearFilter}
-          onChange={(moment, value) => {
-            setFilters({ ...filters, 'year': value });
-          }}
+          onChange={(moment, value) => setFilters({ ...filters, year: value })}
         />
       )}
       {filterFormItem(
@@ -64,9 +60,9 @@ export default function SearchBar(props) {
           picker='year'
           bordered={false}
           value={filters.startYearFilter}
-          onChange={(moment, value) => {
-            setFilters({ ...filters, 'startYear': value });
-          }}
+          onChange={(moment, value) =>
+            setFilters({ ...filters, startYear: value })
+          }
         />
       )}
       {filterFormItem(
@@ -76,9 +72,9 @@ export default function SearchBar(props) {
           picker='year'
           bordered={false}
           value={filters.endYearFilter}
-          onChange={(moment, value) => {
-            setFilters({ ...filters, 'endYear': value });
-          }}
+          onChange={(moment, value) =>
+            setFilters({ ...filters, endYear: value })
+          }
         />
       )}
     </>

@@ -18,9 +18,7 @@ export default function DataTable(props) {
     }) => (
       <div style={{ padding: 8 }}>
         <Input
-          ref={(node) => {
-            setSearchInput(node);
-          }}
+          ref={(node) => setSearchInput(node)}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) =>
@@ -160,9 +158,8 @@ export default function DataTable(props) {
     return columns;
   };
 
-  const onTableChange = (pagination, filters, sorter, extra) => {
+  const onTableChange = (pagination, filters, sorter, extra) =>
     setDisplayedData(extra.currentDataSource);
-  };
 
   let dataSource = [];
   let columns = [];
@@ -182,7 +179,7 @@ export default function DataTable(props) {
       dataSource={dataSource}
       bordered={true}
       pagination={{
-        position: [ 'topRight', 'bottomRight'],
+        position: ['topRight', 'bottomRight'],
         defaultPageSize: 100,
         pageSizeOptions: [100, 250, 500],
       }}
