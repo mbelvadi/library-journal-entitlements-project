@@ -13,7 +13,7 @@ defaults:
     working-directory: server
 
 jobs:
-  build:
+  PHP-build:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
