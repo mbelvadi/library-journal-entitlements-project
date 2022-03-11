@@ -1,13 +1,10 @@
 name: PHP Test
 
-env:
-  BRANCH: main
-
 on:
   push:
-    branches: [ ${{ env.BRANCH }} ]
+    branches: [ main ]
   pull_request:
-    branches: [ ${{ env.BRANCH }} ]
+    branches: [ main ]
 
 defaults:
   run:
