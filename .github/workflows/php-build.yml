@@ -42,11 +42,14 @@ jobs:
         path: ${{ github.workspace }}/server
 
     - name: Move files and folders into final structure
-      run: |
-          mv frontend/* ${{ github.workspace }}/server
-          rmdir ${{ github.workspace }}/server/frontend
-          mkdir ${{ github.workspace }}/LJEP/
-          cp -r ./* ${{ github.workspace }}/LJEP/
+      run: mv frontend/* ${{ github.workspace }}/server
+    - run: ls -l
+    - run: rmdir ${{ github.workspace }}/server/frontend
+    - run: ls -l
+    - run: mkdir ${{ github.workspace }}/LJEP/
+    - run: ls -l
+    - run: cp -r ./* ${{ github.workspace }}/LJEP/
+    - run: ls -l
 
     - name: Get date
       id: date
