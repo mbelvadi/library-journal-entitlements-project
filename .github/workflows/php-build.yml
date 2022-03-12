@@ -4,6 +4,7 @@ env:
   ZIP_PREFIX: LJEP-COMPLETE-
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: [Node Build]
     types: [completed]
@@ -42,11 +43,11 @@ jobs:
         path: ${{ github.workspace }}/server
 
     - name: Move files and folders into final structure
-    - run: |
-      mv frontend/* ./
-      rmdir frontend
-      mkdir ${{ github.workspace }}/LJEP/
-      cp ./* ${{ github.workspace }}/LJEP/
+      run: |
+          mv frontend/* ./
+          rmdir frontend
+          mkdir ${{ github.workspace }}/LJEP/
+          cp ./* ${{ github.workspace }}/LJEP/
 
     - name: Get date
       id: date
