@@ -41,6 +41,13 @@ jobs:
         branch: release
         path: ${{ github.workspace }}/server
 
+    - name: Move files and folders into final structure
+    - run: |
+      mv frontend/* ./
+      rmdir frontend
+      mkdir ${{ github.workspace }}/LJEP/
+      cp ./* ${{ github.workspace }}/LJEP/
+
     - name: Get date
       id: date
       run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H')"
@@ -49,4 +56,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ env.ZIP_PREFIX }}${{ steps.date.outputs.date }}
-        path: ${{ github.workspace }}/server/
+        path: ${{ github.workspace }}/LJEP/
