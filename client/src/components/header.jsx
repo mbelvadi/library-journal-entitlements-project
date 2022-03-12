@@ -1,5 +1,5 @@
 import { PageHeader, Row, Col, Button } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from './search-bar';
@@ -52,15 +52,23 @@ export default function Header(props) {
           <Button
             type='default'
             shape='round'
-            onClick={() => {
-              navigate('/admin');
-            }}
+            onClick={() => navigate('/admin')}
             style={{
               marginRight: '20px',
               marginLeft: '10px',
             }}
           >
             Admin
+          </Button>
+          <Button
+            icon={<QuestionCircleOutlined />}
+            onClick={() =>
+              window.open(
+                'https://github.com/UPEI-Android/library-journal-entitlements-project/wiki'
+              )
+            }
+          >
+            Help
           </Button>
         </Col>
       </Row>

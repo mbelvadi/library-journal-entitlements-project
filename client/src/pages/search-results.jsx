@@ -26,28 +26,50 @@ export default function SearchResults() {
   const searchParams = parseParams(search);
 
   const onClickDownload = () => {
-    const resultsToExport = displayedData.map(
-      ({ key, ...keepAttrs }) => keepAttrs
-    );
-    const replacer = (key, value) => (value === null ? '' : value); //TODO: how to handle nulls?
-    const delimeter = '\t'; //TODO: can easily change to CSV or add as an option
+    const unwantedColumns = ['key', 'created_at'];
+    const delimeter = '\t';
     const fileExtension = 'tsv';
-    const header = Object.keys(resultsToExport[0]);
-    let tsv = [
-      header.join(delimeter),
-      ...resultsToExport.map((row) =>
-        header
-          .map((fieldName) => JSON.stringify(row[fieldName], replacer))
-          .join(delimeter)
-      ),
-    ]
-      .join('\r\n')
-      .replaceAll('"', '');
+
+    const resultsToExport = displayedData.map((row) => {
+      for (const [oldKey, oldValue] of Object.entries(row)) {
+        const key = oldKey.trim();
+        row[oldKey] = undefined;
+
+        if(key.toLowerCase() === 'is_crkn_record') {
+          row[key] = oldValue ? 'Y' : 'N';
+          continue;
+        }
+
+        if (typeof oldValue === 'string') { // trim out white space
+          row[key] = oldValue.trim();
+        } else if (oldValue === null || oldValue === undefined) { // convert empty entries to empty strings
+          row[key] = '';
+        } else {
+          row[key] = oldValue;
+        }
+      }
+
+      // remove unwanted columns from each row
+      for (const prop of unwantedColumns) {
+        row[prop] = undefined;
+      }
+
+      return row;
+    });
+
+    // remove unwanted columns that were undefined from header of columns
+    const firstRow = resultsToExport[0];
+    Object.keys(resultsToExport[0]).forEach(key => firstRow[key] === undefined && delete firstRow[key])
+    const header = Object.keys(firstRow).join(delimeter);
+
+    const values = resultsToExport.map(o => Object.values(o).join(delimeter)).join('\n');
+
+    const fileContent = header + '\n' + values;
 
     downloadFileToClient(
-      new Blob([tsv], { type: 'text/' + fileExtension }),
-      'report.' + fileExtension
-    ); //TODO: come up with a useful filename template
+      new Blob([fileContent], { type: 'text/' + fileExtension }),
+      'LJEP-PAR-Report-' + new Date().toISOString().substring(0, 19) + 'Z.' + fileExtension
+    );
   };
 
   React.useEffect(() => {
@@ -64,7 +86,6 @@ export default function SearchResults() {
     };
     fetchSearchResults().catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-
   }, [search]);
 
   return (

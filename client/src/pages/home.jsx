@@ -30,13 +30,7 @@ export default function Home() {
   const mapLinkToListItem = (link) => {
     return (
       <List.Item>
-        <Button
-          type='link'
-          key={link}
-          onClick={() => {
-            downloadFile(link);
-          }}
-        >
+        <Button type='link' key={link} onClick={() => downloadFile(link)}>
           {link}
         </Button>
       </List.Item>
@@ -56,9 +50,7 @@ export default function Home() {
             <Button
               type='default'
               shape='round'
-              onClick={() => {
-                navigate('/admin');
-              }}
+              onClick={() => navigate('/admin')}
               style={{
                 position: 'absolute',
                 right: '1vh',
