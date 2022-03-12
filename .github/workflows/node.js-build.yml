@@ -5,7 +5,6 @@ env:
   CI: "false"
 
 on:
-  workflow_dispatch:
   push:
     branches: [ release ]
   pull_request:
