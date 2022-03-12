@@ -43,10 +43,10 @@ jobs:
 
     - name: Move files and folders into final structure
       run: |
-          mv frontend/* ./
-          rmdir frontend
+          mv frontend/* ${{ github.workspace }}/server
+          rmdir ${{ github.workspace }}/server/frontend
           mkdir ${{ github.workspace }}/LJEP/
-          cp ./* ${{ github.workspace }}/LJEP/
+          cp -r ./* ${{ github.workspace }}/LJEP/
 
     - name: Get date
       id: date
