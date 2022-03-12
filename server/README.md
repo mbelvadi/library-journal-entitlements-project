@@ -52,3 +52,5 @@ thenrestart your apache server to enable the changes.
 When working with SQLite a helpful VSCode extension is the
 [SQLite](https://marketplace.visualstudio.com/items?itemName=alexcvzz.vscode-sqlite)
 extension which makes it easy to view the databse and query it.
+
+just testing
