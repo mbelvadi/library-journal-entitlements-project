@@ -12,6 +12,8 @@
 
   RewriteCond %{THE_REQUEST} "^[^ ]* .*?\.php[? ].*$"
   RewriteRule .* - [L,R=404]
+
+  RewriteRule ^database/.*$ - [F,L]
 </IfModule>
 
 <Files "config.json">  
