@@ -3,10 +3,12 @@ import { DownloadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from './search-bar';
+import StyleContext from '../util/styleContext';
 
 export default function Header(props) {
   const { onClickDownload } = props;
   const navigate = useNavigate();
+  const styleConfig = React.useContext(StyleContext);
 
   return (
     <PageHeader
@@ -23,7 +25,7 @@ export default function Header(props) {
           <Row style={{ alignItems: 'center' }}>
             <Link to='/'>
               <img //TODO: replace with configurable logo
-                src='https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg'
+                src={styleConfig?.logo}
                 alt='university logo'
                 style={{ width: 60 }}
               />
