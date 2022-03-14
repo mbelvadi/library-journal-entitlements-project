@@ -4,10 +4,12 @@ import { API_URL } from '../util';
 import SearchBar from '../components/search-bar';
 import downloadFileToClient from '../functions/downloadFileToClient';
 import { useNavigate } from 'react-router-dom';
+import StyleContext from '../util/styleContext';
 
 export default function Home() {
   const [fileLinks, setFileLinks] = React.useState([]);
   const navigate = useNavigate();
+  const styleConfig = React.useContext(StyleContext);
 
   React.useEffect(() => {
     const getFileLinks = async () => {
@@ -69,7 +71,7 @@ export default function Home() {
               style={{ minHeight: '50vh' }}
             >
               <img //TODO: replace with configurable logo
-                src='https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg'
+                src={styleConfig?.logo}
                 alt='university logo'
                 style={{ width: 160 }}
               />
