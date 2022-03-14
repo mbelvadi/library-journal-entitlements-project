@@ -10,10 +10,13 @@
   RewriteCond %{REQUEST_FILENAME}.php -f
   RewriteRule ^(.*)$ $1.php
 
-  RewriteCond %{THE_REQUEST} "^[^ ]* .*?\.php[? ].*$"
-  RewriteRule .* - [L,R=404]
-
   RewriteRule ^database/.*$ - [F,L]
+
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  RewriteRule ^ index.html [L]
 </IfModule>
 
 <Files "config.json">  
