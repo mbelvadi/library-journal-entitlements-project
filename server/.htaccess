@@ -13,3 +13,8 @@
   RewriteCond %{THE_REQUEST} "^[^ ]* .*?\.php[? ].*$"
   RewriteRule .* - [L,R=404]
 </IfModule>
+
+<Files "config.json">  
+  Order Allow,Deny
+  Deny from all
+</Files>
