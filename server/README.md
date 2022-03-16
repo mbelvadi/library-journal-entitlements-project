@@ -28,11 +28,11 @@ Congrats! You have now set up the PHP server in your dev environment. Read on as
 
 ## Composer
 
-Composer is a dependency management tool for PHP. As of (Feb 10th) we are using it to install a dependency to help read excel files. You can follow these [instructions](https://getcomposer.org/doc/00-intro.md#introduction) to download Composer.
+Composer is a dependency management tool for PHP. [Instructions](https://getcomposer.org/doc/00-intro.md#introduction) to download Composer.
 
-The actual dependencies are not committed to the repo so to download them you will need to run the following command `php composer.phar install`
+The actual dependencies are not committed to the repo so to download them you will need to run the following command `composer install` in the server directory.
 
-In order to use the the current dependency ([phpspreadsheet](https://phpspreadsheet.readthedocs.io/en/latest/)) you need to enable the gd PHP extension. In XAMPP you do this by navigating to your php.ini file.
+Some dependencies may depend on certain PHP extensions such as the gd PHP extension. In XAMPP you can enable these extensions by navigating to your php.ini file.
 
 <image src="./assets/xampp-php-config.png" alt="XAMPP PHP config">
 <image src="./assets/xampp-php-ini.png" alt="XAMPP php.ini">

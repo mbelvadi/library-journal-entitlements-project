@@ -1,13 +1,9 @@
 <?php
   require '../../vendor/autoload.php';
-  use PhpOffice\PhpSpreadsheet\Spreadsheet;
-  use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+  use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 
   function ingestSpreadsheet($filePath, $filename, $isCrknFile = false) {
     $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
-    $fileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($filePath);
-    $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($fileType);
-    $spreadsheet = $reader->load($filePath);
 
     $dbProperties = (object) array(
       'title' => '',
@@ -23,61 +19,87 @@
       'has_rights' => '',
     );
 
-    $sheetNames = $spreadsheet->getSheetNames();
-    $paRightsSheetIndex = -1;
-    for($i = 0; $i < count($sheetNames); $i++) {
-      if (strtolower($sheetNames[$i]) === 'pa-rights') {
-        $paRightsSheetIndex = $i;
-        break;
-      }
-    }
-    if ($paRightsSheetIndex === -1) return;
-
-    $paRightSheet = $spreadsheet->getSheet($paRightsSheetIndex); // sheet we are concerned with will ALWAYS be called 'PA-rights'
-    $paRightSheetData = $paRightSheet->toArray(null, true, true, true);
-
-    // 3rd Row of PA-rights sheet will ALWAYS contain headers
-    foreach($paRightSheetData[3] as $key => $value){
-      if (strcmp($value, $config->school) === 0) {
-        $dbProperties->has_rights = $key;
-      }
-      elseif (property_exists($dbProperties, strtolower($value))) {
-        $dbProperties->{strtolower($value)} = $key;
-      }
-    }
-
     $dbPath = dirname(__DIR__, 1) . '/ljp.db';
     $db = new SQLite3($dbPath);
 
-    for ($i = 4; $i <= count($paRightSheetData); $i++) { // Rights will ALWAYS start on row 4
-      $row = $paRightSheetData[$i];
-      if (!isset($row[$dbProperties->title]) || !isset($row[$dbProperties->year]) || !isset($row[$dbProperties->has_rights])) {
-        continue;
+    $reader = ReaderEntityFactory::createReaderFromFile($filePath);
+    $reader->open($filePath);
+    
+    foreach ($reader->getSheetIterator() as $sheet) {
+      $sheetName = $sheet->getName();
+      if (!(strtolower($sheetName) === 'pa-rights')) continue;
+
+      $rowCount = 1;
+      foreach ($sheet->getRowIterator() as $row) {
+        if ($rowCount === 1 ) {
+          $rowCount++;
+          continue;
+        } elseif ($rowCount === 2) {
+          $cells = $row->getCells();
+
+          foreach($cells as $key => $value){
+            if ($value->isEmpty()) continue;
+            $cellValue = $value->getValue();
+            if (strcmp($cellValue, $config->school) === 0) {
+              $dbProperties->has_rights = $key;
+            }
+            elseif (property_exists($dbProperties, strtolower($cellValue))) {
+              $dbProperties->{strtolower($cellValue)} = $key;
+            }
+          }
+        } else {
+          $cells = $row->getCells();
+          if ($cells[$dbProperties->title]->isEmpty() || $cells[$dbProperties->year]->isEmpty() || $cells[$dbProperties->has_rights]->isEmpty() ) {
+            continue;
+          }
+
+      
+          $sqlStatement = $db->prepare("INSERT OR REPLACE INTO PA_RIGHTS (title, 
+          title_id, print_issn, online_issn, has_former_title, has_succeeding_title, 
+          agreement_code, year, collection_name, title_metadata_last_modified,
+          filename, has_rights, is_crkn_record) VALUES (:title, :title_id, :print_issn, :online_issn, 
+          :has_former_title, :has_succeeding_title, :agreement_code, :year, :collection_name, :title_metadata_last_modified, 
+          :filename, :has_rights, :is_crkn_record)");
+    
+          $title = $cells[$dbProperties->title]->getValue();
+          $titleId = $cells[$dbProperties->title_id]->getValue();
+          $printISSN = $cells[$dbProperties->print_issn]->getValue();
+          $onlineISSN = $cells[$dbProperties->online_issn]->getValue();
+          $hasFormerTitle = $cells[$dbProperties->has_former_title]->getValue();
+          $hasSucceedingTitle = $cells[$dbProperties->has_succeeding_title]->getValue();
+          $agreementCode = $cells[$dbProperties->agreement_code]->getValue();
+          $year = $cells[$dbProperties->year]->__toString();
+          $collectionName = $cells[$dbProperties->collection_name]->getValue();
+          $lastModified = $cells[$dbProperties->title_metadata_last_modified]->getValue();
+          $hasRights = $cells[$dbProperties->has_rights]->getValue();
+          
+          if (!is_string($lastModified)){
+            $lastModified = $lastModified->format('d/m/Y');
+          }
+
+          $sqlStatement->bindParam(':title', $title);
+          $sqlStatement->bindParam(':title_id', $titleId);
+          $sqlStatement->bindParam(':print_issn', $printISSN);
+          $sqlStatement->bindParam(':online_issn', $onlineISSN);
+          $sqlStatement->bindParam(':has_former_title', $hasFormerTitle);
+          $sqlStatement->bindParam(':has_succeeding_title', $hasSucceedingTitle);
+          $sqlStatement->bindParam(':agreement_code', $agreementCode);
+          $sqlStatement->bindParam(':year', $year);
+          $sqlStatement->bindParam(':collection_name', $collectionName);
+          $sqlStatement->bindParam(':title_metadata_last_modified', $lastModified);
+          $sqlStatement->bindParam(':filename', $filename);
+          $sqlStatement->bindParam(':has_rights', $hasRights);
+          $sqlStatement->bindParam(':is_crkn_record', $isCrknFile);
+    
+          $sqlStatement->execute();
+        }
+        
+        $rowCount++;
       }
-
-      $sqlStatement = $db->prepare("INSERT OR REPLACE INTO PA_RIGHTS (title, 
-      title_id, print_issn, online_issn, has_former_title, has_succeeding_title, 
-      agreement_code, year, collection_name, title_metadata_last_modified,
-      filename, has_rights, is_crkn_record) VALUES (:title, :title_id, :print_issn, :online_issn, 
-      :has_former_title, :has_succeeding_title, :agreement_code, :year, :collection_name, :title_metadata_last_modified, 
-      :filename, :has_rights, :is_crkn_record)");
-
-      $sqlStatement->bindParam(':title', $row[$dbProperties->title]);
-      $sqlStatement->bindParam(':title_id', $row[$dbProperties->title_id]);
-      $sqlStatement->bindParam(':print_issn', $row[$dbProperties->print_issn]);
-      $sqlStatement->bindParam(':online_issn', $row[$dbProperties->online_issn]);
-      $sqlStatement->bindParam(':has_former_title', $row[$dbProperties->has_former_title]);
-      $sqlStatement->bindParam(':has_succeeding_title', $row[$dbProperties->has_succeeding_title]);
-      $sqlStatement->bindParam(':agreement_code', $row[$dbProperties->agreement_code]);
-      $sqlStatement->bindParam(':year', $row[$dbProperties->year]);
-      $sqlStatement->bindParam(':collection_name', $row[$dbProperties->collection_name]);
-      $sqlStatement->bindParam(':title_metadata_last_modified', $row[$dbProperties->title_metadata_last_modified]);
-      $sqlStatement->bindParam(':filename', $filename);
-      $sqlStatement->bindParam(':has_rights', $row[$dbProperties->has_rights]);
-      $sqlStatement->bindParam(':is_crkn_record', $isCrknFile);
-
-      $sqlStatement->execute();
+      break;
     }
+    
+    $reader->close(); 
     $db->close();
   }
 ?>
