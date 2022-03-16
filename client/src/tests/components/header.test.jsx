@@ -30,7 +30,7 @@ const renderHeader = (onClick, rerender) => {
 
 describe('<Header />', () => {
   describe('Success', () => {
-    it('renders the header component', () => {
+    it('renders the Header component', () => {
       // intentionally empty; testing beforeEach
     });
 
