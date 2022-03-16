@@ -69,7 +69,6 @@
   }
 
   // 4. Ingest new data into DB
-  ini_set('memory_limit', '1G');
   $crknFiles = glob($crknFilesPath);
   $uploadStartTime = time();
   foreach($crknFiles as $file) {
