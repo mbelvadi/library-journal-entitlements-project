@@ -1,7 +1,19 @@
-import { Form, Input, Col, Row, Dropdown, DatePicker, Card } from 'antd';
+import {
+  Form,
+  Input,
+  Col,
+  Row,
+  Dropdown,
+  DatePicker,
+  Typography,
+  Menu,
+  Space,
+} from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+const Text = Typography.Text;
 
 export default function SearchBar(props) {
   const [query, setQuery] = useState(props.query);
@@ -33,51 +45,54 @@ export default function SearchBar(props) {
 
   const handleVisibleChange = (flag) => setVisible(flag);
 
-  const filterFormItem = (name, title, content) => (
-    <Form.Item name={name} style={{ marginBottom: 0 }}>
-      <Card title={title} size='small'>
-        {content}
-      </Card>
-    </Form.Item>
+  const filterMenuItem = (name, content) => (
+    <Menu.Item title={name}>
+      <Row align='middle'>
+        <Col flex={'auto'}>
+          <Text>{name}</Text>
+        </Col>
+        <Col span={14}>{content}</Col>
+      </Row>
+    </Menu.Item>
   );
 
   const filterForm = (
-    <>
-      {filterFormItem(
+    <Menu>
+      {filterMenuItem(
         'yearFilter',
         'Specific Year',
         <DatePicker
           picker='year'
-          bordered={false}
+          bordered={true}
           value={filters.specificYearFilter}
           onChange={(moment, value) => setFilters({ ...filters, year: value })}
         />
       )}
-      {filterFormItem(
+      {filterMenuItem(
         'startYearFilter',
         'Start Year',
         <DatePicker
           picker='year'
-          bordered={false}
+          bordered={true}
           value={filters.startYearFilter}
           onChange={(moment, value) =>
             setFilters({ ...filters, startYear: value })
           }
         />
       )}
-      {filterFormItem(
+      {filterMenuItem(
         'endYearFilter',
         'End Year',
         <DatePicker
           picker='year'
-          bordered={false}
+          bordered={true}
           value={filters.endYearFilter}
           onChange={(moment, value) =>
             setFilters({ ...filters, endYear: value })
           }
         />
       )}
-    </>
+    </Menu>
   );
 
   return (
