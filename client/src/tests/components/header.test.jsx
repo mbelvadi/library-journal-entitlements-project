@@ -53,9 +53,9 @@ describe('<Header />', () => {
       renderHeader(false, rerenderHeader);
       expect(header).toBeTruthy();
 
-      const downloadBtn = screen.queryByLabelText('download');
+      const downloadButton = screen.queryByLabelText('download');
 
-      expect(header).not.toContainElement(downloadBtn);
+      expect(header).not.toContainElement(downloadButton);
     });
 
     it('calls onClickDownload when the TSV button is clicked', () => {
