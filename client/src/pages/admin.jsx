@@ -6,17 +6,13 @@ import {
   Col,
   Card,
   Spin,
-  Form,
-  Input,
   Button,
   Avatar,
   Alert,
   Divider,
   Modal,
-  Radio,
   Space,
   Checkbox,
-  List,
 } from 'antd';
 import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import Header from '../components/header';
@@ -174,9 +170,15 @@ function AdminControls(props) {
           body: formData,
         });
 
+        let data = null;
+        try {
+          data = await res.json();
+        } catch (error) {
+          console.error('Response data was not in JSON format.');
+        }
+
         setUploadingFile(false);
         if (res.status === 200) {
-          const data = await res.json();
           setSuccessMsg('Succesfully uploaded spreadsheet.');
           if (data.files) setServerFiles(data.files);
         } else if (res.status === 401) {
@@ -184,7 +186,7 @@ function AdminControls(props) {
           setLoginMessage('Admin session has expired. Please login again.');
           setLoggedIn(false);
         } else {
-          setError('An unexpected error occurred.');
+          setError(data.error ?? 'An unexpected error occurred.');
         }
       },
     });
