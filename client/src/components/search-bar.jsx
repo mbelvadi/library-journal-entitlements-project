@@ -7,7 +7,6 @@ import {
   DatePicker,
   Typography,
   Menu,
-  Space,
 } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
@@ -16,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 const Text = Typography.Text;
 
 export default function SearchBar(props) {
-  const [query, setQuery] = useState(props.query);
+  const [query, setQuery] = useState(props.query ?? '');
   const [filters, setFilters] = useState({});
   const [visible, setVisible] = useState(false);
 
@@ -29,7 +28,7 @@ export default function SearchBar(props) {
     // get rid of empty string form items
     let nonEmptyFilters = {};
     for (const property in filters) {
-      if (filters[property] != '') {
+      if (filters[property] !== '') {
         nonEmptyFilters[property] = filters[property];
       }
     }
