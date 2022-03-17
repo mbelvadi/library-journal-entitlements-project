@@ -44,8 +44,10 @@ export default function SearchBar(props) {
 
   const handleVisibleChange = (flag) => setVisible(flag);
 
+  let menuItemKey = 0;
+
   const filterMenuItem = (name, content) => (
-    <Menu.Item title={name}>
+    <Menu.Item title={name} key={menuItemKey += 1}>
       <Row align='middle'>
         <Col flex={'auto'}>
           <Text>{name}</Text>
