@@ -7,7 +7,7 @@ import renderWithRouter from '../helper-functions/renderWithRouter'
 import Header from '../../components/header';
 
 let header = {};
-let historyGlobal = {};
+let history = {};
 let rerenderHeader = () => {};
 
 beforeEach(() => {
@@ -20,9 +20,9 @@ const renderHeader = (onClick, rerender) => {
     '/search',
     <Header onClickDownload={onClick} />,
     'header',
-    (history) => {
+    (historyLocal) => {
       header = screen.queryByTestId('header');
-      historyGlobal = history;
+      history = historyLocal;
     },
     rerender
   );
@@ -69,15 +69,15 @@ describe('<Header />', () => {
     });
 
     it('navigates to / when logo is clicked', () => {
-      expect(historyGlobal.location.pathname).toBe('/search');
+      expect(history.location.pathname).toBe('/search');
       fireEvent.click(screen.getByAltText(/university logo/i));
-      expect(historyGlobal.location.pathname).toBe('/');
+      expect(history.location.pathname).toBe('/');
     });
 
     it('navitgates to /admin when Admin button is clicked', () => {
-      expect(historyGlobal.location.pathname).toBe('/search');
+      expect(history.location.pathname).toBe('/search');
       fireEvent.click(screen.getByText(/admin/i));
-      expect(historyGlobal.location.pathname).toBe('/admin');
+      expect(history.location.pathname).toBe('/admin');
     });
   });
 });

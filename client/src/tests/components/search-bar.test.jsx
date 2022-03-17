@@ -7,7 +7,7 @@ import renderWithRouter from '../helper-functions/renderWithRouter';
 import SearchBar from '../../components/search-bar';
 
 let searchBar = {};
-let historyGlobal = {};
+let history = {};
 
 beforeEach(() => {
   renderSearchBar();
@@ -19,9 +19,9 @@ const renderSearchBar = () => {
     '/',
     <SearchBar />,
     'searchbar',
-    (history) => {
+    (historyLocal) => {
       searchBar = screen.queryByTestId('searchbar');
-      historyGlobal = history;
+      history = historyLocal;
     }
   );
 };
@@ -66,7 +66,7 @@ describe('<SearchBar />', () => {
 
       fireEvent.click(getInvisibleSubmitButton());
 
-      expect(historyGlobal.location.pathname).toBe('/search');
+      expect(history.location.pathname).toBe('/search');
     });
 
     it('allows submitting the form when clicking the search button', () => {
