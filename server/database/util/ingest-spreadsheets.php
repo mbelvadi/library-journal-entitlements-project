@@ -23,18 +23,17 @@
     $db = new SQLite3($dbPath);
 
     $reader = ReaderEntityFactory::createReaderFromFile($filePath);
+    $reader->setShouldPreserveEmptyRows(true);
     $reader->open($filePath);
     
     foreach ($reader->getSheetIterator() as $sheet) {
       $sheetName = $sheet->getName();
       if (!(strtolower($sheetName) === 'pa-rights')) continue;
 
-      $rowCount = 1;
-      foreach ($sheet->getRowIterator() as $row) {
-        if ($rowCount === 1 ) {
-          $rowCount++;
+      foreach ($sheet->getRowIterator() as $rowIndex => $row) {
+        if ($rowIndex < 3) {
           continue;
-        } elseif ($rowCount === 2) {
+        } elseif ($rowIndex === 3) {
           $cells = $row->getCells();
 
           foreach($cells as $key => $value){
@@ -93,8 +92,6 @@
     
           $sqlStatement->execute();
         }
-        
-        $rowCount++;
       }
       break;
     }

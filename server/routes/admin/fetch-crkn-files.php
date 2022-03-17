@@ -53,15 +53,6 @@
   }
 
   // 3. Move new files to proper folder
-  function move_file($path,$to){
-    if(copy($path, $to)){
-       unlink($path);
-       return true;
-    } else {
-      return false;
-    }
-  }
-
   $newCrknFiles = glob("./CRKN_PARightsTracking_*.xlsx");
   foreach($newCrknFiles as $file) {
     $fileBaseName = basename($file);
