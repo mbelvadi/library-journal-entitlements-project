@@ -40,7 +40,7 @@ describe('<SearchBar />', () => {
       ];
 
       for (const child of children) {
-        expect(searchBar).toContainElement(child);
+        expect(screen.queryByTestId('searchbar')).toContainElement(child);
       }
     });
 
@@ -97,7 +97,7 @@ describe('<SearchBar />', () => {
       for (const datepicker of datepickers) {
         act(() => {
           fullClick(datepicker);
-          fireEvent.change(datepicker, { target: { value: (year += 1) } });
+          fireEvent.change(datepicker, { target: { value: (++year) } });
         });
 
         years.push(year + '');
@@ -108,10 +108,13 @@ describe('<SearchBar />', () => {
       });
 
       enterQueryIntoInput('chemical');
+
       expect(history.location.pathname).toBe('/');
       act(() => {
         fireEvent.click(screen.getByText(/search/i));
       });
+
+      expect(history.location.pathname).toBe('/search');
 
       for (const year of years) {
         expect(history.location.search).toContain(year);
