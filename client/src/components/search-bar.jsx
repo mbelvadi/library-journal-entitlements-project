@@ -44,8 +44,10 @@ export default function SearchBar(props) {
 
   const handleVisibleChange = (flag) => setVisible(flag);
 
+  let menuItemKey = 0;
+
   const filterMenuItem = (name, content) => (
-    <Menu.Item title={name}>
+    <Menu.Item title={name} key={(menuItemKey += 1)}>
       <Row align='middle'>
         <Col flex={'auto'}>
           <Text>{name}</Text>
@@ -55,7 +57,7 @@ export default function SearchBar(props) {
     </Menu.Item>
   );
 
-  const filterForm = (
+  const filterMenu = (
     <Menu>
       {filterMenuItem(
         'Specific Year',
@@ -118,7 +120,7 @@ export default function SearchBar(props) {
           <Dropdown.Button
             type='primary'
             size='large'
-            overlay={filterForm}
+            overlay={filterMenu}
             icon={<FilterOutlined />}
             trigger={['click']}
             onVisibleChange={handleVisibleChange}
