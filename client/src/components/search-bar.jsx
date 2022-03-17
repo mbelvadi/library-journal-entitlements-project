@@ -59,7 +59,6 @@ export default function SearchBar(props) {
   const filterForm = (
     <Menu>
       {filterMenuItem(
-        'yearFilter',
         'Specific Year',
         <DatePicker
           picker='year'
@@ -69,7 +68,6 @@ export default function SearchBar(props) {
         />
       )}
       {filterMenuItem(
-        'startYearFilter',
         'Start Year',
         <DatePicker
           picker='year'
@@ -81,7 +79,6 @@ export default function SearchBar(props) {
         />
       )}
       {filterMenuItem(
-        'endYearFilter',
         'End Year',
         <DatePicker
           picker='year'
