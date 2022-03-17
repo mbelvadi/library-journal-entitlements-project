@@ -55,7 +55,7 @@ export default function SearchBar(props) {
     </Menu.Item>
   );
 
-  const filterForm = (
+  const filterMenu = (
     <Menu>
       {filterMenuItem(
         'Specific Year',
@@ -118,7 +118,7 @@ export default function SearchBar(props) {
           <Dropdown.Button
             type='primary'
             size='large'
-            overlay={filterForm}
+            overlay={filterMenu}
             icon={<FilterOutlined />}
             trigger={['click']}
             onVisibleChange={handleVisibleChange}
