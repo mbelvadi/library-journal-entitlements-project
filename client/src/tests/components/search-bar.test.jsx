@@ -6,7 +6,6 @@ import renderWithRouter from '../helper-functions/renderWithRouter';
 
 import SearchBar from '../../components/search-bar';
 
-let searchBar = {};
 let history = {};
 
 beforeEach(() => {
@@ -16,7 +15,6 @@ beforeEach(() => {
 
 const renderSearchBar = () => {
   return renderWithRouter('/', <SearchBar />, 'searchbar', (historyLocal) => {
-    searchBar = screen.queryByTestId('searchbar');
     history = historyLocal;
   });
 };
@@ -36,7 +34,7 @@ describe('<SearchBar />', () => {
 
     it('has all of its children', () => {
       const children = [
-        screen.getByPlaceholderText(/search/i), // get searchbar
+        screen.getByPlaceholderText(/search/i), // get search input
         getInvisibleSubmitButton(), // invisible button (used for submitting when pressing 'enter' on searchbar)
         screen.getByText(/search/i), // get search button
       ];
@@ -99,13 +97,15 @@ describe('<SearchBar />', () => {
       for (const datepicker of datepickers) {
         act(() => {
           fullClick(datepicker);
-          fireEvent.change(datepicker, { target: { value: year+=1 } });
+          fireEvent.change(datepicker, { target: { value: (year += 1) } });
         });
 
         years.push(year + '');
       }
 
-      fireEvent.click(document.querySelector('.ant-picker-cell-selected'));
+      act(() => {
+        fullClick(datepickers[0]);
+      });
 
       enterQueryIntoInput('chemical');
       expect(history.location.pathname).toBe('/');
@@ -113,7 +113,7 @@ describe('<SearchBar />', () => {
         fireEvent.click(screen.getByText(/search/i));
       });
 
-      for(const year of years) {
+      for (const year of years) {
         expect(history.location.search).toContain(year);
       }
     });
