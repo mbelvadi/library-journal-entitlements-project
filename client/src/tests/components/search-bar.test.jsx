@@ -1,7 +1,7 @@
 import React from 'react';
 
 import '@testing-library/jest-dom';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent, act } from '@testing-library/react';
 import renderWithRouter from '../helper-functions/renderWithRouter';
 
 import SearchBar from '../../components/search-bar';
@@ -15,15 +15,10 @@ beforeEach(() => {
 });
 
 const renderSearchBar = () => {
-  return renderWithRouter(
-    '/',
-    <SearchBar />,
-    'searchbar',
-    (historyLocal) => {
-      searchBar = screen.queryByTestId('searchbar');
-      history = historyLocal;
-    }
-  );
+  return renderWithRouter('/', <SearchBar />, 'searchbar', (historyLocal) => {
+    searchBar = screen.queryByTestId('searchbar');
+    history = historyLocal;
+  });
 };
 
 const getInvisibleSubmitButton = () => {
@@ -53,7 +48,9 @@ describe('<SearchBar />', () => {
 
     const enterQueryIntoInput = (query) => {
       const input = screen.getByPlaceholderText(/search/i);
-      fireEvent.change(input, { target: { value: query } });
+      act(() => {
+        fireEvent.change(input, { target: { value: query } });
+      });
       expect(input.value).toBe(query);
     };
 
@@ -72,9 +69,53 @@ describe('<SearchBar />', () => {
     it('allows submitting the form when clicking the search button', () => {
       enterQueryIntoInput('chemical');
 
-      expect(historyGlobal.location.pathname).toBe('/');
-      fireEvent.click(screen.getByText(/search/i));
-      expect(historyGlobal.location.pathname).toBe('/search');
+      expect(history.location.pathname).toBe('/');
+      act(() => {
+        fireEvent.click(screen.getByText(/search/i));
+      });
+      expect(history.location.pathname).toBe('/search');
+    });
+
+    const fullClick = (element) => {
+      fireEvent.mouseOver(element);
+      fireEvent.mouseMove(element);
+      fireEvent.mouseDown(element);
+      element.focus();
+      fireEvent.mouseUp(element);
+      fireEvent.click(element);
+    };
+
+    it('adds filter years as URL parameters', () => {
+      let filterButton = screen.getByLabelText(/filter/i);
+
+      act(() => {
+        fireEvent.click(filterButton);
+      });
+
+      const datepickers = screen.getAllByPlaceholderText(/select year/i);
+      const years = [];
+      let year = 2000;
+
+      for (const datepicker of datepickers) {
+        act(() => {
+          fullClick(datepicker);
+          fireEvent.change(datepicker, { target: { value: year+=1 } });
+        });
+
+        years.push(year + '');
+      }
+
+      fireEvent.click(document.querySelector('.ant-picker-cell-selected'));
+
+      enterQueryIntoInput('chemical');
+      expect(history.location.pathname).toBe('/');
+      act(() => {
+        fireEvent.click(screen.getByText(/search/i));
+      });
+
+      for(const year of years) {
+        expect(history.location.search).toContain(year);
+      }
     });
   });
 });
