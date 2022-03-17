@@ -268,7 +268,6 @@ function AdminControls(props) {
         accept='.xlsx, .csv, .tsv'
         onChange={(e) => {
           setUploadedFile(e.target.files[0]);
-          console.log(e.target.files[0]);
         }}
       />
       <Button
