@@ -26,4 +26,12 @@
     return false;
   }
 
+  function move_file($path,$to){
+    if(copy($path, $to)){
+       unlink($path);
+       return true;
+    } else {
+      return false;
+    }
+  }
 ?>
