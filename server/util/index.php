@@ -6,6 +6,7 @@
     while ($res= $results->fetchArray(1)) {
       array_push($resultsArray, $res);
     }
+    $db->close();
   
     if(count($resultsArray) !== 1) {
       http_response_code(401);

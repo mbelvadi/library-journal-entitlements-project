@@ -12,6 +12,7 @@
     $db = new SQLite3('../../database/ljp.db');
     $db->exec("DELETE FROM ADMIN_TOKENS");
     $db->exec("INSERT INTO ADMIN_TOKENS (token) VALUES ('$adminKey')");
+    $db->close();
 
     http_response_code(200);
     echo json_encode(array("adminKey" => $adminKey));
