@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout, Button, Col, Row, List } from 'antd';
 import { API_URL } from '../util';
 import SearchBar from '../components/search-bar';
-import downloadFileToClient from '../functions/downloadFileToClient';
+import { downloadFileToClient } from '../util';
 import { useNavigate } from 'react-router-dom';
 import StyleContext from '../util/styleContext';
 

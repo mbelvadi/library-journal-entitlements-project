@@ -4,7 +4,7 @@ import { Layout } from 'antd';
 import { API_URL } from '../util';
 import DataTable from '../components/data-table';
 import Header from '../components/header';
-import downloadFileToClient from '../functions/downloadFileToClient';
+import { downloadFileToClient } from '../util';
 
 const parseParams = (querystring) => {
   const params = new URLSearchParams(querystring);
@@ -35,14 +35,16 @@ export default function SearchResults() {
         const key = oldKey.trim();
         row[oldKey] = undefined;
 
-        if(key.toLowerCase() === 'is_crkn_record') {
+        if (key.toLowerCase() === 'is_crkn_record') {
           row[key] = oldValue ? 'Y' : 'N';
           continue;
         }
 
-        if (typeof oldValue === 'string') { // trim out white space
+        if (typeof oldValue === 'string') {
+          // trim out white space
           row[key] = oldValue.trim();
-        } else if (oldValue === null || oldValue === undefined) { // convert empty entries to empty strings
+        } else if (oldValue === null || oldValue === undefined) {
+          // convert empty entries to empty strings
           row[key] = '';
         } else {
           row[key] = oldValue;
@@ -59,16 +61,23 @@ export default function SearchResults() {
 
     // remove unwanted columns that were undefined from header of columns
     const firstRow = resultsToExport[0];
-    Object.keys(resultsToExport[0]).forEach(key => firstRow[key] === undefined && delete firstRow[key])
+    Object.keys(resultsToExport[0]).forEach(
+      (key) => firstRow[key] === undefined && delete firstRow[key]
+    );
     const header = Object.keys(firstRow).join(delimeter);
 
-    const values = resultsToExport.map(o => Object.values(o).join(delimeter)).join('\n');
+    const values = resultsToExport
+      .map((o) => Object.values(o).join(delimeter))
+      .join('\n');
 
     const fileContent = header + '\n' + values;
 
     downloadFileToClient(
       new Blob([fileContent], { type: 'text/' + fileExtension }),
-      'LJEP-PAR-Report-' + new Date().toISOString().substring(0, 19) + 'Z.' + fileExtension
+      'LJEP-PAR-Report-' +
+        new Date().toISOString().substring(0, 19) +
+        'Z.' +
+        fileExtension
     );
   };
 
