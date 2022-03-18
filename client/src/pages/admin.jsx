@@ -18,12 +18,14 @@ import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import Header from '../components/header';
 import AdminSetupForm from '../components/admin/setup-form';
 import AdminLoginForm from '../components/admin/login-form';
+import StyleContext from '../util/styleContext';
 
 export default function Admin() {
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [adminSetup, setAdminSetup] = React.useState(false);
   const [loadingPage, setLoadingPage] = React.useState(true);
   const [loginMessage, setLoginMessage] = React.useState('');
+  const styleConfig = React.useContext(StyleContext);
 
   React.useEffect(() => {
     const fetchAdminStatus = async () => {
@@ -67,7 +69,9 @@ export default function Admin() {
                   >
                     <Avatar
                       style={{
-                        backgroundColor: '#1890ff',
+                        backgroundColor: styleConfig?.color
+                          ? styleConfig.color
+                          : '#1890ff',
                         marginBottom: '20px',
                       }}
                       size={100}
