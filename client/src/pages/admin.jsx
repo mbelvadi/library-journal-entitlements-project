@@ -19,13 +19,17 @@ import Header from '../components/header';
 import AdminSetupForm from '../components/admin/setup-form';
 import AdminLoginForm from '../components/admin/login-form';
 import StyleContext from '../util/styleContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function Admin() {
+  const [error, setError] = React.useState(undefined);
+  const [loggingOut, setLoggingOut] = React.useState(false);
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [adminSetup, setAdminSetup] = React.useState(false);
   const [loadingPage, setLoadingPage] = React.useState(true);
   const [loginMessage, setLoginMessage] = React.useState('');
   const styleConfig = React.useContext(StyleContext);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const fetchAdminStatus = async () => {
@@ -38,89 +42,174 @@ export default function Admin() {
       }
       setLoadingPage(false);
     };
+    setError(undefined);
     fetchAdminStatus();
   }, []);
+
+  const logout = async () => {
+    if (!sessionStorage.getItem('adminKey')) navigate('/');
+
+    setError(undefined);
+    setLoggingOut(true);
+    try {
+      const res = await fetch(
+        `${API_URL}/admin/logout?adminKey=${sessionStorage.getItem('adminKey')}`
+      );
+      setLoggingOut(false);
+      if (res.status === 200 || res.status === 401) {
+        sessionStorage.removeItem('adminKey');
+        navigate('/');
+      } else {
+        setError('Failed to logout.');
+      }
+    } catch (error) {
+      setLoggingOut(false);
+      setError('Failed to logout');
+    }
+  };
 
   return (
     <Layout>
       <Header />
       <Layout.Content style={{ padding: '0 2vw' }}>
-        <Row>
-          <Col
-            span={24}
-            md={{ span: 12, offset: 6 }}
-            style={{ display: 'flex' }}
-          >
-            {!loggedIn && (
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  marginTop: '10vh',
-                  width: '100%',
-                }}
-              >
-                {loadingPage && <Spin tip='Loading...' size='large' />}
-                {!loadingPage && (
-                  <Card
+        <Col span={24} md={{ span: 12, offset: 6 }} style={{ display: 'flex' }}>
+          {!loggedIn && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: '10vh',
+                width: '100%',
+              }}
+            >
+              {loadingPage && <Spin tip='Loading...' size='large' />}
+              {!loadingPage && (
+                <Card
+                  style={{
+                    boxShadow: '5px 8px 24px 5px rgba(208, 216, 243, 0.6)',
+                    maxWidth: '700px',
+                    minWidth: '300px',
+                    width: '100%',
+                  }}
+                >
+                  <div
                     style={{
-                      boxShadow: '5px 8px 24px 5px rgba(208, 216, 243, 0.6)',
-                      maxWidth: '700px',
-                      minWidth: '300px',
-                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'column',
+                      marginBottom: '20px',
                     }}
                   >
-                    <div
+                    <Avatar
                       style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'column',
+                        backgroundColor: styleConfig?.color
+                          ? styleConfig.color
+                          : '#1890ff',
                         marginBottom: '20px',
                       }}
-                    >
-                      <Avatar
-                        style={{
-                          backgroundColor: styleConfig?.color
-                            ? styleConfig.color
-                            : '#1890ff',
-                          marginBottom: '20px',
-                        }}
-                        size={100}
-                        icon={<UserOutlined />}
-                      />
-                      <h1>{adminSetup ? 'Admin Login' : 'Admin Setup'}</h1>
-                    </div>
-                    {adminSetup ? (
-                      <AdminLoginForm
-                        loginMessage={loginMessage}
-                        setLoginMessage={setLoginMessage}
-                        setLoggedIn={setLoggedIn}
-                      />
-                    ) : (
-                      <AdminSetupForm
-                        setAdminSetup={setAdminSetup}
-                        setLoginMessage={setLoginMessage}
-                      />
-                    )}
-                  </Card>
-                )}
-              </div>
-            )}
-            {loggedIn && (
-              <AdminControls
+                      size={100}
+                      icon={<UserOutlined />}
+                    />
+                    <h1>{adminSetup ? 'Admin Login' : 'Admin Setup'}</h1>
+                  </div>
+                  {adminSetup ? (
+                    <AdminLoginForm
+                      loginMessage={loginMessage}
+                      setLoginMessage={setLoginMessage}
+                      setLoggedIn={setLoggedIn}
+                    />
+                  ) : (
+                    <AdminSetupForm
+                      setAdminSetup={setAdminSetup}
+                      setLoginMessage={setLoginMessage}
+                    />
+                  )}
+                </Card>
+              )}
+            </div>
+          )}
+          {loggedIn && (
+            <Col span={24} style={{ marginTop: '30px' }}>
+              <Row justify='space-between'>
+                <h1>Admin Page</h1>
+                <Button
+                  size='large'
+                  shape='round'
+                  onClick={logout}
+                  loading={loggingOut}
+                >
+                  Logout
+                </Button>
+              </Row>
+              {error && (
+                <Alert
+                  type='error'
+                  message={error}
+                  showIcon
+                  style={{ marginBottom: '10px' }}
+                />
+              )}
+              <FileModificationSection
                 setLoggedIn={setLoggedIn}
                 setLoginMessage={setLoginMessage}
               />
-            )}
-          </Col>
-        </Row>
+              <StyleConfigurationSection
+                setLoggedIn={setLoggedIn}
+                setLoginMessage={setLoginMessage}
+              />
+            </Col>
+          )}
+        </Col>
       </Layout.Content>
     </Layout>
   );
 }
 
-function AdminControls(props) {
+function StyleConfigurationSection(props) {
+  const { setLoggedIn, setLoginMessage } = props;
+  const [error, setError] = React.useState(undefined);
+  const [successMsg, setSuccessMsg] = React.useState(undefined);
+
+  React.useEffect(() => {}, []);
+
+  return (
+    <>
+      <Divider>Style Configuration</Divider>
+      {error && (
+        <Alert
+          type='error'
+          message={error}
+          showIcon
+          style={{ marginBottom: '10px' }}
+        />
+      )}
+      {successMsg && (
+        <Alert
+          type='success'
+          message={successMsg}
+          showIcon
+          style={{ marginBottom: '10px' }}
+        />
+      )}
+      <Row style={{ alignItems: 'center' }}>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Refresh CRKN Data:</h3>
+        </Col>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Upload Spreadsheet:</h3>
+        </Col>
+      </Row>
+      <Row>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Delete Files:</h3>
+        </Col>
+      </Row>
+    </>
+  );
+}
+
+function FileModificationSection(props) {
   const { setLoggedIn, setLoginMessage } = props;
   const [error, setError] = React.useState(undefined);
   const [successMsg, setSuccessMsg] = React.useState(undefined);
@@ -253,10 +342,8 @@ function AdminControls(props) {
   };
 
   return (
-    <div
-      style={{ marginTop: '30px', display: 'flex', flexDirection: 'column' }}
-    >
-      <h1>Admin Page</h1>
+    <>
+      <Divider>File Modification</Divider>
       {error && (
         <Alert
           type='error'
@@ -273,58 +360,74 @@ function AdminControls(props) {
           style={{ marginBottom: '10px' }}
         />
       )}
-      <Button
-        type='primary'
-        size='large'
-        onClick={confirmRefreshCrknData}
-        loading={crknRefreshing}
-      >
-        Refresh CRKN data
-      </Button>
-      <Divider />
-      <input
-        type='file'
-        accept='.xlsx, .csv, .tsv'
-        onChange={(e) => {
-          setUploadedFile(e.target.files[0]);
-        }}
-      />
-      <Button
-        type='primary'
-        size='large'
-        onClick={confirmUploadFile}
-        disabled={!uploadedFile}
-        loading={uploadingFile}
-        style={{ marginTop: '10px' }}
-      >
-        Upload file
-      </Button>
-      <Divider />
-      <Checkbox.Group
-        value={filesToDelete}
-        onChange={(checkedValues) => setFilesToDelete(checkedValues)}
-      >
-        <Space direction='vertical'>
-          {serverFiles.map((f) => {
-            return (
-              <Checkbox key={f} value={f}>
-                {f}
-              </Checkbox>
-            );
-          })}
-        </Space>
-      </Checkbox.Group>
-      <Button
-        type='primary'
-        size='large'
-        danger
-        onClick={confirmDeleteFiles}
-        disabled={filesToDelete.length === 0}
-        loading={deletingFiles}
-        style={{ marginTop: '10px' }}
-      >
-        Delete files
-      </Button>
-    </div>
+      <Row style={{ alignItems: 'center' }}>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Refresh CRKN Data:</h3>
+          <Button
+            type='primary'
+            size='large'
+            onClick={confirmRefreshCrknData}
+            loading={crknRefreshing}
+          >
+            Refresh CRKN Data
+          </Button>
+        </Col>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Upload Spreadsheet:</h3>
+          <Space wrap={true}>
+            <input
+              type='file'
+              accept='.xlsx'
+              onChange={(e) => {
+                setUploadedFile(e.target.files[0]);
+              }}
+            />
+            <Button
+              type='primary'
+              size='large'
+              onClick={confirmUploadFile}
+              disabled={!uploadedFile}
+              loading={uploadingFile}
+            >
+              Upload file
+            </Button>
+          </Space>
+        </Col>
+      </Row>
+      <Row>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Delete Files:</h3>
+          <Row>
+            <Checkbox.Group
+              value={filesToDelete}
+              onChange={(checkedValues) => setFilesToDelete(checkedValues)}
+            >
+              <Space direction='vertical'>
+                {serverFiles.map((f) => {
+                  return (
+                    <Checkbox key={f} value={f}>
+                      {f}
+                    </Checkbox>
+                  );
+                })}
+              </Space>
+            </Checkbox.Group>
+          </Row>
+          <Row>
+            <Button
+              type='primary'
+              size='large'
+              danger
+              onClick={confirmDeleteFiles}
+              disabled={filesToDelete.length === 0}
+              loading={deletingFiles}
+              style={{ marginTop: '10px' }}
+            >
+              Delete files
+            </Button>
+          </Row>
+        </Col>
+      </Row>
+    </>
   );
 }
