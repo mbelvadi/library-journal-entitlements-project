@@ -37,7 +37,16 @@ export default function Admin() {
       if (res.status === 200) {
         setAdminSetup(true);
         if (sessionStorage.getItem('adminKey')) {
-          setLoggedIn(true);
+          const resValid = await fetch(
+            `${API_URL}/admin/valid-token?adminKey=${sessionStorage.getItem(
+              'adminKey'
+            )}`
+          );
+          if (resValid.status === 401) {
+            setLoginMessage('Admin session has expired. Please login again.');
+          } else {
+            setLoggedIn(true);
+          }
         }
       }
       setLoadingPage(false);
