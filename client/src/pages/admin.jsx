@@ -46,54 +46,67 @@ export default function Admin() {
       <Header />
       <Layout.Content style={{ padding: '0 2vw' }}>
         <Row>
-          <Col md={{ span: 12, offset: 6 }} style={{ display: 'flex' }}>
-            <div style={{ justifyContent: 'center', marginTop: '10vh' }}>
-              {loadingPage && <Spin tip='Loading...' size='large' />}
-              {!loadingPage && !loggedIn && (
-                <Card
-                  style={{
-                    boxShadow: '5px 8px 24px 5px rgba(208, 216, 243, 0.6)',
-                    maxWidth: '700px',
-                    minWidth: '300px',
-                    width: '50vw',
-                  }}
-                >
-                  <div
+          <Col
+            span={24}
+            md={{ span: 12, offset: 6 }}
+            style={{ display: 'flex' }}
+          >
+            {!loggedIn && (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  marginTop: '10vh',
+                  width: '100%',
+                }}
+              >
+                {loadingPage && <Spin tip='Loading...' size='large' />}
+                {!loadingPage && (
+                  <Card
                     style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      flexDirection: 'column',
-                      marginBottom: '20px',
+                      boxShadow: '5px 8px 24px 5px rgba(208, 216, 243, 0.6)',
+                      maxWidth: '700px',
+                      minWidth: '300px',
+                      width: '100%',
                     }}
                   >
-                    <Avatar
+                    <div
                       style={{
-                        backgroundColor: styleConfig?.color
-                          ? styleConfig.color
-                          : '#1890ff',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'column',
                         marginBottom: '20px',
                       }}
-                      size={100}
-                      icon={<UserOutlined />}
-                    />
-                    <h1>{adminSetup ? 'Admin Login' : 'Admin Setup'}</h1>
-                  </div>
-                  {adminSetup ? (
-                    <AdminLoginForm
-                      loginMessage={loginMessage}
-                      setLoginMessage={setLoginMessage}
-                      setLoggedIn={setLoggedIn}
-                    />
-                  ) : (
-                    <AdminSetupForm
-                      setAdminSetup={setAdminSetup}
-                      setLoginMessage={setLoginMessage}
-                    />
-                  )}
-                </Card>
-              )}
-            </div>
+                    >
+                      <Avatar
+                        style={{
+                          backgroundColor: styleConfig?.color
+                            ? styleConfig.color
+                            : '#1890ff',
+                          marginBottom: '20px',
+                        }}
+                        size={100}
+                        icon={<UserOutlined />}
+                      />
+                      <h1>{adminSetup ? 'Admin Login' : 'Admin Setup'}</h1>
+                    </div>
+                    {adminSetup ? (
+                      <AdminLoginForm
+                        loginMessage={loginMessage}
+                        setLoginMessage={setLoginMessage}
+                        setLoggedIn={setLoggedIn}
+                      />
+                    ) : (
+                      <AdminSetupForm
+                        setAdminSetup={setAdminSetup}
+                        setLoginMessage={setLoginMessage}
+                      />
+                    )}
+                  </Card>
+                )}
+              </div>
+            )}
             {loggedIn && (
               <AdminControls
                 setLoggedIn={setLoggedIn}
