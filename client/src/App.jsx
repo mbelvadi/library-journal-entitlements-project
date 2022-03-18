@@ -6,6 +6,7 @@ import NotFound from './pages/not-found';
 import SearchResults from './pages/search-results';
 import { API_URL } from './util';
 import StyleContext from './util/styleContext';
+import { changeAntdTheme } from 'dynamic-antd-theme';
 
 export default function App() {
   const [styleConfig, setStyleConfig] = React.useState(null);
@@ -18,6 +19,10 @@ export default function App() {
         const favicon = document.getElementById('favicon');
         favicon.href = style?.favicon;
         setStyleConfig(style);
+
+        if (style.color) {
+          changeAntdTheme(style.color);
+        }
       } catch (error) {
         console.error('Failed to set styling configuration values');
       }
