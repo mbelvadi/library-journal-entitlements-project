@@ -1,7 +1,7 @@
-import { screen, fireEvent, act } from '@testing-library/react';
+import { screen, fireEvent, act, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import renderWithRouter from '../helper-functions/renderWithRouter'
+import renderWithRouter from '../helper-functions/renderWithRouter';
 
 import SearchBar from '../../components/search-bar';
 
@@ -96,7 +96,7 @@ describe('<SearchBar />', () => {
       for (const datepicker of datepickers) {
         act(() => {
           fullClick(datepicker);
-          fireEvent.change(datepicker, { target: { value: (++year) } });
+          fireEvent.change(datepicker, { target: { value: ++year } });
         });
 
         years.push(year + '');
@@ -118,6 +118,9 @@ describe('<SearchBar />', () => {
       for (const year of years) {
         expect(history.location.search).toContain(year);
       }
+
+      // explicit cleanup() to deal with antd Menu warning
+      cleanup();
     });
   });
 });
