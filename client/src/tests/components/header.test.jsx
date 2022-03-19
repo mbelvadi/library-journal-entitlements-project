@@ -1,30 +1,35 @@
-import React from 'react';
-
-import '@testing-library/jest-dom';
 import { screen, fireEvent } from '@testing-library/react';
-import renderWithRouter from '../helper-functions/renderWithRouter'
+import '@testing-library/jest-dom';
+
+import {
+  renderWithRouter,
+  rerenderWithRouter,
+} from '../helper-functions/renderWithRouter';
 
 import Header from '../../components/header';
 
+const testId = 'header-testId';
+
 let header = {};
 let history = {};
-let rerenderHeader = () => {};
+let rerenderHook = () => {};
 
 beforeEach(() => {
-  rerenderHeader = renderHeader(jest.fn()).rerender;
-  expect(screen.queryByTestId('header')).toBeTruthy();
+  ({ history, rerenderHook } = renderWithRouter(
+    '/search',
+    <Header onClickDownload={jest.fn()} />,
+    testId
+  ));
+  header = screen.queryByTestId(testId);
+  expect(header).toBeTruthy();
 });
 
-const renderHeader = (onClick, rerender) => {
-  return renderWithRouter(
-    '/search',
+const rerenderHeader = (onClick) => {
+  return rerenderWithRouter(
+    history,
     <Header onClickDownload={onClick} />,
-    'header',
-    (historyLocal) => {
-      header = screen.queryByTestId('header');
-      history = historyLocal;
-    },
-    rerender
+    testId,
+    rerenderHook
   );
 };
 
@@ -50,7 +55,7 @@ describe('<Header />', () => {
     });
 
     it('does not display the TSV button without an onClickDownload prop', () => {
-      renderHeader(false, rerenderHeader);
+      rerenderHeader();
       expect(header).toBeTruthy();
 
       const downloadButton = screen.queryByLabelText('download');
@@ -61,7 +66,7 @@ describe('<Header />', () => {
     it('calls onClickDownload when the TSV button is clicked', () => {
       const onClickDownload = jest.fn(() => {});
 
-      renderHeader(onClickDownload, rerenderHeader);
+      rerenderHeader(onClickDownload);
       expect(header).toBeTruthy();
 
       fireEvent.click(screen.getByLabelText('download'));

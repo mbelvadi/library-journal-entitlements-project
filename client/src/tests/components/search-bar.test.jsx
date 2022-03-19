@@ -1,23 +1,18 @@
-import React from 'react';
-
+import { screen, fireEvent, act, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { screen, fireEvent, act } from '@testing-library/react';
-import renderWithRouter from '../helper-functions/renderWithRouter';
+
+import { renderWithRouter } from '../helper-functions/renderWithRouter';
 
 import SearchBar from '../../components/search-bar';
+
+const testId = 'searchbar-testId'
 
 let history = {};
 
 beforeEach(() => {
-  renderSearchBar();
-  expect(screen.queryByTestId('searchbar')).toBeTruthy();
+  ({ history } = renderWithRouter('/', <SearchBar />, testId));
+  expect(screen.queryByTestId(testId)).toBeTruthy();
 });
-
-const renderSearchBar = () => {
-  return renderWithRouter('/', <SearchBar />, 'searchbar', (historyLocal) => {
-    history = historyLocal;
-  });
-};
 
 const getInvisibleSubmitButton = () => {
   return screen.getAllByRole(/button/i, { hidden: true }).filter((button) => {
@@ -40,7 +35,7 @@ describe('<SearchBar />', () => {
       ];
 
       for (const child of children) {
-        expect(screen.queryByTestId('searchbar')).toContainElement(child);
+        expect(screen.queryByTestId(testId)).toContainElement(child);
       }
     });
 
@@ -97,7 +92,7 @@ describe('<SearchBar />', () => {
       for (const datepicker of datepickers) {
         act(() => {
           fullClick(datepicker);
-          fireEvent.change(datepicker, { target: { value: (++year) } });
+          fireEvent.change(datepicker, { target: { value: ++year } });
         });
 
         years.push(year + '');
@@ -119,6 +114,9 @@ describe('<SearchBar />', () => {
       for (const year of years) {
         expect(history.location.search).toContain(year);
       }
+
+      // explicit cleanup() to deal with antd Menu warning
+      cleanup();
     });
   });
 });
