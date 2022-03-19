@@ -1,1 +1,4 @@
 server/composer.phar
+
+*.code-workspace
+*.vscode
