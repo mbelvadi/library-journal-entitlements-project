@@ -2,29 +2,20 @@ import React from 'react';
 
 import '@testing-library/jest-dom';
 import { screen, fireEvent, act } from '@testing-library/react';
-import renderWithRouter from '../helper-functions/renderWithRouter';
+import { renderWithRouter } from '../helper-functions/renderWithRouter';
 
 import DataTable from '../../components/data-table';
+
+const testId = 'datatable-testId';
 
 let history = {};
 let dataTable = {};
 
 beforeEach(() => {
-  renderDataTable();
-  dataTable = screen.queryByTestId('datatable');
+  ({ history } = renderWithRouter('/search', <DataTable />, testId));
+  dataTable = screen.queryByTestId(testId);
   expect(dataTable).toBeTruthy();
 });
-
-const renderDataTable = () => {
-  return renderWithRouter(
-    '/search',
-    <DataTable />,
-    'datatable',
-    (historyLocal) => {
-      history = historyLocal;
-    }
-  );
-};
 
 const fullClick = (element) => {
   fireEvent.mouseOver(element);
@@ -41,6 +32,10 @@ describe('<DataTable />', () => {
       // intentionally empty; testing beforeEach
     });
 
-    it('adds filter years as URL parameters', () => {});
+    it('displays data', () => {});
+
+    it('sorts data', () => {});
+
+    it('filters data', () => {});
   });
 });
