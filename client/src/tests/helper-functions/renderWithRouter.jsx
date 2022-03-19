@@ -3,32 +3,24 @@ import { Router } from 'react-router-dom';
 import { render } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 
-export default function renderWithRouter(
-  route,
-  component,
-  testId,
-  defaultFunc,
-  rerenderFunc
-) {
-  const history = createMemoryHistory({ initialEntries: [route] });
-
-  const finalComponent = (
+function getWrapperComponent(history, component, testId) {
+  return (
     <Router location={history.location} navigator={history}>
       <div data-testid={testId}>{component}</div>
     </Router>
   );
+}
 
-  let rerender = () => {};
-
-  if (rerenderFunc) {
-    rerenderFunc(finalComponent);
-  } else {
-    rerender = render(finalComponent).rerender;
-    defaultFunc(history);
-  }
+export function renderWithRouter(route, component, testId) {
+  let history = createMemoryHistory({ initialEntries: [route] });
 
   return {
-    rerender: rerender,
-    component: finalComponent,
+    history: history,
+    rerenderHook: render(getWrapperComponent(history, component, testId))
+      .rerender,
   };
+}
+
+export function rerenderWithRouter(history, component, testId, rerenderHook) {
+  return rerenderHook(getWrapperComponent(history, component, testId));
 }

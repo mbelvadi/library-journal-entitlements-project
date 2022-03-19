@@ -1,35 +1,37 @@
 import { screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import renderWithRouter from '../helper-functions/renderWithRouter'
+import {
+  renderWithRouter,
+  rerenderWithRouter,
+} from '../helper-functions/renderWithRouter';
 
 import Header from '../../components/header';
 
+const testId = 'header-testId';
+
 let header = {};
 let history = {};
-let rerenderHeaderHook = () => {};
+let rerenderHook = () => {};
 
 beforeEach(() => {
-  rerenderHeaderHook = renderHeader(jest.fn()).rerender;
-  expect(screen.queryByTestId('header')).toBeTruthy();
+  ({ history, rerenderHook } = renderWithRouter(
+    '/search',
+    <Header onClickDownload={jest.fn()} />,
+    testId
+  ));
+  header = screen.queryByTestId(testId);
+  expect(header).toBeTruthy();
 });
 
-const renderHeader = (onClick, rerender) => {
-  return renderWithRouter(
-    '/search',
+const rerenderHeader = (onClick) => {
+  return rerenderWithRouter(
+    history,
     <Header onClickDownload={onClick} />,
-    'header',
-    (historyLocal) => {
-      header = screen.queryByTestId('header');
-      history = historyLocal;
-    },
-    rerender
+    testId,
+    rerenderHook
   );
 };
-
-const rerenderHeader = (onClick) => {
-  return renderHeader(onClick, rerenderHeaderHook)
-}
 
 describe('<Header />', () => {
   describe('Success', () => {
