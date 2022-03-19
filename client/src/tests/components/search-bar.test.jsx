@@ -1,8 +1,7 @@
-import React from 'react';
-
-import '@testing-library/jest-dom';
 import { screen, fireEvent, act } from '@testing-library/react';
-import renderWithRouter from '../helper-functions/renderWithRouter';
+import '@testing-library/jest-dom';
+
+import renderWithRouter from '../helper-functions/renderWithRouter'
 
 import SearchBar from '../../components/search-bar';
 
