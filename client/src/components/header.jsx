@@ -1,13 +1,14 @@
 import { PageHeader, Row, Col, Button } from 'antd';
-import { DownloadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { DownloadOutlined } from '@ant-design/icons';
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SearchBar from './search-bar';
 import StyleContext from '../util/styleContext';
+import AdminButton from './buttons/admin';
+import HelpButton from './buttons/help';
 
 export default function Header(props) {
   const { onClickDownload } = props;
-  const navigate = useNavigate();
   const styleConfig = React.useContext(StyleContext);
 
   return (
@@ -51,27 +52,13 @@ export default function Header(props) {
               TSV
             </Button>
           )}
-          <Button
-            type='default'
-            shape='round'
-            onClick={() => navigate('/admin')}
+          <AdminButton
             style={{
-              marginRight: '20px',
+              marginRight: '10px',
               marginLeft: '10px',
             }}
-          >
-            Admin
-          </Button>
-          <Button
-            icon={<QuestionCircleOutlined />}
-            onClick={() =>
-              window.open(
-                'https://github.com/UPEI-Android/library-journal-entitlements-project/wiki'
-              )
-            }
-          >
-            Help
-          </Button>
+          />
+          <HelpButton />
         </Col>
       </Row>
     </PageHeader>

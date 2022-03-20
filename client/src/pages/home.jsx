@@ -3,12 +3,12 @@ import { Layout, Button, Col, Row, List } from 'antd';
 import { API_URL } from '../util';
 import SearchBar from '../components/search-bar';
 import { downloadFileToClient } from '../util';
-import { useNavigate } from 'react-router-dom';
 import StyleContext from '../util/styleContext';
+import AdminButton from '../components/buttons/admin';
+import HelpButton from '../components/buttons/help';
 
 export default function Home() {
   const [fileLinks, setFileLinks] = React.useState([]);
-  const navigate = useNavigate();
   const styleConfig = React.useContext(StyleContext);
 
   React.useEffect(() => {
@@ -47,20 +47,26 @@ export default function Home() {
             type='flex'
             justify='center'
             align='middle'
-            style={{ minHeight: '100vh' }}
+            style={{
+              minHeight: '100vh',
+              paddingTop: '100px',
+              paddingBottom: '100px',
+            }}
           >
-            <Button
-              type='default'
-              shape='round'
-              onClick={() => navigate('/admin')}
+            <AdminButton
               style={{
                 position: 'absolute',
-                right: '1vh',
-                top: '1vh',
+                right: '100px',
+                top: '10px',
               }}
-            >
-              Admin
-            </Button>
+            />
+            <HelpButton
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '10px',
+              }}
+            />
             <Col
               md={12}
               span={24}
@@ -70,14 +76,14 @@ export default function Home() {
               align='middle'
               style={{ minHeight: '50vh' }}
             >
-              <img //TODO: replace with configurable logo
+              <img
                 src={styleConfig?.logo}
                 alt='university logo'
                 style={{ width: 160 }}
               />
               <SearchBar />
               <List
-                style={{ marginTop: '50px' }}
+                style={{ marginTop: '50px', maxWidth: '700px' }}
                 header={<h3>Files Being Searched</h3>}
                 bordered={true}
                 dataSource={fileLinks}
