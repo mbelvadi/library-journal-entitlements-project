@@ -107,10 +107,8 @@ export default function DataTable(props) {
     return finalString;
   };
 
-  // should make configurable
   // order of this list is reflected in the table
   const crknColumnNames = [
-    'Has_Rights',
     'Title',
     'Collection_Name',
     'Year',
@@ -120,6 +118,7 @@ export default function DataTable(props) {
     'Former_Title',
     'Succeeding_Title',
     'Agreement_Code',
+    'Has_Rights',
   ];
 
   const getColumns = (element) => {
@@ -176,6 +175,9 @@ export default function DataTable(props) {
   return (
     <Table
       columns={columns}
+      scroll={{
+        x: true,
+      }}
       dataSource={dataSource}
       bordered={true}
       pagination={{
