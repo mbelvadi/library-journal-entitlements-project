@@ -45,7 +45,7 @@ jobs:
       run: mv frontend/* ${{ github.workspace }}/server
     - run: rmdir ${{ github.workspace }}/server/frontend
     - run: mkdir -p ${{ github.workspace }}/ARTIFACT/LJEP/
-    - run: cp -r ./* ${{ github.workspace }}/ARTIFACT/LJEP/
+    - run: cp -r ./ ${{ github.workspace }}/ARTIFACT/LJEP/
 
     - name: Get date
       id: date
