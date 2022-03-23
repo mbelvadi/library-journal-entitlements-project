@@ -38,7 +38,6 @@ jobs:
       uses: dawidd6/action-download-artifact@v2.17.0
       with:
         workflow: node.js-build.yml
-        branch: release
         path: ${{ github.workspace }}/server
 
     - name: Move files and folders into final structure
