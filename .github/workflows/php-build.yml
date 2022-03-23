@@ -1,7 +1,7 @@
 name: PHP Build
 
 env:
-  ZIP_PREFIX: LJEP-COMPLETE-
+  ZIP_PREFIX: LJEP-
 
 on:
   workflow_run:
