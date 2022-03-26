@@ -1,6 +1,16 @@
 import React from 'react';
 import { API_URL } from '../../util';
-import { Row, Col, Button, Alert, Divider, Modal, Space, Checkbox } from 'antd';
+import {
+  Row,
+  Col,
+  Button,
+  Alert,
+  Divider,
+  Modal,
+  Space,
+  Checkbox,
+  Input,
+} from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 export default function FileModificationSection(props) {
@@ -14,11 +24,26 @@ export default function FileModificationSection(props) {
   const [filesToDelete, setFilesToDelete] = React.useState([]);
   const [deletingFiles, setDeletingFiles] = React.useState(false);
   const [wipingDB, setWipingDB] = React.useState(false);
+  const [school, setSchool] = React.useState('');
+  const [changingSchool, setChangingSchool] = React.useState(false);
 
   React.useEffect(() => {
     const getFileLinks = async () => {
-      const data = await (await fetch(`${API_URL}/list-files`)).json();
-      setServerFiles(data);
+      try {
+        const data = await (await fetch(`${API_URL}/list-files`)).json();
+        const currentSchool = await (
+          await fetch(
+            `${API_URL}/admin/get-school?adminKey=${sessionStorage.getItem(
+              'adminKey'
+            )}`
+          )
+        ).json();
+        console.log(currentSchool.school);
+        setSchool(currentSchool.school);
+        setServerFiles(data);
+      } catch (error) {
+        setError('An unexpected error occured.');
+      }
     };
     getFileLinks();
   }, []);
@@ -95,7 +120,7 @@ export default function FileModificationSection(props) {
 
   const confirmDeleteFiles = () => {
     Modal.confirm({
-      title: `Are you sure you want to delete files?"`,
+      title: `Are you sure you want to delete files?`,
       icon: <ExclamationCircleOutlined />,
       content: (
         <>
@@ -154,7 +179,40 @@ export default function FileModificationSection(props) {
 
         setWipingDB(false);
         if (res.status === 200) {
-          setSuccessMsg('Succesfully wiped database');
+          setSuccessMsg('Succesfully wiped database.');
+          setServerFiles([]);
+        } else if (res.status === 401) {
+          sessionStorage.removeItem('adminKey');
+          setLoginMessage('Admin session has expired. Please login again.');
+          setLoggedIn(false);
+        } else {
+          setError('An unexpected error occurred.');
+        }
+      },
+    });
+  };
+
+  const confirmChangeSchool = () => {
+    Modal.confirm({
+      title: `Are you sure you want to change the school?`,
+      icon: <ExclamationCircleOutlined />,
+      content:
+        'This will delete all the files as well as all the records from the database. Ensure the school your changing to is spelt the same way as in the spreadsheets.',
+      async onOk() {
+        setError(undefined);
+        setSuccessMsg(undefined);
+        setChangingSchool(true);
+        const formData = new FormData();
+        formData.append('school', school);
+        formData.append('adminKey', sessionStorage.getItem('adminKey'));
+        const res = await fetch(`${API_URL}/admin/change-school`, {
+          method: 'Post',
+          body: formData,
+        });
+
+        setChangingSchool(false);
+        if (res.status === 200) {
+          setSuccessMsg('Succesfully changed schools.');
           setServerFiles([]);
         } else if (res.status === 401) {
           sessionStorage.removeItem('adminKey');
@@ -232,6 +290,30 @@ export default function FileModificationSection(props) {
             Wipe Database
           </Button>
         </Col>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Change School:</h3>
+          <Row gutter={20}>
+            <Col span={12} md={18}>
+              <Input
+                size='large'
+                value={school}
+                onChange={(e) => setSchool(e.target.value)}
+              />
+            </Col>
+            <Col span={4}>
+              <Button
+                type='primary'
+                size='large'
+                loading={changingSchool}
+                onClick={confirmChangeSchool}
+              >
+                Change School
+              </Button>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row>
         <Col style={{ marginBottom: '20px' }} span={24} md={12}>
           <h3>Delete Files:</h3>
           <Row>
