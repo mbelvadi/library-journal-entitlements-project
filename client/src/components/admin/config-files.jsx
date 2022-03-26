@@ -13,6 +13,7 @@ export default function FileModificationSection(props) {
   const [serverFiles, setServerFiles] = React.useState([]);
   const [filesToDelete, setFilesToDelete] = React.useState([]);
   const [deletingFiles, setDeletingFiles] = React.useState(false);
+  const [wipingDB, setWipingDB] = React.useState(false);
 
   React.useEffect(() => {
     const getFileLinks = async () => {
@@ -135,6 +136,37 @@ export default function FileModificationSection(props) {
     });
   };
 
+  const confirmWipeDatabase = () => {
+    Modal.confirm({
+      title: `Are you sure you want to wipe the database?"`,
+      icon: <ExclamationCircleOutlined />,
+      content:
+        'This will delete all the files as well as all the records from the database.',
+      async onOk() {
+        setError(undefined);
+        setSuccessMsg(undefined);
+        setWipingDB(true);
+        const res = await fetch(
+          `${API_URL}/admin/wipe-database?adminKey=${sessionStorage.getItem(
+            'adminKey'
+          )}`
+        );
+
+        setWipingDB(false);
+        if (res.status === 200) {
+          setSuccessMsg('Succesfully wiped database');
+          setServerFiles([]);
+        } else if (res.status === 401) {
+          sessionStorage.removeItem('adminKey');
+          setLoginMessage('Admin session has expired. Please login again.');
+          setLoggedIn(false);
+        } else {
+          setError('An unexpected error occurred.');
+        }
+      },
+    });
+  };
+
   return (
     <>
       <Divider>File Modification</Divider>
@@ -189,6 +221,17 @@ export default function FileModificationSection(props) {
         </Col>
       </Row>
       <Row>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Wipe Database:</h3>
+          <Button
+            type='danger'
+            size='large'
+            onClick={confirmWipeDatabase}
+            loading={wipingDB}
+          >
+            Wipe Database
+          </Button>
+        </Col>
         <Col style={{ marginBottom: '20px' }} span={24} md={12}>
           <h3>Delete Files:</h3>
           <Row>
