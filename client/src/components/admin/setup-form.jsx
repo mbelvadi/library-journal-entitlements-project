@@ -36,13 +36,6 @@ export default function AdminSetupForm(props) {
         />
       )}
       <Form.Item
-        name='adminCode'
-        label='Admin Code'
-        rules={[{ required: true, message: 'This field is required' }]}
-      >
-        <Input size='large' placeholder='Admin Code' type='password' />
-      </Form.Item>
-      <Form.Item
         name='password'
         label='Password'
         rules={[{ required: true, message: 'This field is required' }]}
