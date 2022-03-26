@@ -8,7 +8,7 @@ export default function NotFound() {
     <>
       <Layout>
         <Header />
-        <Layout.Content style={{ padding: '0 2vw' }}>
+        <Layout.Content style={{ padding: '20px 2vw' }}>
           <h1>Not found</h1>
           <p>Sorry it looks like that page doesn't exist</p>
           <Link to='/'>Home</Link>
