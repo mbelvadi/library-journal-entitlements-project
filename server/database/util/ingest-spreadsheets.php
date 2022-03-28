@@ -26,12 +26,21 @@
     $reader->setShouldPreserveEmptyRows(true);
     $reader->open($filePath);
     
+    $packageName = '';
     foreach ($reader->getSheetIterator() as $sheet) {
       $sheetName = $sheet->getName();
       if (!(strtolower($sheetName) === 'pa-rights')) continue;
 
       foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-        if ($rowIndex < 3) {
+        if ($rowIndex == 1) {
+          $cells = $row->getCells();
+          foreach($cells as $key => $value){
+            if ($key == 0) {
+              $packageName = $value;
+            }
+            break;
+          }
+        } elseif ($rowIndex < 3) {
           continue;
         } elseif ($rowIndex === 3) {
           $cells = $row->getCells();
@@ -70,9 +79,9 @@
           $sqlStatement = $db->prepare("INSERT OR REPLACE INTO PA_RIGHTS (title, 
           title_id, print_issn, online_issn, has_former_title, has_succeeding_title, 
           agreement_code, year, collection_name, title_metadata_last_modified,
-          filename, has_rights, is_crkn_record) VALUES (:title, :title_id, :print_issn, :online_issn, 
+          filename, has_rights, package_name, is_crkn_record) VALUES (:title, :title_id, :print_issn, :online_issn, 
           :has_former_title, :has_succeeding_title, :agreement_code, :year, :collection_name, :title_metadata_last_modified, 
-          :filename, :has_rights, :is_crkn_record)");
+          :filename, :has_rights, :package_name, :is_crkn_record)");
     
           $title = $cells[$dbProperties->title]->getValue();
           $titleId = array_key_exists($dbProperties->title_id, $cells) ? $cells[$dbProperties->title_id]->getValue() : '';
@@ -105,6 +114,7 @@
           $sqlStatement->bindParam(':filename', $filename);
           $sqlStatement->bindParam(':has_rights', $hasRights);
           $sqlStatement->bindParam(':is_crkn_record', $isCrknFile);
+          $sqlStatement->bindParam(':package_name', $packageName);
     
           $sqlStatement->execute();
         }

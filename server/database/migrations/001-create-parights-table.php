@@ -15,6 +15,7 @@
       filename VARCHAR(255) NOT NULL,
       has_rights CHARACTER(20) NOT NULL,
       is_crkn_record BOOLEAN NOT NULL DEFAULT FALSE,
+      package_name VARCHAR(255),
       created_at DATETIME NOT NULL DEFAULT (strftime('%s', 'now')));
     EOF;
 
