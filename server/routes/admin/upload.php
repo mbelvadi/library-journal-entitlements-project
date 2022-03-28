@@ -47,7 +47,24 @@
 
     $hasPaRightsSheet = true;
     foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-      if ($rowIndex > 3) break;
+      if ($rowIndex == 1) {
+        $cells = $row->getCells();
+        $packageName = '';
+        foreach($cells as $key => $value){
+          if ($key == 0) {
+            $packageName = $value;
+          }
+          break;
+        }
+        if ($packageName == '') {
+          $reader->close(); 
+          http_response_code(400);
+          unlink($newFilePath);
+          echo json_encode(array("error" => "Please ensure there is a package name is cell A1."));
+          return;
+        }
+      }
+      elseif ($rowIndex > 3) break;
       elseif ($rowIndex !== 3 ) continue;
       $cells = $row->getCells();
 
