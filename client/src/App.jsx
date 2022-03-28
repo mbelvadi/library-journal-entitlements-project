@@ -30,9 +30,11 @@ export default function App() {
     getStyleConfig();
   }, []);
 
+  // TODO using 'window.location.pathname' as the basename currently breaks if user opens the website on a page other than the homepage
+
   return (
     <StyleContext.Provider value={styleConfig}>
-      <BrowserRouter>
+      <BrowserRouter basename={window.location.pathname}>
         <Routes>
           <Route path='/' element={<Home />}></Route>
           <Route path='/search' element={<SearchResults />}></Route>
