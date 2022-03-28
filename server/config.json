@@ -1,7 +1,7 @@
 {
   "school": "Univ. of Prince Edward Island",
+  "crknURL": "https://www.crkn-rcdr.ca/en/perpetual-access-rights-reports-storage",
   "adminSetup": false,
-  "adminSetupCode": "Canada123",
   "adminPassword": "",
   "style": {
     "pageTitle": "UPEI PAR",

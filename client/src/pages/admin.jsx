@@ -70,7 +70,7 @@ export default function Admin() {
   return (
     <Layout>
       <Header />
-      <Layout.Content style={{ padding: '0 2vw' }}>
+      <Layout.Content style={{ padding: '20px 2vw' }}>
         <Col span={24} md={{ span: 12, offset: 6 }} style={{ display: 'flex' }}>
           {!loggedIn && (
             <div
@@ -129,7 +129,7 @@ export default function Admin() {
             </div>
           )}
           {loggedIn && (
-            <Col span={24} style={{ marginTop: '30px' }}>
+            <Col span={24}>
               <Row justify='space-between'>
                 <h1>Admin Page</h1>
                 <Button

@@ -18,8 +18,10 @@
   if(!$isValidAdmin) return;
 
   // 1. Fetch new files from CRKN site and put them in temp directory
-  $crkn_website_url = 'https://www.crkn-rcdr.ca';
-  $crkn_files_page_path = '/en/perpetual-access-rights-reports-storage';
+  $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
+  $crknUrlParts = parse_url($config->crknURL);
+  $crkn_website_url = $crknUrlParts["scheme"] . '://' . $crknUrlParts["host"];
+  $crkn_files_page_path = $crknUrlParts["path"];
 
   $client = new HtmlWeb();
   $html = $client->load("{$crkn_website_url}{$crkn_files_page_path}");

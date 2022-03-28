@@ -8,11 +8,6 @@
   http_response_code(400);
   
   // 1. Password validation
-  if ($data->adminCode !== $config->adminSetupCode) {
-    echo json_encode(array("error" => "Admin setup code is invalid."));
-    return;
-  }
-
   if ($data->password !== $data->confirmPassword) {
     echo json_encode(array("error" => "Passwords do not match"));
     return;
