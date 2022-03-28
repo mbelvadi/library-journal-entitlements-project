@@ -86,7 +86,7 @@
           $lastModified = array_key_exists($dbProperties->title_metadata_last_modified, $cells) ? $cells[$dbProperties->title_metadata_last_modified]->getValue() : '';
           $hasRights = $cells[$dbProperties->has_rights]->getValue();
           
-          if (is_a($lastModified, 'DateTime') || (is_string($lastModified) && strtotime($lastModified))){
+          if (is_a($lastModified, 'DateTime')){
             $lastModified = $lastModified->format('d/m/Y');
           } else {
             $lastModified = '';
