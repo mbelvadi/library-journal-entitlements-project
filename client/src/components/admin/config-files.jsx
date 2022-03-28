@@ -26,6 +26,8 @@ export default function FileModificationSection(props) {
   const [wipingDB, setWipingDB] = React.useState(false);
   const [school, setSchool] = React.useState('');
   const [changingSchool, setChangingSchool] = React.useState(false);
+  const [crknURL, setCrknURL] = React.useState('');
+  const [changingCrknURL, setChangingCrknURL] = React.useState('');
 
   React.useEffect(() => {
     const getFileLinks = async () => {
@@ -38,8 +40,15 @@ export default function FileModificationSection(props) {
             )}`
           )
         ).json();
-        console.log(currentSchool.school);
-        setSchool(currentSchool.school);
+        const url = await (
+          await fetch(
+            `${API_URL}/admin/get-crkn-url?adminKey=${sessionStorage.getItem(
+              'adminKey'
+            )}`
+          )
+        ).json();
+        setCrknURL(url);
+        setSchool(currentSchool);
         setServerFiles(data);
       } catch (error) {
         setError('An unexpected error occured.');
@@ -225,6 +234,37 @@ export default function FileModificationSection(props) {
     });
   };
 
+  const confirmChangeURL = () => {
+    Modal.confirm({
+      title: `Are you sure you want to change the CRKN URL?`,
+      icon: <ExclamationCircleOutlined />,
+      content: 'This will change the URL used to fetch CRKN files.',
+      async onOk() {
+        setError(undefined);
+        setSuccessMsg(undefined);
+        setChangingCrknURL(true);
+        const formData = new FormData();
+        formData.append('url', crknURL);
+        formData.append('adminKey', sessionStorage.getItem('adminKey'));
+        const res = await fetch(`${API_URL}/admin/change-crkn-url`, {
+          method: 'Post',
+          body: formData,
+        });
+
+        setChangingCrknURL(false);
+        if (res.status === 200) {
+          setSuccessMsg('Succesfully changed CRKN URL.');
+        } else if (res.status === 401) {
+          sessionStorage.removeItem('adminKey');
+          setLoginMessage('Admin session has expired. Please login again.');
+          setLoggedIn(false);
+        } else {
+          setError('An unexpected error occurred.');
+        }
+      },
+    });
+  };
+
   return (
     <>
       <Divider>File Modification</Divider>
@@ -244,7 +284,7 @@ export default function FileModificationSection(props) {
           style={{ marginBottom: '10px' }}
         />
       )}
-      <Row style={{ alignItems: 'center' }}>
+      <Row gutter={20} style={{ alignItems: 'center' }}>
         <Col style={{ marginBottom: '20px' }} span={24} md={12}>
           <h3>Refresh CRKN Data:</h3>
           <Button
@@ -278,7 +318,7 @@ export default function FileModificationSection(props) {
           </Space>
         </Col>
       </Row>
-      <Row>
+      <Row gutter={20}>
         <Col style={{ marginBottom: '20px' }} span={24} md={12}>
           <h3>Wipe Database:</h3>
           <Button
@@ -292,28 +332,40 @@ export default function FileModificationSection(props) {
         </Col>
         <Col style={{ marginBottom: '20px' }} span={24} md={12}>
           <h3>Change School:</h3>
-          <Row gutter={20}>
-            <Col span={12} md={18}>
-              <Input
-                size='large'
-                value={school}
-                onChange={(e) => setSchool(e.target.value)}
-              />
-            </Col>
-            <Col span={4}>
-              <Button
-                type='primary'
-                size='large'
-                loading={changingSchool}
-                onClick={confirmChangeSchool}
-              >
-                Change School
-              </Button>
-            </Col>
-          </Row>
+          <Input
+            size='large'
+            value={school}
+            onChange={(e) => setSchool(e.target.value)}
+          />
+          <Button
+            type='primary'
+            size='large'
+            loading={changingSchool}
+            onClick={confirmChangeSchool}
+            style={{ marginTop: '10px' }}
+          >
+            Change School
+          </Button>
         </Col>
       </Row>
-      <Row>
+      <Row gutter={20}>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Change CRKN File URL:</h3>
+          <Input
+            size='large'
+            value={crknURL}
+            onChange={(e) => setCrknURL(e.target.value)}
+          />
+          <Button
+            type='primary'
+            size='large'
+            loading={changingCrknURL}
+            onClick={confirmChangeURL}
+            style={{ marginTop: '10px' }}
+          >
+            Change URL
+          </Button>
+        </Col>
         <Col style={{ marginBottom: '20px' }} span={24} md={12}>
           <h3>Delete Files:</h3>
           <Row>
