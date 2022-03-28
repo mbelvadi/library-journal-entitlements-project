@@ -26,12 +26,21 @@
     $reader->setShouldPreserveEmptyRows(true);
     $reader->open($filePath);
     
+    $packageName = '';
     foreach ($reader->getSheetIterator() as $sheet) {
       $sheetName = $sheet->getName();
       if (!(strtolower($sheetName) === 'pa-rights')) continue;
 
       foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-        if ($rowIndex < 3) {
+        if ($rowIndex == 1) {
+          $cells = $row->getCells();
+          foreach($cells as $key => $value){
+            if ($key == 0) {
+              $packageName = $value;
+            }
+            break;
+          }
+        } elseif ($rowIndex < 3) {
           continue;
         } elseif ($rowIndex === 3) {
           $cells = $row->getCells();
@@ -48,32 +57,48 @@
           }
         } else {
           $cells = $row->getCells();
+          if(!array_key_exists($dbProperties->title, $cells) || !array_key_exists($dbProperties->year, $cells) || !array_key_exists($dbProperties->has_rights, $cells)) {
+            continue;
+          }
+
           if ($cells[$dbProperties->title]->isEmpty() || $cells[$dbProperties->year]->isEmpty() || $cells[$dbProperties->has_rights]->isEmpty() ) {
             continue;
           }
 
+          if ($cells[$dbProperties->has_rights] != 'Y' &&
+            $cells[$dbProperties->has_rights] != 'YBUT' &&
+            $cells[$dbProperties->has_rights] != 'NBUT' &&
+            $cells[$dbProperties->has_rights] != 'N'
+          ) continue;
+
+          $yearInt = (int) $cells[$dbProperties->year]->getValue();
+          if ($yearInt < 1900 || $yearInt > 2100) {
+            continue;
+          }
       
           $sqlStatement = $db->prepare("INSERT OR REPLACE INTO PA_RIGHTS (title, 
           title_id, print_issn, online_issn, has_former_title, has_succeeding_title, 
           agreement_code, year, collection_name, title_metadata_last_modified,
-          filename, has_rights, is_crkn_record) VALUES (:title, :title_id, :print_issn, :online_issn, 
+          filename, has_rights, package_name, is_crkn_record) VALUES (:title, :title_id, :print_issn, :online_issn, 
           :has_former_title, :has_succeeding_title, :agreement_code, :year, :collection_name, :title_metadata_last_modified, 
-          :filename, :has_rights, :is_crkn_record)");
+          :filename, :has_rights, :package_name, :is_crkn_record)");
     
           $title = $cells[$dbProperties->title]->getValue();
-          $titleId = $cells[$dbProperties->title_id]->getValue();
-          $printISSN = $cells[$dbProperties->print_issn]->getValue();
-          $onlineISSN = $cells[$dbProperties->online_issn]->getValue();
-          $hasFormerTitle = $cells[$dbProperties->has_former_title]->getValue();
-          $hasSucceedingTitle = $cells[$dbProperties->has_succeeding_title]->getValue();
-          $agreementCode = $cells[$dbProperties->agreement_code]->getValue();
+          $titleId = array_key_exists($dbProperties->title_id, $cells) ? $cells[$dbProperties->title_id]->getValue() : '';
+          $printISSN = array_key_exists($dbProperties->print_issn, $cells) ? $cells[$dbProperties->print_issn]->getValue() : '';
+          $onlineISSN = array_key_exists($dbProperties->online_issn, $cells) ? $cells[$dbProperties->online_issn]->getValue() : '';
+          $hasFormerTitle = array_key_exists($dbProperties->has_former_title, $cells) ? $cells[$dbProperties->has_former_title]->getValue() : '';
+          $hasSucceedingTitle = array_key_exists($dbProperties->has_succeeding_title, $cells) ? $cells[$dbProperties->has_succeeding_title]->getValue() : '';
+          $agreementCode = array_key_exists($dbProperties->agreement_code, $cells) ? $cells[$dbProperties->agreement_code]->getValue() : '';
           $year = $cells[$dbProperties->year]->__toString();
-          $collectionName = $cells[$dbProperties->collection_name]->getValue();
-          $lastModified = $cells[$dbProperties->title_metadata_last_modified]->getValue();
+          $collectionName = array_key_exists($dbProperties->collection_name, $cells) ? $cells[$dbProperties->collection_name]->getValue() : '';
+          $lastModified = array_key_exists($dbProperties->title_metadata_last_modified, $cells) ? $cells[$dbProperties->title_metadata_last_modified]->getValue() : '';
           $hasRights = $cells[$dbProperties->has_rights]->getValue();
           
-          if (!is_string($lastModified)){
+          if (is_a($lastModified, 'DateTime')){
             $lastModified = $lastModified->format('d/m/Y');
+          } else {
+            $lastModified = '';
           }
 
           $sqlStatement->bindParam(':title', $title);
@@ -89,6 +114,7 @@
           $sqlStatement->bindParam(':filename', $filename);
           $sqlStatement->bindParam(':has_rights', $hasRights);
           $sqlStatement->bindParam(':is_crkn_record', $isCrknFile);
+          $sqlStatement->bindParam(':package_name', $packageName);
     
           $sqlStatement->execute();
         }
