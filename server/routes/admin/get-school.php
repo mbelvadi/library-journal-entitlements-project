@@ -16,5 +16,5 @@
   $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
 
   http_response_code(200);
-  echo json_encode(array("school" => $config->school));
+  echo json_encode($config->school);
 ?>
