@@ -1,5 +1,5 @@
 import React from 'react';
-import { API_URL } from '../../util';
+import AppContext from '../../util/styleContext';
 import { Row, Col, Button, Alert, Divider, Modal, Form, Input } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
@@ -12,11 +12,12 @@ export default function StyleConfigurationSection(props) {
   const [favicon, setFavicon] = React.useState('');
   const [logo, setLogo] = React.useState('');
   const [submitting, setSubmitting] = React.useState(false);
+  const { apiRoute } = React.useContext(AppContext);
 
   React.useEffect(() => {
     const fetchStyles = async () => {
       try {
-        const style = await (await fetch(`${API_URL}/style`)).json();
+        const style = await (await fetch(`${apiRoute}/style`)).json();
         setColor(style.color);
         setPageTitle(style.pageTitle);
         setFavicon(style.favicon);
@@ -26,8 +27,8 @@ export default function StyleConfigurationSection(props) {
       }
     };
     setError(undefined);
-    fetchStyles();
-  }, []);
+    if (apiRoute) fetchStyles();
+  }, [apiRoute]);
 
   const confirmStyleUpdates = () => {
     Modal.confirm({
@@ -45,7 +46,7 @@ export default function StyleConfigurationSection(props) {
         formData.append('logo', logo);
         formData.append('favicon', favicon);
         formData.append('adminKey', sessionStorage.getItem('adminKey'));
-        const res = await fetch(`${API_URL}/admin/set-style`, {
+        const res = await fetch(`${apiRoute}/admin/set-style`, {
           method: 'Post',
           body: formData,
         });

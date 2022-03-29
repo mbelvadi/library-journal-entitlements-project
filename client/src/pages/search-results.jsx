@@ -1,10 +1,10 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Layout } from 'antd';
-import { API_URL } from '../util';
 import DataTable from '../components/data-table';
 import Header from '../components/header';
 import { downloadFileToClient } from '../util';
+import AppContext from '../util/styleContext';
 
 const parseParams = (querystring) => {
   const params = new URLSearchParams(querystring);
@@ -24,6 +24,7 @@ export default function SearchResults() {
   const [displayedData, setDisplayedData] = React.useState([]);
   const search = useLocation().search;
   const searchParams = parseParams(search);
+  const { apiRoute } = React.useContext(AppContext);
 
   const onClickDownload = () => {
     const unwantedColumns = ['key', 'created_at'];
@@ -85,7 +86,7 @@ export default function SearchResults() {
     const fetchSearchResults = async () => {
       if (!searchParams.query) return;
       const res = await (
-        await fetch(`${API_URL}/search`, {
+        await fetch(`${apiRoute}/search`, {
           method: 'POST',
           body: JSON.stringify(searchParams),
         })
@@ -93,9 +94,9 @@ export default function SearchResults() {
       setSearchResults(res);
       setDisplayedData(res.results);
     };
-    fetchSearchResults().catch(console.error);
+    if (apiRoute) fetchSearchResults().catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
+  }, [search, apiRoute]);
 
   return (
     <>

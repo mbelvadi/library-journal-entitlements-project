@@ -3,13 +3,13 @@ import { DownloadOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SearchBar from './search-bar';
-import StyleContext from '../util/styleContext';
+import AppContext from '../util/styleContext';
 import AdminButton from './buttons/admin';
 import HelpButton from './buttons/help';
 
 export default function Header(props) {
   const { onClickDownload } = props;
-  const styleConfig = React.useContext(StyleContext);
+  const { style } = React.useContext(AppContext);
 
   return (
     <PageHeader
@@ -25,8 +25,8 @@ export default function Header(props) {
         <Col md={12}>
           <Row style={{ alignItems: 'center' }}>
             <Link to='/'>
-              <img //TODO: replace with configurable logo
-                src={styleConfig?.logo}
+              <img
+                src={style?.logo}
                 alt='university logo'
                 style={{ width: 60 }}
               />
