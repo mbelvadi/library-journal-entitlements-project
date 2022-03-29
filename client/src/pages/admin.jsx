@@ -1,11 +1,10 @@
 import React from 'react';
-import { API_URL } from '../util';
 import { Layout, Row, Col, Card, Spin, Button, Avatar, Alert } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Header from '../components/header';
 import AdminSetupForm from '../components/admin/setup-form';
 import AdminLoginForm from '../components/admin/login-form';
-import StyleContext from '../util/styleContext';
+import AppContext from '../util/styleContext';
 import { useNavigate } from 'react-router-dom';
 import StyleConfigurationSection from '../components/admin/config-style';
 import FileModificationSection from '../components/admin/config-files';
@@ -17,17 +16,17 @@ export default function Admin() {
   const [adminSetup, setAdminSetup] = React.useState(false);
   const [loadingPage, setLoadingPage] = React.useState(true);
   const [loginMessage, setLoginMessage] = React.useState('');
-  const styleConfig = React.useContext(StyleContext);
+  const { style, apiRoute } = React.useContext(AppContext);
   const navigate = useNavigate();
 
   React.useEffect(() => {
     const fetchAdminStatus = async () => {
-      const res = await fetch(`${API_URL}/admin/setup`);
+      const res = await fetch(`${apiRoute}/admin/setup`);
       if (res.status === 200) {
         setAdminSetup(true);
         if (sessionStorage.getItem('adminKey')) {
           const resValid = await fetch(
-            `${API_URL}/admin/valid-token?adminKey=${sessionStorage.getItem(
+            `${apiRoute}/admin/valid-token?adminKey=${sessionStorage.getItem(
               'adminKey'
             )}`
           );
@@ -42,8 +41,8 @@ export default function Admin() {
       setLoadingPage(false);
     };
     setError(undefined);
-    fetchAdminStatus();
-  }, []);
+    if (apiRoute) fetchAdminStatus();
+  }, [apiRoute]);
 
   const logout = async () => {
     if (!sessionStorage.getItem('adminKey')) navigate('/');
@@ -52,7 +51,9 @@ export default function Admin() {
     setLoggingOut(true);
     try {
       const res = await fetch(
-        `${API_URL}/admin/logout?adminKey=${sessionStorage.getItem('adminKey')}`
+        `${apiRoute}/admin/logout?adminKey=${sessionStorage.getItem(
+          'adminKey'
+        )}`
       );
       setLoggingOut(false);
       if (res.status === 200 || res.status === 401) {
@@ -102,9 +103,7 @@ export default function Admin() {
                   >
                     <Avatar
                       style={{
-                        backgroundColor: styleConfig?.color
-                          ? styleConfig.color
-                          : '#1890ff',
+                        backgroundColor: style?.color ? style.color : '#1890ff',
                         marginBottom: '20px',
                       }}
                       size={100}

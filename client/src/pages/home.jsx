@@ -1,26 +1,25 @@
 import React from 'react';
 import { Layout, Button, Col, Row, List } from 'antd';
-import { API_URL } from '../util';
 import SearchBar from '../components/search-bar';
 import { downloadFileToClient } from '../util';
-import StyleContext from '../util/styleContext';
+import AppContext from '../util/styleContext';
 import AdminButton from '../components/buttons/admin';
 import HelpButton from '../components/buttons/help';
 
 export default function Home() {
   const [fileLinks, setFileLinks] = React.useState([]);
-  const styleConfig = React.useContext(StyleContext);
+  const { style, apiRoute } = React.useContext(AppContext);
 
   React.useEffect(() => {
     const getFileLinks = async () => {
-      const data = await (await fetch(`${API_URL}/list-files`)).json();
+      const data = await (await fetch(`${apiRoute}/list-files`)).json();
       setFileLinks(data);
     };
-    getFileLinks();
-  }, []);
+    if (apiRoute) getFileLinks();
+  }, [apiRoute]);
 
   const downloadFile = async (file) => {
-    const res = await fetch(`${API_URL}/download-local-file`, {
+    const res = await fetch(`${apiRoute}/download-local-file`, {
       method: 'POST',
       body: JSON.stringify({
         file: file,
@@ -77,7 +76,7 @@ export default function Home() {
               style={{ minHeight: '50vh' }}
             >
               <img
-                src={styleConfig?.logo}
+                src={style?.logo}
                 alt='university logo'
                 style={{ width: 160 }}
               />

@@ -1,5 +1,6 @@
 {
   "name": "library-journal-entitlements-project",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

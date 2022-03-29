@@ -1,5 +1,5 @@
 import React from 'react';
-import { API_URL } from '../../util';
+import AppContext from '../../util/styleContext';
 import {
   Row,
   Col,
@@ -28,21 +28,22 @@ export default function FileModificationSection(props) {
   const [changingSchool, setChangingSchool] = React.useState(false);
   const [crknURL, setCrknURL] = React.useState('');
   const [changingCrknURL, setChangingCrknURL] = React.useState('');
+  const { apiRoute } = React.useContext(AppContext);
 
   React.useEffect(() => {
     const getFileLinks = async () => {
       try {
-        const data = await (await fetch(`${API_URL}/list-files`)).json();
+        const data = await (await fetch(`${apiRoute}/list-files`)).json();
         const currentSchool = await (
           await fetch(
-            `${API_URL}/admin/get-school?adminKey=${sessionStorage.getItem(
+            `${apiRoute}/admin/get-school?adminKey=${sessionStorage.getItem(
               'adminKey'
             )}`
           )
         ).json();
         const url = await (
           await fetch(
-            `${API_URL}/admin/get-crkn-url?adminKey=${sessionStorage.getItem(
+            `${apiRoute}/admin/get-crkn-url?adminKey=${sessionStorage.getItem(
               'adminKey'
             )}`
           )
@@ -54,8 +55,8 @@ export default function FileModificationSection(props) {
         setError('An unexpected error occured.');
       }
     };
-    getFileLinks();
-  }, []);
+    if (apiRoute) getFileLinks();
+  }, [apiRoute]);
 
   const confirmRefreshCrknData = () => {
     Modal.confirm({
@@ -67,7 +68,7 @@ export default function FileModificationSection(props) {
         setSuccessMsg(undefined);
         setCrknRefreshing(true);
         const res = await fetch(
-          `${API_URL}/admin/fetch-crkn-files?adminKey=${sessionStorage.getItem(
+          `${apiRoute}/admin/fetch-crkn-files?adminKey=${sessionStorage.getItem(
             'adminKey'
           )}`
         );
@@ -100,7 +101,7 @@ export default function FileModificationSection(props) {
         const formData = new FormData();
         formData.append('file', uploadedFile);
         formData.append('adminKey', sessionStorage.getItem('adminKey'));
-        const res = await fetch(`${API_URL}/admin/upload`, {
+        const res = await fetch(`${apiRoute}/admin/upload`, {
           method: 'Post',
           body: formData,
         });
@@ -148,7 +149,7 @@ export default function FileModificationSection(props) {
         const formData = new FormData();
         formData.append('filesToDelete', JSON.stringify(filesToDelete));
         formData.append('adminKey', sessionStorage.getItem('adminKey'));
-        const res = await fetch(`${API_URL}/admin/delete-files`, {
+        const res = await fetch(`${apiRoute}/admin/delete-files`, {
           method: 'Post',
           body: formData,
         });
@@ -181,7 +182,7 @@ export default function FileModificationSection(props) {
         setSuccessMsg(undefined);
         setWipingDB(true);
         const res = await fetch(
-          `${API_URL}/admin/wipe-database?adminKey=${sessionStorage.getItem(
+          `${apiRoute}/admin/wipe-database?adminKey=${sessionStorage.getItem(
             'adminKey'
           )}`
         );
@@ -214,7 +215,7 @@ export default function FileModificationSection(props) {
         const formData = new FormData();
         formData.append('school', school);
         formData.append('adminKey', sessionStorage.getItem('adminKey'));
-        const res = await fetch(`${API_URL}/admin/change-school`, {
+        const res = await fetch(`${apiRoute}/admin/change-school`, {
           method: 'Post',
           body: formData,
         });
@@ -246,7 +247,7 @@ export default function FileModificationSection(props) {
         const formData = new FormData();
         formData.append('url', crknURL);
         formData.append('adminKey', sessionStorage.getItem('adminKey'));
-        const res = await fetch(`${API_URL}/admin/change-crkn-url`, {
+        const res = await fetch(`${apiRoute}/admin/change-crkn-url`, {
           method: 'Post',
           body: formData,
         });

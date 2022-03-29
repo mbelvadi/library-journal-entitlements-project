@@ -1,17 +1,18 @@
 import React from 'react';
-import { API_URL } from '../../util';
 import { Form, Input, Button, Alert } from 'antd';
+import AppContext from '../../util/styleContext';
 
 export default function AdminLoginForm(props) {
   const { loginMessage, setLoginMessage, setLoggedIn } = props;
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState(undefined);
+  const { apiRoute } = React.useContext(AppContext);
 
   const handleSubmit = async (values) => {
     setLoginMessage('');
     setError(undefined);
     setSubmitting(true);
-    const res = await fetch(`${API_URL}/admin/login`, {
+    const res = await fetch(`${apiRoute}/admin/login`, {
       method: 'POST',
       body: JSON.stringify(values),
     });
