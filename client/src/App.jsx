@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 import Admin from './pages/admin';
 import Home from './pages/home';
 import NotFound from './pages/not-found';
@@ -30,18 +30,16 @@ export default function App() {
     getStyleConfig();
   }, []);
 
-  // TODO using 'window.location.pathname' as the basename currently breaks if user opens the website on a page other than the homepage
-
   return (
     <StyleContext.Provider value={styleConfig}>
-      <BrowserRouter basename={window.location.pathname}>
+      <HashRouter>
         <Routes>
           <Route path='/' element={<Home />}></Route>
           <Route path='/search' element={<SearchResults />}></Route>
           <Route path='/admin' element={<Admin />}></Route>
           <Route path='*' element={<NotFound />}></Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </StyleContext.Provider>
   );
 }
