@@ -82,7 +82,12 @@ export default function Home() {
               />
               <SearchBar />
               <List
-                style={{ marginTop: '50px', maxWidth: '700px' }}
+                style={{
+                  marginTop: '50px',
+                  maxWidth: '700px',
+                  overflow: 'auto',
+                  height: '350px',
+                }}
                 header={<h3>Files Being Searched</h3>}
                 bordered={true}
                 dataSource={fileLinks}
