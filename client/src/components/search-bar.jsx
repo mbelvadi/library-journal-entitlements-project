@@ -65,7 +65,7 @@ export default function SearchBar(props) {
           picker='year'
           bordered={true}
           value={filters.specificYearFilter}
-          onChange={(moment, value) => setFilters({ ...filters, year: value })}
+          onChange={(_moment, value) => setFilters({ ...filters, year: value })}
         />
       )}
       {filterMenuItem(
@@ -74,7 +74,7 @@ export default function SearchBar(props) {
           picker='year'
           bordered={true}
           value={filters.startYearFilter}
-          onChange={(moment, value) =>
+          onChange={(_moment, value) =>
             setFilters({ ...filters, startYear: value })
           }
         />
@@ -85,7 +85,7 @@ export default function SearchBar(props) {
           picker='year'
           bordered={true}
           value={filters.endYearFilter}
-          onChange={(moment, value) =>
+          onChange={(_moment, value) =>
             setFilters({ ...filters, endYear: value })
           }
         />
