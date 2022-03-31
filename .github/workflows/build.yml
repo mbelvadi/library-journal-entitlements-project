@@ -1,0 +1,118 @@
+name: Build
+
+env:
+  CI: "false"
+
+  FRONTEND_REPO_DIR: client
+  FRONTEND_TEMP_DIR: ARTIFACT/FRONTEND
+  FRONTEND_ARTIFACT: frontend-build
+
+  BACKEND_REPO_DIR: server
+  BACKEND_TEMP_DIR: ARTIFACT/BACKEND
+  BACKEND_ARTIFACT: backend-build
+
+  ARTIFACT_OUTER_DIR: ARTIFACT
+  ARTIFACT_INNER_DIR: ARTIFACT/LJEP
+  ZIP_PREFIX: LJEP-
+
+
+on:
+  push:
+    branches: [ release ]
+  pull_request:
+    branches: [ release ]
+  workflow_dispatch:
+
+
+jobs:
+  Frontend-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.FRONTEND_REPO_DIR }}
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16.x
+        cache: 'npm'
+        cache-dependency-path: ${{ github.workspace }}/${{ env.FRONTEND_REPO_DIR }}/package-lock.json
+
+    - run: npm ci
+    - run: npm run build
+    - run: npm test
+
+    - name: Upload frontend build folder as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.FRONTEND_ARTIFACT }}
+        path: ${{ github.workspace }}/${{ env.FRONTEND_REPO_DIR }}/build/
+
+
+  Backend-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.BACKEND_REPO_DIR }}
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}/${{ env.BACKEND_REPO_DIR }}/vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Upload backend folder as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.BACKEND_ARTIFACT }}
+        path: ${{ github.workspace }}/${{ env.BACKEND_REPO_DIR }}/
+
+
+  Combine-and-upload-builds:
+    needs: [ Frontend-build, Backend-build ]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download frontend artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ env.FRONTEND_ARTIFACT }}
+        path: ${{ github.workspace }}/${{ env.FRONTEND_TEMP_DIR }}
+
+    - name: Download backend artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ env.BACKEND_ARTIFACT }}
+        path: ${{ github.workspace }}/${{ env.BACKEND_TEMP_DIR }}
+
+    - name: Make final artifact directory
+      run: mkdir -p ${{ github.workspace }}/${{ env.ARTIFACT_INNER_DIR }}/
+
+    - name: Set shell option to copy hidden files
+      run: shopt -s dotglob
+
+    - name: Copy frontend artifact contents into final artifact root
+      run: cp -r ${{ github.workspace }}/${{ env.FRONTEND_TEMP_DIR }}/* ${{ github.workspace }}/${{ env.ARTIFACT_INNER_DIR }}/
+
+    - name: Copy backend artifact contents into final artifact root
+      run: cp -r ${{ github.workspace }}/${{ env.BACKEND_TEMP_DIR }}/* ${{ github.workspace }}/${{ env.ARTIFACT_INNER_DIR }}/
+
+    - name: Get date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H')"
+
+    - name: Upload server root to create drag-and-drop zip artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.ZIP_PREFIX }}${{ steps.date.outputs.date }}
+        path: ${{ github.workspace }}/${{ env.ARTIFACT_OUTER_DIR }}/
