@@ -13,6 +13,13 @@
   $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
 
+  if (isDatabaseLocked()) {
+    http_response_code(503);
+    echo json_encode(array("error" => "Database is locked by another process. Please try again later. Note if you think the database is incorrectly locked then it will automatically unlock in 20 minutes."));
+    return;
+  }
+  lockDatabase();
+
   $filesToDelete = json_decode($_POST["filesToDelete"]);
 
   foreach ($filesToDelete as $file) {
@@ -22,6 +29,7 @@
     }
   }
 
+  unlockDatabase();
   $remainingFiles = getXLSXFiles('../../PAR-files/');
   echo json_encode(array("files" => $remainingFiles));
 ?>

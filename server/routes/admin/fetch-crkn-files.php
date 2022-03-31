@@ -17,6 +17,13 @@
   $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
 
+  if (isDatabaseLocked()) {
+    http_response_code(503);
+    echo json_encode(array("error" => "Database is locked by another process. Please try again later. Note if you think the database is incorrectly locked then it will automatically unlock in 20 minutes."));
+    return;
+  }
+  lockDatabase();
+
   // 1. Fetch new files from CRKN site and put them in temp directory
   $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
   $crknUrlParts = parse_url($config->crknURL);
@@ -71,6 +78,7 @@
   // 5. Remove old DB entries
   deleteOldCrknData('time', $uploadStartTime, null);
 
+  unlockDatabase();
   $serverFiles = getXLSXFiles('../../PAR-files/');
   echo json_encode(array("files" => $serverFiles));
 ?>
