@@ -95,7 +95,7 @@ export default function FileModificationSection(props) {
           const data = await res.json();
           setSuccessMsg('Succesfully updated CRKN sheets.');
           if (data.files) setServerFiles(data.files);
-        } else handleError(res);
+        } else await handleError(res);
       },
     });
   };
@@ -184,7 +184,7 @@ export default function FileModificationSection(props) {
         if (res.status === 200) {
           setSuccessMsg('Succesfully wiped database.');
           setServerFiles([]);
-        } else handleError(res);
+        } else await handleError(res);
       },
     });
   };
@@ -211,7 +211,7 @@ export default function FileModificationSection(props) {
         if (res.status === 200) {
           setSuccessMsg('Succesfully changed schools.');
           setServerFiles([]);
-        } else handleError(res);
+        } else await handleError(res);
       },
     });
   };
@@ -236,8 +236,7 @@ export default function FileModificationSection(props) {
         setChangingCrknURL(false);
         if (res.status === 200) {
           setSuccessMsg('Succesfully changed CRKN URL.');
-        }
-        handleError(res);
+        } else await handleError(res);
       },
     });
   };
