@@ -39,11 +39,20 @@ jobs:
       with:
         workflow: node.js-build.yml
         path: ${{ github.workspace }}/server
-
-    - name: Move files and folders into final structure
+  
+    - name: Set shell option to include hidden files in copy
+      run: shopt -s dotglob
+  
+    - name: Move frontend artifact contents into build root
       run: mv frontend/* ${{ github.workspace }}/server
-    - run: rmdir ${{ github.workspace }}/server/frontend
-    - run: mkdir -p ${{ github.workspace }}/ARTIFACT/LJEP/
+      
+    - name: Remove empty directory so it doesn't end up in final artifact
+      run: rmdir ${{ github.workspace }}/server/frontend
+    
+    - name: Make directory to store final artifact
+      run: mkdir -p ${{ github.workspace }}/ARTIFACT/LJEP/
+      
+    - name: Copy all files in working dir into final artifact directory
     - run: cp -r ./ ${{ github.workspace }}/ARTIFACT/LJEP/
 
     - name: Get date
