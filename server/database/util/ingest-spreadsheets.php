@@ -66,8 +66,8 @@
           }
 
           if ($cells[$dbProperties->has_rights] != 'Y' &&
-            $cells[$dbProperties->has_rights] != 'YBUT' &&
-            $cells[$dbProperties->has_rights] != 'NBUT' &&
+            $cells[$dbProperties->has_rights] != 'YBut' &&
+            $cells[$dbProperties->has_rights] != 'NBut' &&
             $cells[$dbProperties->has_rights] != 'N'
           ) continue;
 
