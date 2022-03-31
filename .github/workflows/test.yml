@@ -1,0 +1,59 @@
+name: Test
+
+env:
+  CI: "false"
+
+  FRONTEND_REPO_DIR: client
+  BACKEND_REPO_DIR: server
+
+
+on:
+  push:
+    branches: [ main, release ]
+  pull_request:
+    branches: [ main, release ]
+  workflow_dispatch:
+
+
+jobs:
+  Frontend-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.FRONTEND_REPO_DIR }}
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16.x
+        cache: 'npm'
+        cache-dependency-path: ${{ github.workspace }}/${{ env.FRONTEND_REPO_DIR }}/package-lock.json
+
+    - run: npm ci
+    - run: npm test
+
+
+  Backend-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.BACKEND_REPO_DIR }}
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}/${{ env.BACKEND_REPO_DIR }}/vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run test suite
+      run: composer run-script test
