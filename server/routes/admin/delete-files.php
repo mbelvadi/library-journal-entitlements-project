@@ -10,7 +10,7 @@
     return false;
   }
 
-  $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/ljp.db');
+  $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
 
   $filesToDelete = json_decode($_POST["filesToDelete"]);

@@ -14,7 +14,7 @@
     return;
   }
 
-  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/ljp.db');
+  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
 
   // 1. Fetch new files from CRKN site and put them in temp directory
