@@ -16,7 +16,7 @@ export default function App() {
       const data = await (await fetch('./root.json')).json();
       const envAppRoute =
         process.env.NODE_ENV === 'development'
-          ? `http://localhost/upei-library-journal-project/server/routes`
+          ? `http://localhost/library-journal-entitlements-project/server/routes`
           : `${data.appRoute}/routes`;
       setAppRoute(envAppRoute);
 
