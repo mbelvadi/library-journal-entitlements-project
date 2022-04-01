@@ -15,7 +15,7 @@
   }
 
   function runMigration() {
-    createAdminTokenTable(new SQLite3('../ljp.db'));
+    createAdminTokenTable(new SQLite3('../admin.db'));
   }
   runMigration();
 ?>
