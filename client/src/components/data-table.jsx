@@ -110,13 +110,14 @@ export default function DataTable(props) {
   // order of this list is reflected in the table
   const crknColumnNames = [
     'Title',
+    'Package_Name',
     'Collection_Name',
     'Year',
     'Title_ID',
     'Print_ISSN',
     'Online_ISSN',
-    'Former_Title',
-    'Succeeding_Title',
+    'Has_Former_Title',
+    'Has_Succeeding_Title',
     'Agreement_Code',
     'Has_Rights',
   ];
