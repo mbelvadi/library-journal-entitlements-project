@@ -8,7 +8,6 @@
     echo json_encode(array("error" => "admin key is required."));
     return;
   }
-
   $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
 

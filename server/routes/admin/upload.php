@@ -112,7 +112,6 @@
     return;
   }
   lockDatabase();
-
   $uploadStartTime = time();
   ingestSpreadsheet($newFilePath, basename($newFilePath), 0);
   deleteOldCrknData('filename', $uploadStartTime, basename($newFilePath));
