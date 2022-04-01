@@ -1,15 +1,16 @@
 import React from 'react';
 import Highlighter from 'react-highlight-words';
 import { Table, Input, Button, Space } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { FilterFilled } from '@ant-design/icons';
+import AppContext from '../util/appContext';
 
 export default function DataTable(props) {
   const { data, setDisplayedData } = props;
-  const [searchText, setSearchText] = React.useState('');
-  const [searchInput, setSearchInput] = React.useState({});
-  const [searchedColumn, setSearchedColumn] = React.useState('');
+  const [filterText, setFilterText] = React.useState('');
+  const [filterInput, setFilterInput] = React.useState({});
+  const [filteredColumn, setFilteredColumn] = React.useState('');
 
-  const getColumnSearchProps = (dataIndex) => ({
+  const mapIndexToColumn = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -18,24 +19,24 @@ export default function DataTable(props) {
     }) => (
       <div style={{ padding: 8 }}>
         <Input
-          ref={(node) => setSearchInput(node)}
-          placeholder={`Search ${dataIndex}`}
+          ref={(node) => setFilterInput(node)}
+          placeholder={`Filter by ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() => handleFilter(selectedKeys, confirm, dataIndex)}
           style={{ marginBottom: 8, display: 'block' }}
         />
         <Space>
           <Button
             type='primary'
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
+            onClick={() => handleFilter(selectedKeys, confirm, dataIndex)}
+            icon={<FilterFilled />}
             size='small'
             style={{ width: 90 }}
           >
-            Search
+            Filter
           </Button>
           <Button
             onClick={() =>
@@ -50,7 +51,7 @@ export default function DataTable(props) {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+      <FilterFilled style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -61,14 +62,14 @@ export default function DataTable(props) {
         : '',
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
-        setTimeout(() => searchInput.select(), 100);
+        setTimeout(() => filterInput.select(), 100);
       }
     },
     render: (text) =>
-      searchedColumn === dataIndex ? (
+      filteredColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-          searchWords={[searchText]}
+          searchWords={[filterText]}
           autoEscape
           textToHighlight={text ? text.toString() : ''}
         />
@@ -77,16 +78,16 @@ export default function DataTable(props) {
       ),
   });
 
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+  const handleFilter = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
+    setFilterText(selectedKeys[0]);
+    setFilteredColumn(dataIndex);
   };
 
-  const handleReset = (clearFilters, selectedKeys, confirm, dataIndex) => {
+  const handleReset = (clearFilters, selectedKeys, confirm, _dataIndex) => {
     clearFilters();
-    setSearchText('');
-    handleSearch(selectedKeys, confirm, dataIndex);
+    setFilterText('');
+    handleFilter(selectedKeys, confirm, null);
   };
 
   const replaceDelimiters = (string, char) => {
@@ -112,7 +113,7 @@ export default function DataTable(props) {
     'Has_Rights',
   ];
 
-  const getColumns = (element) => {
+  const getColumns = () => {
     const columns = [];
 
     for (const columnName of crknColumnNames) {
@@ -122,7 +123,7 @@ export default function DataTable(props) {
         title: replaceDelimiters(columnName, ' '),
         dataIndex: key,
         key: key,
-        ...getColumnSearchProps(key),
+        ...mapIndexToColumn(key),
         sorter: (a, b) => {
           if (a[key]) {
             if (b[key]) {
@@ -148,7 +149,7 @@ export default function DataTable(props) {
     return columns;
   };
 
-  const onTableChange = (pagination, filters, sorter, extra) =>
+  const onTableChange = (_pagination, _filters, _sorter, extra) =>
     setDisplayedData(extra.currentDataSource);
 
   let dataSource = [];
@@ -159,7 +160,7 @@ export default function DataTable(props) {
     columns = getColumns(dataSource[0]);
   }
 
-  dataSource.forEach(function (element, i) {
+  dataSource.forEach((element, i) => {
     element.key = i;
   });
 
