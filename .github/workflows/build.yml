@@ -1,8 +1,6 @@
 name: Build
 
 env:
-  CI: "false"
-
   FRONTEND_REPO_DIR: client
   FRONTEND_TEMP_DIR: ARTIFACT/FRONTEND
   FRONTEND_ARTIFACT: frontend-build

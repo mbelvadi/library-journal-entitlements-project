@@ -1,8 +1,6 @@
 name: Test
 
 env:
-  CI: "false"
-
   FRONTEND_REPO_DIR: client
   BACKEND_REPO_DIR: server
 
