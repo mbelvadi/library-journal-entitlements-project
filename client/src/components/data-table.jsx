@@ -3,7 +3,7 @@ import { Table, Input, Button, Space } from 'antd';
 import { FilterFilled } from '@ant-design/icons';
 
 export default function DataTable(props) {
-  const { data, setDisplayedData } = props;
+  const { data, setDisplayedData, loadingResults } = props;
   const [filterInput, setFilterInput] = React.useState({});
 
   const mapIndexToColumn = (dataIndex) => ({
@@ -158,6 +158,7 @@ export default function DataTable(props) {
         pageSizeOptions: [100, 250, 500],
       }}
       onChange={onTableChange}
+      loading={loadingResults}
     />
   );
 }

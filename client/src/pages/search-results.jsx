@@ -23,9 +23,28 @@ const parseParams = (querystring) => {
 export default function SearchResults() {
   const [searchResults, setSearchResults] = React.useState(null);
   const [displayedData, setDisplayedData] = React.useState([]);
+  const [loadingResults, setLoadingResults] = React.useState(true);
   const search = useLocation().search;
   const searchParams = parseParams(search);
   const { apiRoute } = React.useContext(AppContext);
+
+  React.useEffect(() => {
+    setLoadingResults(true);
+    const fetchSearchResults = async () => {
+      if (!searchParams.query) return;
+      const res = await (
+        await fetch(`${apiRoute}/search`, {
+          method: 'POST',
+          body: JSON.stringify(searchParams),
+        })
+      ).json();
+      setSearchResults(res);
+      setDisplayedData(res.results);
+      setLoadingResults(false);
+    };
+    if (apiRoute) fetchSearchResults().catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, apiRoute]);
 
   const onClickDownload = () => {
     const unwantedColumns = ['key', 'created_at'];
@@ -83,22 +102,6 @@ export default function SearchResults() {
     );
   };
 
-  React.useEffect(() => {
-    const fetchSearchResults = async () => {
-      if (!searchParams.query) return;
-      const res = await (
-        await fetch(`${apiRoute}/search`, {
-          method: 'POST',
-          body: JSON.stringify(searchParams),
-        })
-      ).json();
-      setSearchResults(res);
-      setDisplayedData(res.results);
-    };
-    if (apiRoute) fetchSearchResults().catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, apiRoute]);
-
   return (
     <>
       <Layout>
@@ -118,6 +121,7 @@ export default function SearchResults() {
             <DataTable
               data={searchResults}
               setDisplayedData={setDisplayedData}
+              loadingResults={loadingResults}
             />
           </div>
         </Layout.Content>
