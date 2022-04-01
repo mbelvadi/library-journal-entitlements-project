@@ -58,6 +58,23 @@ export default function FileModificationSection(props) {
     if (apiRoute) getFileLinks();
   }, [apiRoute]);
 
+  const handleError = async (res) => {
+    if (res.status === 401) {
+      sessionStorage.removeItem('adminKey');
+      setLoginMessage('Admin session has expired. Please login again.');
+      setLoggedIn(false);
+    } else {
+      try {
+        const data = await res.json();
+        if (data.error) {
+          setError(data.error);
+        } else throw new Error();
+      } catch (error) {
+        setError('An unexpected error occurred.');
+      }
+    }
+  };
+
   const confirmRefreshCrknData = () => {
     Modal.confirm({
       title: 'Are you sure you want to update the CRKN data?',
@@ -78,13 +95,7 @@ export default function FileModificationSection(props) {
           const data = await res.json();
           setSuccessMsg('Succesfully updated CRKN sheets.');
           if (data.files) setServerFiles(data.files);
-        } else if (res.status === 401) {
-          sessionStorage.removeItem('adminKey');
-          setLoginMessage('Admin session has expired. Please login again.');
-          setLoggedIn(false);
-        } else {
-          setError('An unexpected error occurred.');
-        }
+        } else await handleError(res);
       },
     });
   };
@@ -106,24 +117,12 @@ export default function FileModificationSection(props) {
           body: formData,
         });
 
-        let data = null;
-        try {
-          data = await res.json();
-        } catch (error) {
-          console.error('Response data was not in JSON format.');
-        }
-
         setUploadingFile(false);
         if (res.status === 200) {
+          const data = await res.json();
           setSuccessMsg('Succesfully uploaded spreadsheet.');
           if (data.files) setServerFiles(data.files);
-        } else if (res.status === 401) {
-          sessionStorage.removeItem('adminKey');
-          setLoginMessage('Admin session has expired. Please login again.');
-          setLoggedIn(false);
-        } else {
-          setError(data.error ?? 'An unexpected error occurred.');
-        }
+        } else await handleError(res);
       },
     });
   };
@@ -160,13 +159,7 @@ export default function FileModificationSection(props) {
           setSuccessMsg('Succesfully deleted spreadsheet(s).');
           setFilesToDelete([]);
           if (data.files) setServerFiles(data.files);
-        } else if (res.status === 401) {
-          sessionStorage.removeItem('adminKey');
-          setLoginMessage('Admin session has expired. Please login again.');
-          setLoggedIn(false);
-        } else {
-          setError('An unexpected error occurred.');
-        }
+        } else await handleError(res);
       },
     });
   };
@@ -191,13 +184,7 @@ export default function FileModificationSection(props) {
         if (res.status === 200) {
           setSuccessMsg('Succesfully wiped database.');
           setServerFiles([]);
-        } else if (res.status === 401) {
-          sessionStorage.removeItem('adminKey');
-          setLoginMessage('Admin session has expired. Please login again.');
-          setLoggedIn(false);
-        } else {
-          setError('An unexpected error occurred.');
-        }
+        } else await handleError(res);
       },
     });
   };
@@ -224,13 +211,7 @@ export default function FileModificationSection(props) {
         if (res.status === 200) {
           setSuccessMsg('Succesfully changed schools.');
           setServerFiles([]);
-        } else if (res.status === 401) {
-          sessionStorage.removeItem('adminKey');
-          setLoginMessage('Admin session has expired. Please login again.');
-          setLoggedIn(false);
-        } else {
-          setError('An unexpected error occurred.');
-        }
+        } else await handleError(res);
       },
     });
   };
@@ -255,13 +236,7 @@ export default function FileModificationSection(props) {
         setChangingCrknURL(false);
         if (res.status === 200) {
           setSuccessMsg('Succesfully changed CRKN URL.');
-        } else if (res.status === 401) {
-          sessionStorage.removeItem('adminKey');
-          setLoginMessage('Admin session has expired. Please login again.');
-          setLoggedIn(false);
-        } else {
-          setError('An unexpected error occurred.');
-        }
+        } else await handleError(res);
       },
     });
   };

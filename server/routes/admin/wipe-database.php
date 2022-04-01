@@ -10,8 +10,15 @@
     return;
   }
 
-  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/ljep.db');
+  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
+
+  if (isDatabaseLocked()) {
+    http_response_code(503);
+    echo json_encode(array("error" => "Database is locked by another process. Please try again later. Note if you think the database is incorrectly locked then it will automatically unlock in 2 hours."));
+    return;
+  }
+  lockDatabase();
 
   wipeDatabase();
 
@@ -22,6 +29,7 @@
     }
   }
 
+  unlockDatabase();
   $remainingFiles = getXLSXFiles('../../PAR-files/');
   echo json_encode(array("files" => $remainingFiles));
 ?>

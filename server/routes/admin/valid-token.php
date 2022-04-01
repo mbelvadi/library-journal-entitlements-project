@@ -9,7 +9,7 @@
     return;
   }
 
-  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/ljep.db');
+  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
 
   echo json_encode(array("message" => "valid token."));

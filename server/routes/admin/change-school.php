@@ -10,8 +10,16 @@
     return;
   }
 
-  $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/ljep.db');
+  $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
+
+  // School name affects upload process of data so we will only change when database is unlocked
+  if (isDatabaseLocked()) {
+    http_response_code(503);
+    echo json_encode(array("error" => "Database is locked by another process. Please try again later. Note if you think the database is incorrectly locked then it will automatically unlock in 2 hours."));
+    return;
+  }
+  lockDatabase();
 
   $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
 
@@ -29,7 +37,7 @@
     }
   }
 
-
+  unlockDatabase();
   http_response_code(200);
   echo json_encode(array("message" => "Successfully updated school."));
 ?>

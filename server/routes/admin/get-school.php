@@ -10,7 +10,7 @@
     return;
   }
 
-  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/ljep.db');
+  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
 
   $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));

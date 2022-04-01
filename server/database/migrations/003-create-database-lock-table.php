@@ -1,21 +1,21 @@
 <?php
-  function createAdminTokenTable($db) {
+  function createDatabaseLockTable($db) {
     $sql =<<<EOF
-      CREATE TABLE IF NOT EXISTS ADMIN_TOKENS
+      CREATE TABLE IF NOT EXISTS DATABASE_LOCKED
       (token VARCHAR(255) NOT NULL,
       created_at DATETIME NOT NULL DEFAULT (strftime('%s', 'now')),
-      valid_till DATETIME NOT NULL DEFAULT (strftime('%s', 'now', '+8 hours')));
+      expires_at DATETIME NOT NULL DEFAULT (strftime('%s', 'now', '+2 hours')));
     EOF;
 
     $ret = $db->exec($sql);
     if(!$ret){
         echo $db->lastErrorMsg();
-    }
+    } 
     $db->close();
   }
 
   function runMigration() {
-    createAdminTokenTable(new SQLite3('../admin.db'));
+    createDatabaseLockTable(new SQLite3('../lock.db'));
   }
   runMigration();
 ?>
