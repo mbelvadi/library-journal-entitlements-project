@@ -8,5 +8,6 @@
     "favicon": "https://files.upei.ca/misc/icons/upeifavicon.ico",
     "logo": "https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg",
     "color": "#5c8827"
-  }
+  },
+  "includeNoRightsInSearchResults": false
 }
