@@ -4,7 +4,7 @@
       CREATE TABLE IF NOT EXISTS DATABASE_LOCKED
       (token VARCHAR(255) NOT NULL,
       created_at DATETIME NOT NULL DEFAULT (strftime('%s', 'now')),
-      expires_at DATETIME NOT NULL DEFAULT (strftime('%s', 'now', '+20 minutes')));
+      expires_at DATETIME NOT NULL DEFAULT (strftime('%s', 'now', '+2 hours')));
     EOF;
 
     $ret = $db->exec($sql);
