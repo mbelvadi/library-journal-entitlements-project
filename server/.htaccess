@@ -1,0 +1,25 @@
+<IfModule mod_rewrite.c>
+  # Allowing Cross-origin requests, various methods, and headers
+  Header add Access-Control-Allow-Origin: "*"
+  Header add Access-Control-Allow-Methods: "GET,POST,OPTIONS,DELETE,PUT"
+  Header add Access-Control-Allow-Headers: "X-Requested-With, Content-Type, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding"
+
+  # Rewriting file requests so .php isn't needed in api calls
+  RewriteEngine on
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}.php -f
+  RewriteRule ^(.*)$ $1.php
+
+  RewriteRule ^database/.*$ - [F,L]
+
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+<Files "config.json">  
+  Order Allow,Deny
+  Deny from all
+</Files>

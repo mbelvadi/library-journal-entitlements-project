@@ -1,0 +1,13 @@
+{
+  "school": "Univ. of Prince Edward Island",
+  "crknURL": "https://www.crkn-rcdr.ca/en/perpetual-access-rights-reports-storage",
+  "adminSetup": false,
+  "adminPassword": "",
+  "style": {
+    "pageTitle": "UPEI PAR",
+    "favicon": "https://files.upei.ca/misc/icons/upeifavicon.ico",
+    "logo": "https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg",
+    "color": "#5c8827"
+  },
+  "includeNoRightsInSearchResults": false
+}

@@ -1,70 +1,25 @@
-# Getting Started with Create React App
+# UPEI Library Journal Entitlements Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+For a complete overview of the project please refer to the [wiki.](https://github.com/UPEI-Android/library-journal-entitlements-project/wiki)
 
-## Available Scripts
+This project is licensed under GPLv3. See [`LICENSE`](./LICENSE).
 
-In the project directory, you can run:
+[![Test](https://github.com/UPEI-Android/library-journal-entitlements-project/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/UPEI-Android/library-journal-entitlements-project/actions/workflows/test.yml)
+[![Build](https://github.com/UPEI-Android/library-journal-entitlements-project/actions/workflows/build.yml/badge.svg?branch=release)](https://github.com/UPEI-Android/library-journal-entitlements-project/actions/workflows/build.yml)
 
-### `npm start`
+## Overview
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The Library subscribes to several packages of electronic journals to which it is given "perpetual access rights" (PAR) to each journal title for each year it subscribes. Often, library staff and sometimes even patrons need to be able to quickly determine if a particular year of a particular journal is "owned" by the institution. They might look for it by its title or one of its two "ISSN" numbers (print and online).
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+A central organization called CRKN manages many of these subscriptions/licenses for its members, including UPEI. CRKN has recently started creating spreadsheets that include for each member the "entitlement" list of what titles/years that institution has PAR for.
 
-### `npm test`
+Each package has a separate spreadsheet file - there are about 10 or so of these from CRKN.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Each spreadsheet has all of the data for all approximately 75 members, of which UPEI is one "column" in one of the tabs. They are all in exactly the same format, just different data for different publisher-packages.
 
-### `npm run build`
+The spreadsheets are updated a couple of times per year each and are made available on a public website managed by CRKN.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**The goal of this project** is to create a public-facing web front end that each institution can easily copy/configure to just their own PAR, to:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- generate a report by package/title/year of all entitlements
+- allow the website user to search through all of the spreadsheets by title or issn to find all of the PAR years that institution has

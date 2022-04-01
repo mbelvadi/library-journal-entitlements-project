@@ -1,0 +1,12 @@
+{
+  "require": {
+    "simplehtmldom/simplehtmldom": "V2.0-RC2",
+    "box/spout": "^3.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  },
+  "scripts": {
+    "test": "phpunit tests"
+  }
+}
