@@ -1,5 +1,5 @@
 import React from 'react';
-import AppContext from '../../util/styleContext';
+import AppContext from '../../util/appContext';
 import {
   Row,
   Col,
