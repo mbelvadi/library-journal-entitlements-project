@@ -1,4 +1,4 @@
-# UPEI Library Journal Project
+# UPEI Library Journal Entitlements Project
 
 For a complete overview of the project please refer to the [wiki.](https://github.com/UPEI-Android/library-journal-entitlements-project/wiki)
 
