@@ -83,10 +83,10 @@ export default function DataTable(props) {
     setSearchedColumn(dataIndex);
   };
 
-  const handleReset = (clearFilters, selectedKeys, confirm, dataIndex) => {
+  const handleReset = (clearFilters, selectedKeys, confirm, _dataIndex) => {
     clearFilters();
     setSearchText('');
-    handleSearch(selectedKeys, confirm, dataIndex);
+    handleSearch(selectedKeys, confirm, null);
   };
 
   const replaceDelimiters = (string, char) => {
