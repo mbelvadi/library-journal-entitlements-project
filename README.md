@@ -2,6 +2,9 @@
 
 For a complete overview of the project please refer to the [wiki.](https://github.com/UPEI-Android/library-journal-entitlements-project/wiki)
 
+[![Test](https://github.com/UPEI-Android/library-journal-entitlements-project/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/UPEI-Android/library-journal-entitlements-project/actions/workflows/test.yml)
+[![Build](https://github.com/UPEI-Android/library-journal-entitlements-project/actions/workflows/build.yml/badge.svg?branch=release)](https://github.com/UPEI-Android/library-journal-entitlements-project/actions/workflows/build.yml)
+
 ## Overview
 
 The Library subscribes to several packages of electronic journals to which it is given "perpetual access rights" (PAR) to each journal title for each year it subscribes. Often, library staff and sometimes even patrons need to be able to quickly determine if a particular year of a particular journal is "owned" by the institution. They might look for it by its title or one of its two "ISSN" numbers (print and online).
