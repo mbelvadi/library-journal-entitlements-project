@@ -10,7 +10,6 @@
     $adminKey = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
 
     $db = new SQLite3('../../database/admin.db');
-    $db->exec("DELETE FROM ADMIN_TOKENS");
     $db->exec("INSERT INTO ADMIN_TOKENS (token) VALUES ('$adminKey')");
     $db->close();
 
