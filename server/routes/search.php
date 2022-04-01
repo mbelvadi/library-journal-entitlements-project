@@ -22,7 +22,11 @@
     $filterSQL .= "AND year = $data->year";
   }
 
-  $results = $db->query("SELECT * from PA_RIGHTS WHERE (title LIKE '%$data->query%' OR print_issn LIKE '%$data->query%' OR online_issn LIKE '%$data->query%') AND (has_rights = 'Y' OR has_rights = 'YBut') $filterSQL ORDER BY title, year DESC");
+  $config = json_decode(file_get_contents(dirname(__DIR__, 1) . '/config.json'));
+
+  $rightsFilterQuery = $config->includeNoRightsInSearchResults ? "" : "AND (has_rights = 'Y' OR has_rights = 'YBut')";
+
+  $results = $db->query("SELECT * from PA_RIGHTS WHERE (title LIKE '%$data->query%' OR print_issn LIKE '%$data->query%' OR online_issn LIKE '%$data->query%') $rightsFilterQuery $filterSQL ORDER BY CASE has_rights WHEN 'Y' THEN 0 WHEN 'YBut' THEN 1 WHEN 'NBut' THEN 2 WHEN 'N' THEN 3 END, title, year DESC");
   $resultsArray = array();
   while ($res= $results->fetchArray(1)) {
     array_push($resultsArray, $res);

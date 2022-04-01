@@ -16,5 +16,5 @@
   $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
 
   http_response_code(200);
-  echo json_encode($config->crknURL);
+  echo json_encode(array("url" => $config->crknURL, "school" => $config->school, "includeNoRights" => $config->includeNoRightsInSearchResults));
 ?>
