@@ -1,8 +1,3 @@
-export const API_URL =
-  process.env.NODE_ENV === 'development'
-    ? `http://localhost/upei-library-journal-project/server/routes`
-    : '/routes';
-
 export const downloadFileToClient = (blob, filename) => {
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement('a');

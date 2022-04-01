@@ -9,7 +9,6 @@
     echo json_encode(array("error" => "admin key is required."));
     return;
   }
- 
   $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
 
@@ -31,7 +30,7 @@
   wipeDatabase();
 
   $files = glob('../../PAR-files/*');
-  foreach($files as $file){ 
+  foreach($files as $file){
     if(is_file($file)) {
       unlink($file);
     }

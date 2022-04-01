@@ -8,7 +8,6 @@
     echo json_encode(array("error" => "admin key is required."));
     return;
   }
- 
   $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
 
@@ -19,7 +18,7 @@
   $config->style->pageTitle = $_POST["pageTitle"];
   $config->style->favicon = $_POST["favicon"];
   $config->style->logo = $_POST["logo"];
-  
+
   $jsonData = json_encode($config, JSON_PRETTY_PRINT);
   file_put_contents(dirname(__DIR__, 2) . '/config.json', $jsonData);
 

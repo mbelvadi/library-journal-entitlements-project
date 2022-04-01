@@ -34,8 +34,8 @@
   );
 
   $newFilePath = "../../PAR-files/{$_FILES["file"]["name"]}";
-  move_file($_FILES["file"]["tmp_name"], $newFilePath); 
-  
+  move_file($_FILES["file"]["tmp_name"], $newFilePath);
+
   $reader = ReaderEntityFactory::createReaderFromFile($newFilePath);
   $reader->setShouldPreserveEmptyRows(true);
   $reader->open($newFilePath);
@@ -57,7 +57,7 @@
           break;
         }
         if ($packageName == '') {
-          $reader->close(); 
+          $reader->close();
           http_response_code(400);
           unlink($newFilePath);
           echo json_encode(array("error" => "Please ensure there is a package name is cell A1."));
@@ -82,7 +82,7 @@
     break;
   }
 
-  $reader->close(); 
+  $reader->close();
 
   if (!$hasPaRightsSheet) {
     http_response_code(400);
@@ -112,7 +112,6 @@
     return;
   }
   lockDatabase();
-  
   $uploadStartTime = time();
   ingestSpreadsheet($newFilePath, basename($newFilePath), 0);
   deleteOldCrknData('filename', $uploadStartTime, basename($newFilePath));

@@ -10,7 +10,7 @@
     $ret = $db->exec($sql);
     if(!$ret){
         echo $db->lastErrorMsg();
-    } 
+    }
     $db->close();
   }
 

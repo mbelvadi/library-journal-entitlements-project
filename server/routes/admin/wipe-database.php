@@ -23,7 +23,7 @@
   wipeDatabase();
 
   $files = glob('../../PAR-files/*');
-  foreach($files as $file){ 
+  foreach($files as $file){
     if(is_file($file)) {
       unlink($file);
     }

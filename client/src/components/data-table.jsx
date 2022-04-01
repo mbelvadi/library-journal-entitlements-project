@@ -97,16 +97,6 @@ export default function DataTable(props) {
     return string;
   };
 
-  const capitalizeWords = (string) => {
-    let finalString = '';
-    const splitString = string.split(' ');
-
-    for (const word in splitString) {
-      finalString += word.charAt(0).toUpperCase() + word.slice(1);
-    }
-    return finalString;
-  };
-
   // order of this list is reflected in the table
   const crknColumnNames = [
     'Title',
