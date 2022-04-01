@@ -5,7 +5,7 @@ import { renderWithRouter } from '../helper-functions/renderWithRouter';
 
 import SearchBar from '../../components/search-bar';
 
-const testId = 'searchbar-testId'
+const testId = 'searchbar-testId';
 
 let history = {};
 
@@ -14,18 +14,20 @@ beforeEach(() => {
   expect(screen.queryByTestId(testId)).toBeTruthy();
 });
 
-const getInvisibleSubmitButton = () => {
-  return screen.getAllByRole(/button/i, { hidden: true }).filter((button) => {
-    if (button.style.display === 'none') return button;
-    else return undefined;
-  })[0];
-};
-
 describe('<SearchBar />', () => {
   describe('Success', () => {
     it('renders the SearchBar component', () => {
       // intentionally empty; testing beforeEach
     });
+
+    const getInvisibleSubmitButton = () => {
+      return screen
+        .getAllByRole(/button/i, { hidden: true })
+        .filter((button) => {
+          if (button.style.display === 'none') return button;
+          else return undefined;
+        })[0];
+    };
 
     it('has all of its children', () => {
       const children = [
