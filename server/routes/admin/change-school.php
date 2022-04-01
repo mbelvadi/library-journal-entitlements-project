@@ -16,7 +16,7 @@
   // School name affects upload process of data so we will only change when database is unlocked
   if (isDatabaseLocked()) {
     http_response_code(503);
-    echo json_encode(array("error" => "Database is locked by another process. Please try again later. Note if you think the database is incorrectly locked then it will automatically unlock in 20 minutes."));
+    echo json_encode(array("error" => "Database is locked by another process. Please try again later. Note if you think the database is incorrectly locked then it will automatically unlock in 2 hours."));
     return;
   }
   lockDatabase();
