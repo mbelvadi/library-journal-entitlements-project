@@ -14,7 +14,7 @@
     return;
   }
 
-  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/ljp.db');
+  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/ljep.db');
   if(!$isValidAdmin) return;
 
   // 1. Fetch new files from CRKN site and put them in temp directory
@@ -36,7 +36,7 @@
     $save_file_loc = $dir . $file_name;
 
     $fp = fopen($save_file_loc, 'wb');
-    
+
     curl_setopt($ch, CURLOPT_FILE, $fp);
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_exec($ch);

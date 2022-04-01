@@ -19,13 +19,13 @@
       'has_rights' => '',
     );
 
-    $dbPath = dirname(__DIR__, 1) . '/ljp.db';
+    $dbPath = dirname(__DIR__, 1) . '/ljep.db';
     $db = new SQLite3($dbPath);
 
     $reader = ReaderEntityFactory::createReaderFromFile($filePath);
     $reader->setShouldPreserveEmptyRows(true);
     $reader->open($filePath);
-    
+
     $packageName = '';
     foreach ($reader->getSheetIterator() as $sheet) {
       $sheetName = $sheet->getName();
@@ -75,14 +75,14 @@
           if ($yearInt < 1900 || $yearInt > 2100) {
             continue;
           }
-      
-          $sqlStatement = $db->prepare("INSERT OR REPLACE INTO PA_RIGHTS (title, 
-          title_id, print_issn, online_issn, has_former_title, has_succeeding_title, 
+
+          $sqlStatement = $db->prepare("INSERT OR REPLACE INTO PA_RIGHTS (title,
+          title_id, print_issn, online_issn, has_former_title, has_succeeding_title,
           agreement_code, year, collection_name, title_metadata_last_modified,
-          filename, has_rights, package_name, is_crkn_record) VALUES (:title, :title_id, :print_issn, :online_issn, 
-          :has_former_title, :has_succeeding_title, :agreement_code, :year, :collection_name, :title_metadata_last_modified, 
+          filename, has_rights, package_name, is_crkn_record) VALUES (:title, :title_id, :print_issn, :online_issn,
+          :has_former_title, :has_succeeding_title, :agreement_code, :year, :collection_name, :title_metadata_last_modified,
           :filename, :has_rights, :package_name, :is_crkn_record)");
-    
+
           $title = $cells[$dbProperties->title]->getValue();
           $titleId = array_key_exists($dbProperties->title_id, $cells) ? $cells[$dbProperties->title_id]->getValue() : '';
           $printISSN = array_key_exists($dbProperties->print_issn, $cells) ? $cells[$dbProperties->print_issn]->getValue() : '';
@@ -94,7 +94,7 @@
           $collectionName = array_key_exists($dbProperties->collection_name, $cells) ? $cells[$dbProperties->collection_name]->getValue() : '';
           $lastModified = array_key_exists($dbProperties->title_metadata_last_modified, $cells) ? $cells[$dbProperties->title_metadata_last_modified]->getValue() : '';
           $hasRights = $cells[$dbProperties->has_rights]->getValue();
-          
+
           if (is_a($lastModified, 'DateTime')){
             $lastModified = $lastModified->format('d/m/Y');
           } else {
@@ -115,14 +115,14 @@
           $sqlStatement->bindParam(':has_rights', $hasRights);
           $sqlStatement->bindParam(':is_crkn_record', $isCrknFile);
           $sqlStatement->bindParam(':package_name', $packageName);
-    
+
           $sqlStatement->execute();
         }
       }
       break;
     }
-    
-    $reader->close(); 
+
+    $reader->close();
     $db->close();
   }
 ?>

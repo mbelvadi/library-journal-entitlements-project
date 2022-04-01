@@ -10,12 +10,12 @@
     $ret = $db->exec($sql);
     if(!$ret){
         echo $db->lastErrorMsg();
-    } 
+    }
     $db->close();
   }
 
   function runMigration() {
-    createAdminTokenTable(new SQLite3('../ljp.db'));
+    createAdminTokenTable(new SQLite3('../ljep.db'));
   }
   runMigration();
 ?>

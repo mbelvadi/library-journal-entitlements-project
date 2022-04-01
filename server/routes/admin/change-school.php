@@ -9,8 +9,8 @@
     echo json_encode(array("error" => "admin key is required."));
     return;
   }
- 
-  $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/ljp.db');
+
+  $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/ljep.db');
   if(!$isValidAdmin) return;
 
   $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
@@ -23,7 +23,7 @@
   wipeDatabase();
 
   $files = glob('../../PAR-files/*');
-  foreach($files as $file){ 
+  foreach($files as $file){
     if(is_file($file)) {
       unlink($file);
     }

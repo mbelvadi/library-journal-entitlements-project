@@ -10,13 +10,13 @@
     return;
   }
 
-  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/ljp.db');
+  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/ljep.db');
   if(!$isValidAdmin) return;
 
   wipeDatabase();
 
   $files = glob('../../PAR-files/*');
-  foreach($files as $file){ 
+  foreach($files as $file){
     if(is_file($file)) {
       unlink($file);
     }

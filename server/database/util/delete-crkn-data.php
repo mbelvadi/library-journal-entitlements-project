@@ -1,6 +1,6 @@
 <?php
   function deleteOldCrknData($mode, $time, $filename) {
-    $dbPath = dirname(__DIR__, 1) . '/ljp.db';
+    $dbPath = dirname(__DIR__, 1) . '/ljep.db';
     $db = new SQLite3($dbPath);
 
     if ($mode === 'time') {
@@ -13,7 +13,7 @@
       $sqlStatement->bindParam(':filename', $filename);
       $sqlStatement->execute();
     }
-   
+
 
     $db->close();
   }

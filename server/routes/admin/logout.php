@@ -9,10 +9,10 @@
     return;
   }
 
-  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/ljp.db');
+  $isValidAdmin = validAdmin($_GET["adminKey"], '../../database/ljep.db');
   if(!$isValidAdmin) return;
 
-  $db = new SQLite3('../../database/ljp.db');
+  $db = new SQLite3('../../database/ljep.db');
   $db->exec("DELETE FROM ADMIN_TOKENS");
   $db->close();
 

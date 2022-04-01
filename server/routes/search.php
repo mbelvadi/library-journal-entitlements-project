@@ -8,7 +8,7 @@
   $page = (property_exists($data, "page")) ? $data->page : 1;
   $pageLength = (property_exists($data, "pageLength")) ? $data->pageLength: $DEFAULT_PAGE_LENGTH;
 
-  $db = new SQLite3('../database/ljp.db');
+  $db = new SQLite3('../database/ljep.db');
 
   $filterSQL = '';
   if (isset($data->startYear)) {
