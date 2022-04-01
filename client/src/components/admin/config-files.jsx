@@ -254,7 +254,7 @@ export default function FileModificationSection(props) {
 
     setChangingIncludeNoRights(false);
     if (res.status === 200) {
-      setSuccessMsg('Succesfully changed CRKN URL.');
+      setSuccessMsg('Succesfully changed rights inclusion.');
     } else await handleError(res);
   };
 
