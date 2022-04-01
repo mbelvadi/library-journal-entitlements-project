@@ -112,7 +112,7 @@ export default function DataTable(props) {
     'Has_Rights',
   ];
 
-  const getColumns = (element) => {
+  const getColumns = () => {
     const columns = [];
 
     for (const columnName of crknColumnNames) {
@@ -148,7 +148,7 @@ export default function DataTable(props) {
     return columns;
   };
 
-  const onTableChange = (pagination, filters, sorter, extra) =>
+  const onTableChange = (_pagination, _filters, _sorter, extra) =>
     setDisplayedData(extra.currentDataSource);
 
   let dataSource = [];
@@ -156,12 +156,10 @@ export default function DataTable(props) {
 
   if (data?.results?.length > 0) {
     dataSource = data.results;
-    columns = getColumns(dataSource[0]);
+    columns = getColumns();
   }
 
-  dataSource.forEach(function (element, i) {
-    element.key = i;
-  });
+  dataSource.forEach((element, i) => (element.key = i));
 
   return (
     <Table
