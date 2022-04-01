@@ -1,6 +1,8 @@
 name: Build
 
 env:
+  NODE_VER: 16.x
+
   FRONTEND_REPO_DIR: client
   FRONTEND_TEMP_DIR: ARTIFACT/FRONTEND
   FRONTEND_ARTIFACT: frontend-build
@@ -34,7 +36,7 @@ jobs:
     - name: Use Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: 16.x
+        node-version: ${{ env.NODE_VER }}
         cache: 'npm'
         cache-dependency-path: ${{ github.workspace }}/${{ env.FRONTEND_REPO_DIR }}/package-lock.json
 
