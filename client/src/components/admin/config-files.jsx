@@ -10,6 +10,8 @@ import {
   Space,
   Checkbox,
   Input,
+  Switch,
+  Tooltip,
 } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
@@ -28,29 +30,26 @@ export default function FileModificationSection(props) {
   const [changingSchool, setChangingSchool] = React.useState(false);
   const [crknURL, setCrknURL] = React.useState('');
   const [changingCrknURL, setChangingCrknURL] = React.useState('');
+  const [includeNoRights, setIncludeNoRights] = React.useState(false);
+  const [changingIncludeNoRights, setChangingIncludeNoRights] =
+    React.useState(false);
   const { apiRoute } = React.useContext(AppContext);
 
   React.useEffect(() => {
     const getFileLinks = async () => {
       try {
-        const data = await (await fetch(`${apiRoute}/list-files`)).json();
-        const currentSchool = await (
+        const files = await (await fetch(`${apiRoute}/list-files`)).json();
+        const data = await (
           await fetch(
-            `${apiRoute}/admin/get-school?adminKey=${sessionStorage.getItem(
+            `${apiRoute}/admin/config-options?adminKey=${sessionStorage.getItem(
               'adminKey'
             )}`
           )
         ).json();
-        const url = await (
-          await fetch(
-            `${apiRoute}/admin/get-crkn-url?adminKey=${sessionStorage.getItem(
-              'adminKey'
-            )}`
-          )
-        ).json();
-        setCrknURL(url);
-        setSchool(currentSchool);
-        setServerFiles(data);
+        setCrknURL(data.url);
+        setSchool(data.school);
+        setIncludeNoRights(data.includeNoRights);
+        setServerFiles(files);
       } catch (error) {
         setError('An unexpected error occured.');
       }
@@ -241,6 +240,24 @@ export default function FileModificationSection(props) {
     });
   };
 
+  const handleRightsChange = async (value) => {
+    setError(undefined);
+    setSuccessMsg(undefined);
+    setChangingIncludeNoRights(true);
+    const formData = new FormData();
+    formData.append('includeRights', value);
+    formData.append('adminKey', sessionStorage.getItem('adminKey'));
+    const res = await fetch(`${apiRoute}/admin/change-rights`, {
+      method: 'Post',
+      body: formData,
+    });
+
+    setChangingIncludeNoRights(false);
+    if (res.status === 200) {
+      setSuccessMsg('Succesfully changed CRKN URL.');
+    } else await handleError(res);
+  };
+
   return (
     <>
       <Divider>File Modification</Divider>
@@ -342,6 +359,25 @@ export default function FileModificationSection(props) {
             Change URL
           </Button>
         </Col>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Include 'N*' in search:</h3>
+          <Tooltip
+            title={
+              "This controls whether or not search returns results that have 'N' or 'NBut' for their rights."
+            }
+          >
+            <Switch
+              checked={includeNoRights}
+              loading={changingIncludeNoRights}
+              onChange={(e) => {
+                setIncludeNoRights(e);
+                handleRightsChange(e);
+              }}
+            />
+          </Tooltip>
+        </Col>
+      </Row>
+      <Row gutter={20}>
         <Col style={{ marginBottom: '20px' }} span={24} md={12}>
           <h3>Delete Files:</h3>
           <Row>
