@@ -109,12 +109,8 @@ export default function SearchBar(props) {
             size='large'
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onPressEnter={handleSubmitSearch}
           />
-          <button
-            type='submit'
-            onClick={handleSubmitSearch}
-            style={{ display: 'none' }}
-          ></button>
         </Col>
         <Col span={6} offset={1}>
           <Dropdown.Button

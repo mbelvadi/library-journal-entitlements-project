@@ -1,5 +1,6 @@
 import { screen, fireEvent, act, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import userEvent from "@testing-library/user-event";
 
 import { renderWithRouter } from '../helper-functions/renderWithRouter';
 
@@ -20,19 +21,9 @@ describe('<SearchBar />', () => {
       // intentionally empty; testing beforeEach
     });
 
-    const getInvisibleSubmitButton = () => {
-      return screen
-        .getAllByRole(/button/i, { hidden: true })
-        .filter((button) => {
-          if (button.style.display === 'none') return button;
-          else return undefined;
-        })[0];
-    };
-
     it('has all of its children', () => {
       const children = [
         screen.getByPlaceholderText(/search/i), // get search input
-        getInvisibleSubmitButton(), // invisible button (used for submitting when pressing 'enter' on searchbar)
         screen.getByText(/search/i), // get search button
       ];
 
@@ -47,16 +38,17 @@ describe('<SearchBar />', () => {
         fireEvent.change(input, { target: { value: query } });
       });
       expect(input.value).toBe(query);
+      return input;
     };
 
     it('allows text to be entered into the Input', () => {
       enterQueryIntoInput('chemical');
     });
 
-    it('allows submitting by "clicking" the invisible submit button', () => {
-      enterQueryIntoInput('chemical');
+    it('allows submitting by query by pressing enter', () => {
+      const input = enterQueryIntoInput('chemical');
 
-      fireEvent.click(getInvisibleSubmitButton());
+      userEvent.type(input, '{enter}')
 
       expect(history.location.pathname).toBe('/search');
     });
