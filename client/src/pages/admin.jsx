@@ -4,7 +4,7 @@ import { UserOutlined } from '@ant-design/icons';
 import Header from '../components/header';
 import AdminSetupForm from '../components/admin/setup-form';
 import AdminLoginForm from '../components/admin/login-form';
-import AppContext from '../util/styleContext';
+import AppContext from '../util/appContext';
 import { useNavigate } from 'react-router-dom';
 import StyleConfigurationSection from '../components/admin/config-style';
 import FileModificationSection from '../components/admin/config-files';

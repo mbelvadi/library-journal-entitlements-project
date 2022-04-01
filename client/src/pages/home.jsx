@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout, Button, Col, Row, List } from 'antd';
 import SearchBar from '../components/search-bar';
 import { downloadFileToClient } from '../util';
-import AppContext from '../util/styleContext';
+import AppContext from '../util/appContext';
 import AdminButton from '../components/buttons/admin';
 import HelpButton from '../components/buttons/help';
 

@@ -4,7 +4,7 @@ import Admin from './pages/admin';
 import Home from './pages/home';
 import NotFound from './pages/not-found';
 import SearchResults from './pages/search-results';
-import AppContext from './util/styleContext';
+import AppContext from './util/appContext';
 import { changeAntdTheme } from 'dynamic-antd-theme';
 
 export default function App() {

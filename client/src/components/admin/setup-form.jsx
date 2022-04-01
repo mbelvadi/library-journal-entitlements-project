@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, Button, Alert } from 'antd';
-import AppContext from '../../util/styleContext';
+import AppContext from '../../util/appContext';
 
 export default function AdminSetupForm(props) {
   const { setLoginMessage, setAdminSetup } = props;
