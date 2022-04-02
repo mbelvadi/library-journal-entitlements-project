@@ -1,0 +1,27 @@
+name: Prettier
+
+on:
+  push:
+    branches: [ main, release ]
+  pull_request:
+    branches: [ main, release ]
+  workflow_dispatch:
+
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - run: ls -alR
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.2
+        with:
+          working_directory: ${{ github.workspace }}/client/
+          same_commit: true
