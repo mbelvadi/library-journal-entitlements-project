@@ -87,7 +87,7 @@ export default function SearchResults() {
     const header = Object.keys(firstRow).join(delimeter);
 
     const values = resultsToExport
-      .map((o) => Object.values(o).join(delimeter))
+      .map((row) => Object.values(row).join(delimeter))
       .join('\n');
 
     const fileContent = header + '\n' + values;
