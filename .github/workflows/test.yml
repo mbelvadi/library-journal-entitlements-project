@@ -23,6 +23,8 @@ jobs:
         working-directory: ${{ env.FRONTEND_REPO_DIR }}
     steps:
     - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.head_ref }}
 
     - name: Use Node.js
       uses: actions/setup-node@v2
