@@ -6,7 +6,6 @@ import Header from '../components/header';
 import { downloadFileToClient } from '../util';
 import AppContext from '../util/appContext';
 
-
 const parseParams = (querystring) => {
   const params = new URLSearchParams(querystring);
   const obj = {};
