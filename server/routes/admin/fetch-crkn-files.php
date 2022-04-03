@@ -68,6 +68,10 @@
   }
 
   // 4. Ingest new data into DB
+  $errorFile = fopen("../../upload-errors.csv", 'w');
+  fwrite($errorFile, "filename,row,error\n");
+  fclose($errorFile);
+
   $crknFiles = glob($crknFilesPath);
   foreach($crknFiles as $file) {
     ingestSpreadsheet($file, basename($file), true);

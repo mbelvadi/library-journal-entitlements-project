@@ -112,6 +112,10 @@
     return;
   }
   lockDatabase();
+
+  $errorFile = fopen("../../upload-errors.csv", 'w');
+  fwrite($errorFile, "filename,row,error\n");
+  fclose($errorFile);
   ingestSpreadsheet($newFilePath, basename($newFilePath), 0);
 
   unlockDatabase();
