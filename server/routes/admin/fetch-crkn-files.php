@@ -65,18 +65,14 @@
   $newCrknFiles = glob("./CRKN_PARightsTracking_*.xlsx");
   foreach($newCrknFiles as $file) {
     $fileBaseName = basename($file);
-    move_file($file, "../../PAR-files/{$fileBaseName}"); // TODO handle error if file fails to move
+    move_file($file, "../../PAR-files/{$fileBaseName}"); 
   }
 
   // 4. Ingest new data into DB
   $crknFiles = glob($crknFilesPath);
-  $uploadStartTime = time();
   foreach($crknFiles as $file) {
     ingestSpreadsheet($file, basename($file), true);
   }
-
-  // 5. Remove old DB entries
-  deleteOldCrknData('time', $uploadStartTime, null);
 
   unlockDatabase();
   $serverFiles = getXLSXFiles('../../PAR-files/');
