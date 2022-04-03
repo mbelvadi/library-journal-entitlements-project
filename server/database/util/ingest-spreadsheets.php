@@ -76,10 +76,9 @@
             continue;
           }
 
-          $sqlStatement = $db->prepare("INSERT OR REPLACE INTO PA_RIGHTS (title,
-          title_id, print_issn, online_issn, has_former_title, has_succeeding_title,
+          $sqlStatement = $db->prepare("INSERT OR IGNORE INTO PA_RIGHTS (id, title, title_id, print_issn, online_issn, has_former_title, has_succeeding_title,
           agreement_code, year, collection_name, title_metadata_last_modified,
-          filename, has_rights, package_name, is_crkn_record) VALUES (:title, :title_id, :print_issn, :online_issn,
+          filename, has_rights, package_name, is_crkn_record) VALUES (:id, :title, :title_id, :print_issn, :online_issn,
           :has_former_title, :has_succeeding_title, :agreement_code, :year, :collection_name, :title_metadata_last_modified,
           :filename, :has_rights, :package_name, :is_crkn_record)");
 
@@ -101,6 +100,8 @@
             $lastModified = '';
           }
 
+          $hashedId = hash('md5', "{$title}{$packageName}{$year}");
+          $sqlStatement->bindParam(':id', $hashedId);
           $sqlStatement->bindParam(':title', $title);
           $sqlStatement->bindParam(':title_id', $titleId);
           $sqlStatement->bindParam(':print_issn', $printISSN);

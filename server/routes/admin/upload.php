@@ -3,7 +3,6 @@
   use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 
   require('../../database/util/ingest-spreadsheets.php');
-  require('../../database/util/delete-crkn-data.php');
   require('../../util/error-handling.php');
   require('../../util/index.php');
   set_error_handler('apiErrorHandler', E_ALL);
@@ -107,14 +106,13 @@
   }
 
   if (isDatabaseLocked()) {
+    unlink($newFilePath);
     http_response_code(503);
     echo json_encode(array("error" => "Database is locked by another process. Please try again later. Note if you think the database is incorrectly locked then it will automatically unlock in 2 hours."));
     return;
   }
   lockDatabase();
-  $uploadStartTime = time();
   ingestSpreadsheet($newFilePath, basename($newFilePath), 0);
-  deleteOldCrknData('filename', $uploadStartTime, basename($newFilePath));
 
   unlockDatabase();
   $serverFiles = getXLSXFiles('../../PAR-files/');
