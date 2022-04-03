@@ -3,7 +3,6 @@
   use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 
   require('../../database/util/ingest-spreadsheets.php');
-  require('../../database/util/delete-crkn-data.php');
   require('../../util/error-handling.php');
   require('../../util/index.php');
   set_error_handler('apiErrorHandler', E_ALL);

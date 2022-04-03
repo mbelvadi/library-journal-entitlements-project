@@ -1,6 +1,5 @@
 <?php
   require('../../database/util/ingest-spreadsheets.php');
-  require('../../database/util/delete-crkn-data.php');
   require('../../util/error-handling.php');
   require '../../vendor/autoload.php';
   require('../../util/index.php');
