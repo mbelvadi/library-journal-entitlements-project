@@ -14,6 +14,7 @@ import {
   Tooltip,
 } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { downloadFileToClient } from '../../util';
 
 export default function FileModificationSection(props) {
   const { setLoggedIn, setLoginMessage } = props;
@@ -33,6 +34,7 @@ export default function FileModificationSection(props) {
   const [includeNoRights, setIncludeNoRights] = React.useState(false);
   const [changingIncludeNoRights, setChangingIncludeNoRights] =
     React.useState(false);
+  const [downloadingErrorFile, setDownloadingErrorFile] = React.useState(false);
   const { apiRoute } = React.useContext(AppContext);
 
   React.useEffect(() => {
@@ -258,6 +260,22 @@ export default function FileModificationSection(props) {
     } else await handleError(res);
   };
 
+  const downloadErrorFile = async () => {
+    setError(undefined);
+    setSuccessMsg(undefined);
+    setDownloadingErrorFile(true);
+
+    try {
+      const res = await fetch(`${apiRoute}/admin/error-log-download`);
+      res
+        .blob()
+        .then((blob) => downloadFileToClient(blob, 'upload-errors.csv'));
+    } catch (error) {
+      setError(`Unable to fetch upload error file.`);
+    }
+
+    setDownloadingErrorFile(false);
+  };
   return (
     <>
       <Divider>File Modification</Divider>
@@ -378,6 +396,17 @@ export default function FileModificationSection(props) {
         </Col>
       </Row>
       <Row gutter={20}>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Upload Errors:</h3>
+
+          <Button
+            type='primary'
+            onClick={downloadErrorFile}
+            loading={downloadingErrorFile}
+          >
+            Download Upload Error log
+          </Button>
+        </Col>
         <Col style={{ marginBottom: '20px' }} span={24} md={12}>
           <h3>Delete Files:</h3>
           <Row>
