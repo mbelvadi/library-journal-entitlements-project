@@ -401,6 +401,7 @@ export default function FileModificationSection(props) {
 
           <Button
             type='primary'
+            size='large'
             onClick={downloadErrorFile}
             loading={downloadingErrorFile}
           >
