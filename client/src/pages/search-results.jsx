@@ -6,7 +6,6 @@ import Header from '../components/header';
 import { downloadFileToClient } from '../util';
 import AppContext from '../util/appContext';
 
-
 const parseParams = (querystring) => {
   const params = new URLSearchParams(querystring);
   const obj = {};
@@ -88,7 +87,7 @@ export default function SearchResults() {
     const header = Object.keys(firstRow).join(delimeter);
 
     const values = resultsToExport
-      .map((o) => Object.values(o).join(delimeter))
+      .map((row) => Object.values(row).join(delimeter))
       .join('\n');
 
     const fileContent = header + '\n' + values;

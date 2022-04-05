@@ -4,6 +4,8 @@
 
   function ingestSpreadsheet($filePath, $filename, $isCrknFile = false) {
     $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
+    $errorFile = fopen(dirname(__DIR__, 2) . '/upload-errors.csv', 'a');
+
 
     $dbProperties = (object) array(
       'title' => '',
@@ -21,6 +23,7 @@
 
     $dbPath = dirname(__DIR__, 1) . '/ljep.db';
     $db = new SQLite3($dbPath);
+    $db->busyTimeout(10000);
 
     $reader = ReaderEntityFactory::createReaderFromFile($filePath);
     $reader->setShouldPreserveEmptyRows(true);
@@ -58,10 +61,12 @@
         } else {
           $cells = $row->getCells();
           if(!array_key_exists($dbProperties->title, $cells) || !array_key_exists($dbProperties->year, $cells) || !array_key_exists($dbProperties->has_rights, $cells)) {
+            fwrite($errorFile, "{$filename},{$rowIndex},missing title and/or year and/or rights\n");
             continue;
           }
 
           if ($cells[$dbProperties->title]->isEmpty() || $cells[$dbProperties->year]->isEmpty() || $cells[$dbProperties->has_rights]->isEmpty() ) {
+            fwrite($errorFile, "{$filename},{$rowIndex},missing title and/or year and/or rights\n");
             continue;
           }
 
@@ -69,17 +74,20 @@
             $cells[$dbProperties->has_rights] != 'YBut' &&
             $cells[$dbProperties->has_rights] != 'NBut' &&
             $cells[$dbProperties->has_rights] != 'N'
-          ) continue;
-
-          $yearInt = (int) $cells[$dbProperties->year]->getValue();
-          if ($yearInt < 1900 || $yearInt > 2100) {
+          ) {
+            fwrite($errorFile, "{$filename},{$rowIndex},invalid rights value\n");
             continue;
           }
 
-          $sqlStatement = $db->prepare("INSERT OR REPLACE INTO PA_RIGHTS (title,
-          title_id, print_issn, online_issn, has_former_title, has_succeeding_title,
+          $yearInt = (int) $cells[$dbProperties->year]->getValue();
+          if ($yearInt < 1900 || $yearInt > 2100) {
+            fwrite($errorFile, "{$filename},{$rowIndex},invalid year\n");
+            continue;
+          }
+
+          $sqlStatement = $db->prepare("INSERT OR IGNORE INTO PA_RIGHTS (id, title, title_id, print_issn, online_issn, has_former_title, has_succeeding_title,
           agreement_code, year, collection_name, title_metadata_last_modified,
-          filename, has_rights, package_name, is_crkn_record) VALUES (:title, :title_id, :print_issn, :online_issn,
+          filename, has_rights, package_name, is_crkn_record) VALUES (:id, :title, :title_id, :print_issn, :online_issn,
           :has_former_title, :has_succeeding_title, :agreement_code, :year, :collection_name, :title_metadata_last_modified,
           :filename, :has_rights, :package_name, :is_crkn_record)");
 
@@ -101,6 +109,8 @@
             $lastModified = '';
           }
 
+          $hashedId = hash('md5', "{$title}{$packageName}{$year}");
+          $sqlStatement->bindParam(':id', $hashedId);
           $sqlStatement->bindParam(':title', $title);
           $sqlStatement->bindParam(':title_id', $titleId);
           $sqlStatement->bindParam(':print_issn', $printISSN);
@@ -122,6 +132,7 @@
       break;
     }
 
+    fclose($errorFile);
     $reader->close();
     $db->close();
   }

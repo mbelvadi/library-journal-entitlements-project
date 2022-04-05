@@ -2,7 +2,8 @@
   function createPARightsTable($db) {
     $sql =<<<EOF
       CREATE TABLE IF NOT EXISTS PA_RIGHTS
-      (title VARCHAR(255) NOT NULL,
+      (id VARCHAR(1024) NOT NULL PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
       title_id CHARACTER(20),
       print_issn CHARACTER(20),
       online_issn CHARACTER(20),

@@ -1,5 +1,5 @@
 <?php
-  require('../../database/util/delete-crkn-data.php');
+  require('../../database/util/delete-spreadsheet-data.php');
   require('../../util/error-handling.php');
   require('../../util/index.php');
   set_error_handler('apiErrorHandler', E_ALL);
@@ -23,7 +23,7 @@
   $filesToDelete = json_decode($_POST["filesToDelete"]);
 
   foreach ($filesToDelete as $file) {
-    deleteOldCrknData('filename', time(), $file);
+    deleteSpreadsheetData($file);
     if(is_file("../../PAR-files/$file")) {
       unlink("../../PAR-files/$file");
     }
