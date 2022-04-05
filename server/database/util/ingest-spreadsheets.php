@@ -23,6 +23,7 @@
 
     $dbPath = dirname(__DIR__, 1) . '/ljep.db';
     $db = new SQLite3($dbPath);
+    $db->busyTimeout(10000);
 
     $reader = ReaderEntityFactory::createReaderFromFile($filePath);
     $reader->setShouldPreserveEmptyRows(true);
