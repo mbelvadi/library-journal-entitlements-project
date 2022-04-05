@@ -39,7 +39,7 @@ export default function SearchBar(props) {
       filterURLPart = '&' + filterURLPart;
     }
 
-    navigate(`/search?query=${query}${filterURLPart}`);
+    navigate(`/search?query=${encodeURIComponent(query)}${filterURLPart}`);
   };
 
   const handleVisibleChange = (flag) => setVisible(flag);
