@@ -5,6 +5,12 @@
   $DEFAULT_PAGE_LENGTH = -1; // CLient doesn't want pagination
 
   $data = json_decode(file_get_contents("php://input"));
+  if (!$data || !property_exists($data, "query")) {
+    http_response_code(400);
+    echo json_encode(array("error" => "query must be specified"));
+    return;
+  }
+
   $page = (property_exists($data, "page")) ? $data->page : 1;
   $pageLength = (property_exists($data, "pageLength")) ? $data->pageLength: $DEFAULT_PAGE_LENGTH;
 
