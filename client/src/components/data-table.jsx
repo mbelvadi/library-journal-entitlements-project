@@ -4,6 +4,7 @@ import { FilterFilled } from '@ant-design/icons';
 
 export default function DataTable(props) {
   const { data, setDisplayedData, loadingResults } = props;
+  const [currentEvent, setCurrentEvent] = React.useState({});
   const [filterInput, setFilterInput] = React.useState({});
 
   const mapIndexToColumn = (dataIndex) => ({
@@ -18,16 +19,23 @@ export default function DataTable(props) {
           ref={(node) => setFilterInput(node)}
           placeholder={`Filter by ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => handleFilter(selectedKeys, confirm, dataIndex)}
+          onChange={(e) => setCurrentEvent(e)}
+          onPressEnter={() => {
+            setKeysAndFilter(setSelectedKeys, selectedKeys, confirm, dataIndex);
+          }}
           style={{ marginBottom: 8, display: 'block' }}
         />
         <Space>
           <Button
             type='primary'
-            onClick={() => handleFilter(selectedKeys, confirm, dataIndex)}
+            onClick={() =>
+              setKeysAndFilter(
+                setSelectedKeys,
+                selectedKeys,
+                confirm,
+                dataIndex
+              )
+            }
             icon={<FilterFilled />}
             size='small'
             style={{ width: 90 }}
@@ -62,6 +70,18 @@ export default function DataTable(props) {
       }
     },
   });
+
+  const setKeysAndFilter = (
+    setSelectedKeys,
+    selectedKeys,
+    confirm,
+    dataIndex
+  ) => {
+    setSelectedKeys(
+      currentEvent.target.value ? [currentEvent.target.value] : []
+    );
+    handleFilter(selectedKeys, confirm, dataIndex);
+  };
 
   const handleFilter = (_selectedKeys, confirm, _dataIndex) => {
     confirm();
