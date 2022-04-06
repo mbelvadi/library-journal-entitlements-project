@@ -2,7 +2,7 @@
   require('../../util/error-handling.php');
   set_error_handler('apiErrorHandler', E_ALL);
 
-  $filepath = "../../upload-errors.csv";
+  $filepath = "../../upload-errors.tsv";
   
   if (file_exists($filepath)) {
     header('Content-Description: File Transfer');
