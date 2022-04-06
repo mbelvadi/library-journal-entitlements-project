@@ -22,15 +22,15 @@ const parseParams = (querystring) => {
 export default function SearchResults() {
   const [searchResults, setSearchResults] = React.useState(null);
   const [displayedData, setDisplayedData] = React.useState([]);
-  const [loadingResults, setLoadingResults] = React.useState(true);
+  const [loadingResults, setLoadingResults] = React.useState(false);
   const search = useLocation().search;
   const searchParams = parseParams(search);
   const { apiRoute } = React.useContext(AppContext);
 
   React.useEffect(() => {
-    setLoadingResults(true);
     const fetchSearchResults = async () => {
       if (!searchParams.query) return;
+      setLoadingResults(true);
       const res = await (
         await fetch(`${apiRoute}/search`, {
           method: 'POST',
