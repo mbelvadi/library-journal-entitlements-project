@@ -68,8 +68,8 @@
   }
 
   // 4. Ingest new data into DB
-  $errorFile = fopen("../../upload-errors.csv", 'w');
-  fwrite($errorFile, "filename,row,error\n");
+  $errorFile = fopen("../../upload-errors.tsv", 'w');
+  fwrite($errorFile, "filename\trow\terror\n");
   fclose($errorFile);
 
   $crknFiles = glob($crknFilesPath);

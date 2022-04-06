@@ -113,8 +113,8 @@
   }
   lockDatabase();
 
-  $errorFile = fopen("../../upload-errors.csv", 'w');
-  fwrite($errorFile, "filename,row,error\n");
+  $errorFile = fopen("../../upload-errors.tsv", 'w');
+  fwrite($errorFile, "filename\trow\terror\n");
   fclose($errorFile);
   ingestSpreadsheet($newFilePath, basename($newFilePath), 0);
 

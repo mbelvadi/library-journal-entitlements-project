@@ -269,7 +269,7 @@ export default function FileModificationSection(props) {
       const res = await fetch(`${apiRoute}/admin/error-log-download`);
       res
         .blob()
-        .then((blob) => downloadFileToClient(blob, 'upload-errors.csv'));
+        .then((blob) => downloadFileToClient(blob, 'upload-errors.tsv'));
     } catch (error) {
       setError(`Unable to fetch upload error file.`);
     }
