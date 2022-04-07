@@ -2,6 +2,8 @@
   <testsuites>
     <testsuite name="backendTests">
       <file>tests/AdminTest.php</file>
+      <file>tests/SearchTest.php</file>
+      <file>tests/CleanupTest.php</file>
     </testsuite>
   </testsuites>
 </phpunit>
