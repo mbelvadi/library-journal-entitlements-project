@@ -5,6 +5,11 @@
   $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
 
   $data = json_decode(file_get_contents("php://input"));
+  if (!$data) {
+    http_response_code(400);
+    echo json_encode(array("error" => "Invalid request."));
+    return;
+  }
 
   if (password_verify($data->password, $config->adminPassword)) {
     $adminKey = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));

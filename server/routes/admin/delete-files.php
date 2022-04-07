@@ -12,6 +12,11 @@
 
   $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
+  if (!isset($_POST["filesToDelete"])) {
+    http_response_code(400);
+    echo json_encode(array("error" => "Invalid request."));
+    return;
+  }
 
   if (isDatabaseLocked()) {
     http_response_code(503);

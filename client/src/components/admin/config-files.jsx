@@ -266,7 +266,12 @@ export default function FileModificationSection(props) {
     setDownloadingErrorFile(true);
 
     try {
-      const res = await fetch(`${apiRoute}/admin/error-log-download`);
+      const res = await fetch(
+        `${apiRoute}/admin/error-log-download?adminKey=${sessionStorage.getItem(
+          'adminKey'
+        )}`
+      );
+      if (res.status !== 200) throw new Error('Unauthorized');
       res
         .blob()
         .then((blob) => downloadFileToClient(blob, 'upload-errors.tsv'));

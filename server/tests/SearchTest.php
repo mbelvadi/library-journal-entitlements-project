@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
   use PHPUnit\Framework\TestCase;
   use GuzzleHttp\Client;
-  use GuzzleHttp\Promise;
-  use GuzzleHttp\Stream\Stream;
 
   final class SearchTest extends TestCase {
     private $basePath = '/library-journal-entitlements-project/server/routes';
