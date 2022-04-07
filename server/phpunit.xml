@@ -1,0 +1,7 @@
+<phpunit>
+  <testsuites>
+    <testsuite name="backendTests">
+      <file>tests/AdminTest.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>
