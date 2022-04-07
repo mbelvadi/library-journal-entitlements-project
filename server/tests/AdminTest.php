@@ -8,6 +8,10 @@
     private $adminKey;
     private $testCrknUrl = 'https://test.ca';
     private $testSchool = 'test school';
+    private $testColor = 'red';
+    private $testTitle = 'test title :)';
+    private $testFaviconUrl = 'https://files.upei.ca/misc/icons/upeifavicon.ico';
+    private $testMainLogo = 'https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg';
 
     protected function setup(): void {
       $this->adminKey = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
@@ -243,6 +247,53 @@
       $this->assertEquals($resData['url'], $this->testCrknUrl);
       $this->assertEquals($resData['school'], $this->testSchool);
       $this->assertTrue($resData['includeNoRights']);
+    }
+
+    public function testSetStyleInvalidRequest(): void {
+      $response = $this->client->post("{$this->basePath}/admin/set-style", [
+        'form_params' => [
+          'adminKey' => $this->adminKey
+        ],
+        'http_errors' => false
+      ]);
+
+      $this->assertEquals(400, $response->getStatusCode());
+      $resData = json_decode($response->getBody(true)->getContents(), true);
+      $this->assertArrayHasKey('error', $resData);
+      $this->assertEquals($resData['error'], 'Invalid request.');
+    }
+
+    public function testSetStyle(): void {
+      $response = $this->client->post("{$this->basePath}/admin/set-style", [
+        'form_params' => [
+          'adminKey' => $this->adminKey,
+          'color' => $this->testColor,
+          'favicon' => $this->testFaviconUrl,
+          'logo' => $this->testMainLogo,
+          'pageTitle' => $this->testTitle,
+        ],
+        'http_errors' => false
+      ]);
+
+      $this->assertEquals(200, $response->getStatusCode());
+      $resData = json_decode($response->getBody(true)->getContents(), true);
+      $this->assertArrayHasKey('message', $resData);
+      $this->assertEquals($resData['message'], "Successfully updated style config.");
+    }
+
+    public function testGetStyle(): void {
+      $response = $this->client->post("{$this->basePath}/style", []);
+
+      $this->assertEquals(200, $response->getStatusCode());
+      $resData = json_decode($response->getBody(true)->getContents(), true);
+      $this->assertArrayHasKey('color', $resData);
+      $this->assertArrayHasKey('favicon', $resData);
+      $this->assertArrayHasKey('pageTitle', $resData);
+      $this->assertArrayHasKey('logo', $resData);
+      $this->assertEquals($resData['color'], $this->testColor);
+      $this->assertEquals($resData['pageTitle'], $this->testTitle);
+      $this->assertEquals($resData['logo'], $this->testMainLogo);
+      $this->assertEquals($resData['favicon'], $this->testFaviconUrl);
     }
   }
 ?>
