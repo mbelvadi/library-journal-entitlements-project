@@ -6,9 +6,9 @@
     private $basePath = '/library-journal-entitlements-project/server/routes';
     private $client;  
     private $adminKey;
-    private $testCrknUrl = 'https://test.ca';
-    private $testSchool = 'test school';
-    private $testColor = 'red';
+    private $testCrknUrl = 'https://www.crkn-rcdr.ca/en/perpetual-access-rights-reports-storage';
+    private $testSchool = 'Univ. of Prince Edward Island';
+    private $testColor = '#5c8827';
     private $testTitle = 'test title :)';
     private $testFaviconUrl = 'https://files.upei.ca/misc/icons/upeifavicon.ico';
     private $testMainLogo = 'https://pbs.twimg.com/profile_images/878250120587997184/siODyNVB_400x400.jpg';
@@ -234,6 +234,19 @@
       $resData = json_decode($response->getBody(true)->getContents(), true);
       $this->assertArrayHasKey('message', $resData);
       $this->assertEquals($resData['message'], "Successfully updated 'rights' configuration.");
+
+      $response2 = $this->client->post("{$this->basePath}/admin/change-rights", [
+        'form_params' => [
+          'adminKey' => $this->adminKey,
+          'includeRights' => 'false',
+        ],
+        'http_errors' => false
+      ]);
+
+      $this->assertEquals(200, $response2->getStatusCode());
+      $resData = json_decode($response2->getBody(true)->getContents(), true);
+      $this->assertArrayHasKey('message', $resData);
+      $this->assertEquals($resData['message'], "Successfully updated 'rights' configuration.");
     }
 
     public function testGetConfigOptions(): void {
@@ -246,7 +259,39 @@
       $this->assertArrayHasKey('school', $resData);
       $this->assertEquals($resData['url'], $this->testCrknUrl);
       $this->assertEquals($resData['school'], $this->testSchool);
-      $this->assertTrue($resData['includeNoRights']);
+      $this->assertFalse($resData['includeNoRights']);
+    }
+
+    public function testUploadFile(): void {
+      $testFilePath = dirname(__DIR__, 1) . '/tests/testSpreadsheet.xlsx';
+      $response = $this->client->post("{$this->basePath}/admin/upload", [
+        'multipart' => [
+          [
+            'name'     => 'file',
+            'contents' => file_get_contents($testFilePath),
+            'filename' => 'testSpreadsheet.xlsx',
+          ],
+          [
+            'name' => 'adminKey',
+            'contents' => $this->adminKey,
+          ]
+        ],
+        'http_errors' => false
+      ]);
+
+      $this->assertEquals(200, $response->getStatusCode());
+      $resData = json_decode($response->getBody(true)->getContents(), true);
+      $this->assertArrayHasKey('files', $resData);
+      $this->assertEquals(count($resData['files']), 1);
+      $this->assertEquals($resData['files'][0], 'testSpreadsheet.xlsx');
+    }
+
+    public function testListFiles(): void {
+      $response = $this->client->post("{$this->basePath}/list-files", []);
+
+      $this->assertEquals(200, $response->getStatusCode());
+      $resData = json_decode($response->getBody(true)->getContents(), true);
+      $this->assertEquals($resData[0], 'testSpreadsheet.xlsx');
     }
 
     public function testSetStyleInvalidRequest(): void {
@@ -294,6 +339,12 @@
       $this->assertEquals($resData['pageTitle'], $this->testTitle);
       $this->assertEquals($resData['logo'], $this->testMainLogo);
       $this->assertEquals($resData['favicon'], $this->testFaviconUrl);
+    }
+
+    public function testGetErrorLog(): void {
+      $response = $this->client->post("{$this->basePath}/admin/error-log-download?adminKey={$this->adminKey}", []);
+
+      $this->assertEquals(200, $response->getStatusCode());
     }
   }
 ?>
