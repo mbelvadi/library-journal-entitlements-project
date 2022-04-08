@@ -124,6 +124,7 @@ export default function DataTable(props) {
       columns.push({
         title: replaceDelimiters(columnName, ' '),
         dataIndex: key,
+        width: 100,
         key: key,
         ...mapIndexToColumn(key),
         sorter: (a, b) => {
@@ -168,7 +169,8 @@ export default function DataTable(props) {
     <Table
       columns={columns}
       scroll={{
-        x: true,
+        x: 'max-content',
+        y: '68vh',
       }}
       dataSource={dataSource}
       bordered={true}
