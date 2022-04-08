@@ -15,6 +15,8 @@ let history = {};
 let rerenderHook = () => {};
 
 beforeEach(() => {
+  jest.resetAllMocks();
+
   ({ history, rerenderHook } = renderWithRouter(
     '/search',
     <Header onClickDownload={jest.fn()} />,
