@@ -21,24 +21,28 @@ export default function Admin() {
 
   React.useEffect(() => {
     const fetchAdminStatus = async () => {
-      const res = await fetch(`${apiRoute}/admin/setup`);
-      if (res.status === 200) {
-        setAdminSetup(true);
-        if (sessionStorage.getItem('adminKey')) {
-          const resValid = await fetch(
-            `${apiRoute}/admin/valid-token?adminKey=${sessionStorage.getItem(
-              'adminKey'
-            )}`
-          );
-          if (resValid.status === 401) {
-            setLoginMessage('Admin session has expired. Please login again.');
-            setLoggedIn(false);
-          } else {
-            setLoggedIn(true);
+      try {
+        const res = await fetch(`${apiRoute}/admin/setup`);
+        if (res.status === 200) {
+          setAdminSetup(true);
+          if (sessionStorage.getItem('adminKey')) {
+            const resValid = await fetch(
+              `${apiRoute}/admin/valid-token?adminKey=${sessionStorage.getItem(
+                'adminKey'
+              )}`
+            );
+            if (resValid.status === 401) {
+              setLoginMessage('Admin session has expired. Please login again.');
+              setLoggedIn(false);
+            } else {
+              setLoggedIn(true);
+            }
           }
         }
+        setLoadingPage(false);
+      } catch (error) {
+        setError('An unexpected error occurred.');
       }
-      setLoadingPage(false);
     };
     setError(undefined);
     if (apiRoute) fetchAdminStatus();
@@ -82,7 +86,15 @@ export default function Admin() {
                 width: '100%',
               }}
             >
-              {loadingPage && <Spin tip='Loading...' size='large' />}
+              {loadingPage && error && (
+                <Alert
+                  type='error'
+                  message={error}
+                  showIcon
+                  style={{ marginBottom: '10px' }}
+                />
+              )}
+              {loadingPage && !error && <Spin tip='Loading...' size='large' />}
               {!loadingPage && (
                 <Card
                   style={{

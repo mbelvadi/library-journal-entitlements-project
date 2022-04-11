@@ -40,27 +40,33 @@ export default function StyleConfigurationSection(props) {
         setError(undefined);
         setSuccessMsg(undefined);
         setSubmitting(true);
-        const formData = new FormData();
-        formData.append('pageTitle', pageTitle);
-        formData.append('color', color);
-        formData.append('logo', logo);
-        formData.append('favicon', favicon);
-        formData.append('adminKey', sessionStorage.getItem('adminKey'));
-        const res = await fetch(`${apiRoute}/admin/set-style`, {
-          method: 'Post',
-          body: formData,
-        });
+        try {
+          const formData = new FormData();
+          formData.append('pageTitle', pageTitle);
+          formData.append('color', color);
+          formData.append('logo', logo);
+          formData.append('favicon', favicon);
+          formData.append('adminKey', sessionStorage.getItem('adminKey'));
+          const res = await fetch(`${apiRoute}/admin/set-style`, {
+            method: 'Post',
+            body: formData,
+          });
 
-        setSubmitting(false);
-        if (res.status === 200) {
-          setSuccessMsg(
-            'Succesfully updated site style configuration. Please refresh page to view changes.'
-          );
-        } else if (res.status === 401) {
-          sessionStorage.removeItem('adminKey');
-          setLoginMessage('Admin session has expired. Please login again.');
-          setLoggedIn(false);
-        } else {
+          setSubmitting(false);
+          if (res.status === 200) {
+            setSuccessMsg(
+              'Succesfully updated site style configuration. Please refresh page to view changes.'
+            );
+          } else if (res.status === 401) {
+            sessionStorage.removeItem('adminKey');
+            setLoginMessage('Admin session has expired. Please login again.');
+            setLoggedIn(false);
+          } else {
+            setError('An unexpected error occurred.');
+          }
+        } catch (error) {
+          console.error(error);
+          setSubmitting(false);
           setError('An unexpected error occurred.');
         }
       },

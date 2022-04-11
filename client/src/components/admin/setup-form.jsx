@@ -11,18 +11,24 @@ export default function AdminSetupForm(props) {
   const handleSubmit = async (values) => {
     setError(undefined);
     setSubmitting(true);
-    const res = await fetch(`${apiRoute}/admin/create`, {
-      method: 'POST',
-      body: JSON.stringify(values),
-    });
-    const data = await res.json();
+    try {
+      const res = await fetch(`${apiRoute}/admin/create`, {
+        method: 'POST',
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
 
-    setSubmitting(false);
-    if (res.status === 200) {
-      setLoginMessage(data.message);
-      setAdminSetup(true);
-    } else {
-      setError(data.error);
+      setSubmitting(false);
+      if (res.status === 200) {
+        setLoginMessage(data.message);
+        setAdminSetup(true);
+      } else {
+        setError(data.error);
+      }
+    } catch (error) {
+      console.error(error);
+      setSubmitting(false);
+      setError('An unexpected error occurred.');
     }
   };
 
