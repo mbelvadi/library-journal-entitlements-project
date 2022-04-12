@@ -1,3 +1,4 @@
 /vendor
 /PAR-files/*.xlsx
-upload-errors.csv
+upload-errors.tsv
+.phpunit.result.cache

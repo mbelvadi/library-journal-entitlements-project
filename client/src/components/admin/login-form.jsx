@@ -12,18 +12,24 @@ export default function AdminLoginForm(props) {
     setLoginMessage('');
     setError(undefined);
     setSubmitting(true);
-    const res = await fetch(`${apiRoute}/admin/login`, {
-      method: 'POST',
-      body: JSON.stringify(values),
-    });
-    const data = await res.json();
+    try {
+      const res = await fetch(`${apiRoute}/admin/login`, {
+        method: 'POST',
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
 
-    setSubmitting(false);
-    if (res.status === 200) {
-      sessionStorage.setItem('adminKey', data.adminKey);
-      setLoggedIn(true);
-    } else {
-      setError(data.error);
+      setSubmitting(false);
+      if (res.status === 200) {
+        sessionStorage.setItem('adminKey', data.adminKey);
+        setLoggedIn(true);
+      } else {
+        setError(data.error);
+      }
+    } catch (error) {
+      console.error(error);
+      setSubmitting(false);
+      setError('An unexpected error occurred.');
     }
   };
 

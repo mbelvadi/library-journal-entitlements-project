@@ -11,6 +11,8 @@ const testId = 'searchbar-testId';
 let history = {};
 
 beforeEach(() => {
+  jest.resetAllMocks();
+
   ({ history } = renderWithRouter('/', <SearchBar />, testId));
   expect(screen.queryByTestId(testId)).toBeTruthy();
 });

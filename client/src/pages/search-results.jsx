@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { Layout } from 'antd';
+import { Alert, Layout } from 'antd';
 import DataTable from '../components/data-table';
 import Header from '../components/header';
 import { downloadFileToClient } from '../util';
@@ -22,26 +22,38 @@ const parseParams = (querystring) => {
 export default function SearchResults() {
   const [searchResults, setSearchResults] = React.useState(null);
   const [displayedData, setDisplayedData] = React.useState([]);
-  const [loadingResults, setLoadingResults] = React.useState(true);
+  const [loadingResults, setLoadingResults] = React.useState(false);
+  const [error, setError] = React.useState(undefined);
   const search = useLocation().search;
   const searchParams = parseParams(search);
   const { apiRoute } = React.useContext(AppContext);
 
   React.useEffect(() => {
-    setLoadingResults(true);
     const fetchSearchResults = async () => {
       if (!searchParams.query) return;
-      const res = await (
-        await fetch(`${apiRoute}/search`, {
-          method: 'POST',
-          body: JSON.stringify(searchParams),
-        })
-      ).json();
-      setSearchResults(res);
-      setDisplayedData(res.results);
-      setLoadingResults(false);
+      try {
+        setError(undefined);
+        setLoadingResults(true);
+        const res = await (
+          await fetch(`${apiRoute}/search`, {
+            method: 'POST',
+            body: JSON.stringify(searchParams),
+          })
+        ).json();
+        setLoadingResults(false);
+        setSearchResults(res);
+        setDisplayedData(res.results);
+      } catch (error) {
+        setLoadingResults(false);
+        setSearchResults(null);
+        setDisplayedData([]);
+        setError(
+          'An unexpected error occured. This could be due to the search requiring more server memory than is currently allocated to PHP. Create a more narrow search or contact your system administrator for help.'
+        );
+        console.error(error);
+      }
     };
-    if (apiRoute) fetchSearchResults().catch(console.error);
+    if (apiRoute) fetchSearchResults();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, apiRoute]);
 
@@ -116,6 +128,14 @@ export default function SearchResults() {
               ''
             )}
           </h1>
+          {error && (
+            <Alert
+              type='error'
+              message={error}
+              showIcon
+              style={{ marginBottom: '10px' }}
+            />
+          )}
           <div>
             <DataTable
               data={searchResults}

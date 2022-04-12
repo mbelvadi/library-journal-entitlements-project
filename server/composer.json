@@ -8,6 +8,6 @@
     "guzzlehttp/guzzle": "^7.4"
   },
   "scripts": {
-    "test": "phpunit tests"
+    "test": "phpunit --testsuite backendTests"
   }
 }

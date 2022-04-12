@@ -11,7 +11,11 @@
   }
   $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
-
+  if (!isset($_POST["school"])) {
+    http_response_code(400);
+    echo json_encode(array("error" => "Invalid request."));
+    return;
+  }
   // School name affects upload process of data so we will only change when database is unlocked
   if (isDatabaseLocked()) {
     http_response_code(503);
@@ -21,8 +25,6 @@
   lockDatabase();
 
   $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
-
-
   $config->school = $_POST["school"];
   $jsonData = json_encode($config, JSON_PRETTY_PRINT);
   file_put_contents(dirname(__DIR__, 2) . '/config.json', $jsonData);

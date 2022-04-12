@@ -4,7 +4,7 @@
 
   function ingestSpreadsheet($filePath, $filename, $isCrknFile = false) {
     $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
-    $errorFile = fopen(dirname(__DIR__, 2) . '/upload-errors.csv', 'a');
+    $errorFile = fopen(dirname(__DIR__, 2) . '/upload-errors.tsv', 'a');
 
 
     $dbProperties = (object) array(
@@ -61,12 +61,12 @@
         } else {
           $cells = $row->getCells();
           if(!array_key_exists($dbProperties->title, $cells) || !array_key_exists($dbProperties->year, $cells) || !array_key_exists($dbProperties->has_rights, $cells)) {
-            fwrite($errorFile, "{$filename},{$rowIndex},missing title and/or year and/or rights\n");
+            fwrite($errorFile, "{$filename}\t{$rowIndex}\tmissing title and/or year and/or rights\n");
             continue;
           }
 
           if ($cells[$dbProperties->title]->isEmpty() || $cells[$dbProperties->year]->isEmpty() || $cells[$dbProperties->has_rights]->isEmpty() ) {
-            fwrite($errorFile, "{$filename},{$rowIndex},missing title and/or year and/or rights\n");
+            fwrite($errorFile, "{$filename}\t{$rowIndex}\tmissing title and/or year and/or rights\n");
             continue;
           }
 
@@ -75,13 +75,13 @@
             $cells[$dbProperties->has_rights] != 'NBut' &&
             $cells[$dbProperties->has_rights] != 'N'
           ) {
-            fwrite($errorFile, "{$filename},{$rowIndex},invalid rights value\n");
+            fwrite($errorFile, "{$filename}\t{$rowIndex}\tinvalid rights value\n");
             continue;
           }
 
           $yearInt = (int) $cells[$dbProperties->year]->getValue();
           if ($yearInt < 1900 || $yearInt > 2100) {
-            fwrite($errorFile, "{$filename},{$rowIndex},invalid year\n");
+            fwrite($errorFile, "{$filename}\t{$rowIndex}\tinvalid year\n");
             continue;
           }
 

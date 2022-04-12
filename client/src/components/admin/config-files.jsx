@@ -82,21 +82,27 @@ export default function FileModificationSection(props) {
       icon: <ExclamationCircleOutlined />,
       content: 'This process can take some time.',
       async onOk() {
-        setError(undefined);
-        setSuccessMsg(undefined);
-        setCrknRefreshing(true);
-        const res = await fetch(
-          `${apiRoute}/admin/fetch-crkn-files?adminKey=${sessionStorage.getItem(
-            'adminKey'
-          )}`
-        );
+        try {
+          setError(undefined);
+          setSuccessMsg(undefined);
+          setCrknRefreshing(true);
+          const res = await fetch(
+            `${apiRoute}/admin/fetch-crkn-files?adminKey=${sessionStorage.getItem(
+              'adminKey'
+            )}`
+          );
 
-        setCrknRefreshing(false);
-        if (res.status === 200) {
-          const data = await res.json();
-          setSuccessMsg('Succesfully updated CRKN sheets.');
-          if (data.files) setServerFiles(data.files);
-        } else await handleError(res);
+          setCrknRefreshing(false);
+          if (res.status === 200) {
+            const data = await res.json();
+            setSuccessMsg('Succesfully updated CRKN sheets.');
+            if (data.files) setServerFiles(data.files);
+          } else await handleError(res);
+        } catch (error) {
+          console.error(error);
+          setCrknRefreshing(false);
+          setError('An unexpected error occurred.');
+        }
       },
     });
   };
@@ -107,23 +113,29 @@ export default function FileModificationSection(props) {
       icon: <ExclamationCircleOutlined />,
       content: `This process can take some time. Any file with the same name as "${uploadedFile.name}" will be overwritten.`,
       async onOk() {
-        setError(undefined);
-        setSuccessMsg(undefined);
-        setUploadingFile(true);
-        const formData = new FormData();
-        formData.append('file', uploadedFile);
-        formData.append('adminKey', sessionStorage.getItem('adminKey'));
-        const res = await fetch(`${apiRoute}/admin/upload`, {
-          method: 'Post',
-          body: formData,
-        });
+        try {
+          setError(undefined);
+          setSuccessMsg(undefined);
+          setUploadingFile(true);
+          const formData = new FormData();
+          formData.append('file', uploadedFile);
+          formData.append('adminKey', sessionStorage.getItem('adminKey'));
+          const res = await fetch(`${apiRoute}/admin/upload`, {
+            method: 'Post',
+            body: formData,
+          });
 
-        setUploadingFile(false);
-        if (res.status === 200) {
-          const data = await res.json();
-          setSuccessMsg('Succesfully uploaded spreadsheet.');
-          if (data.files) setServerFiles(data.files);
-        } else await handleError(res);
+          setUploadingFile(false);
+          if (res.status === 200) {
+            const data = await res.json();
+            setSuccessMsg('Succesfully uploaded spreadsheet.');
+            if (data.files) setServerFiles(data.files);
+          } else await handleError(res);
+        } catch (error) {
+          console.error(error);
+          setUploadingFile(false);
+          setError('An unexpected error occurred.');
+        }
       },
     });
   };
@@ -143,24 +155,30 @@ export default function FileModificationSection(props) {
         </>
       ),
       async onOk() {
-        setError(undefined);
-        setSuccessMsg(undefined);
-        setDeletingFiles(true);
-        const formData = new FormData();
-        formData.append('filesToDelete', JSON.stringify(filesToDelete));
-        formData.append('adminKey', sessionStorage.getItem('adminKey'));
-        const res = await fetch(`${apiRoute}/admin/delete-files`, {
-          method: 'Post',
-          body: formData,
-        });
+        try {
+          setError(undefined);
+          setSuccessMsg(undefined);
+          setDeletingFiles(true);
+          const formData = new FormData();
+          formData.append('filesToDelete', JSON.stringify(filesToDelete));
+          formData.append('adminKey', sessionStorage.getItem('adminKey'));
+          const res = await fetch(`${apiRoute}/admin/delete-files`, {
+            method: 'Post',
+            body: formData,
+          });
 
-        setDeletingFiles(false);
-        if (res.status === 200) {
-          const data = await res.json();
-          setSuccessMsg('Succesfully deleted spreadsheet(s).');
-          setFilesToDelete([]);
-          if (data.files) setServerFiles(data.files);
-        } else await handleError(res);
+          setDeletingFiles(false);
+          if (res.status === 200) {
+            const data = await res.json();
+            setSuccessMsg('Succesfully deleted spreadsheet(s).');
+            setFilesToDelete([]);
+            if (data.files) setServerFiles(data.files);
+          } else await handleError(res);
+        } catch (error) {
+          console.error(error);
+          setDeletingFiles(false);
+          setError('An unexpected error occurred.');
+        }
       },
     });
   };
@@ -172,20 +190,26 @@ export default function FileModificationSection(props) {
       content:
         'This will delete all the files as well as all the records from the database.',
       async onOk() {
-        setError(undefined);
-        setSuccessMsg(undefined);
-        setWipingDB(true);
-        const res = await fetch(
-          `${apiRoute}/admin/wipe-database?adminKey=${sessionStorage.getItem(
-            'adminKey'
-          )}`
-        );
+        try {
+          setError(undefined);
+          setSuccessMsg(undefined);
+          setWipingDB(true);
+          const res = await fetch(
+            `${apiRoute}/admin/wipe-database?adminKey=${sessionStorage.getItem(
+              'adminKey'
+            )}`
+          );
 
-        setWipingDB(false);
-        if (res.status === 200) {
-          setSuccessMsg('Succesfully wiped database.');
-          setServerFiles([]);
-        } else await handleError(res);
+          setWipingDB(false);
+          if (res.status === 200) {
+            setSuccessMsg('Succesfully wiped database.');
+            setServerFiles([]);
+          } else await handleError(res);
+        } catch (error) {
+          console.error(error);
+          setWipingDB(false);
+          setError('An unexpected error occurred.');
+        }
       },
     });
   };
@@ -197,22 +221,28 @@ export default function FileModificationSection(props) {
       content:
         'This will delete all the files as well as all the records from the database. Ensure the school your changing to is spelt the same way as in the spreadsheets.',
       async onOk() {
-        setError(undefined);
-        setSuccessMsg(undefined);
-        setChangingSchool(true);
-        const formData = new FormData();
-        formData.append('school', school);
-        formData.append('adminKey', sessionStorage.getItem('adminKey'));
-        const res = await fetch(`${apiRoute}/admin/change-school`, {
-          method: 'Post',
-          body: formData,
-        });
+        try {
+          setError(undefined);
+          setSuccessMsg(undefined);
+          setChangingSchool(true);
+          const formData = new FormData();
+          formData.append('school', school);
+          formData.append('adminKey', sessionStorage.getItem('adminKey'));
+          const res = await fetch(`${apiRoute}/admin/change-school`, {
+            method: 'Post',
+            body: formData,
+          });
 
-        setChangingSchool(false);
-        if (res.status === 200) {
-          setSuccessMsg('Succesfully changed schools.');
-          setServerFiles([]);
-        } else await handleError(res);
+          setChangingSchool(false);
+          if (res.status === 200) {
+            setSuccessMsg('Succesfully changed schools.');
+            setServerFiles([]);
+          } else await handleError(res);
+        } catch (error) {
+          console.error(error);
+          setChangingSchool(false);
+          setError('An unexpected error occurred.');
+        }
       },
     });
   };
@@ -223,21 +253,27 @@ export default function FileModificationSection(props) {
       icon: <ExclamationCircleOutlined />,
       content: 'This will change the URL used to fetch CRKN files.',
       async onOk() {
-        setError(undefined);
-        setSuccessMsg(undefined);
-        setChangingCrknURL(true);
-        const formData = new FormData();
-        formData.append('url', crknURL);
-        formData.append('adminKey', sessionStorage.getItem('adminKey'));
-        const res = await fetch(`${apiRoute}/admin/change-crkn-url`, {
-          method: 'Post',
-          body: formData,
-        });
+        try {
+          setError(undefined);
+          setSuccessMsg(undefined);
+          setChangingCrknURL(true);
+          const formData = new FormData();
+          formData.append('url', crknURL);
+          formData.append('adminKey', sessionStorage.getItem('adminKey'));
+          const res = await fetch(`${apiRoute}/admin/change-crkn-url`, {
+            method: 'Post',
+            body: formData,
+          });
 
-        setChangingCrknURL(false);
-        if (res.status === 200) {
-          setSuccessMsg('Succesfully changed CRKN URL.');
-        } else await handleError(res);
+          setChangingCrknURL(false);
+          if (res.status === 200) {
+            setSuccessMsg('Succesfully changed CRKN URL.');
+          } else await handleError(res);
+        } catch (error) {
+          console.error(error);
+          setChangingCrknURL(false);
+          setError('An unexpected error occurred.');
+        }
       },
     });
   };
@@ -246,18 +282,23 @@ export default function FileModificationSection(props) {
     setError(undefined);
     setSuccessMsg(undefined);
     setChangingIncludeNoRights(true);
-    const formData = new FormData();
-    formData.append('includeRights', value);
-    formData.append('adminKey', sessionStorage.getItem('adminKey'));
-    const res = await fetch(`${apiRoute}/admin/change-rights`, {
-      method: 'Post',
-      body: formData,
-    });
+    try {
+      const formData = new FormData();
+      formData.append('includeRights', value);
+      formData.append('adminKey', sessionStorage.getItem('adminKey'));
+      const res = await fetch(`${apiRoute}/admin/change-rights`, {
+        method: 'Post',
+        body: formData,
+      });
 
+      if (res.status === 200) {
+        setSuccessMsg('Succesfully changed rights inclusion.');
+      } else await handleError(res);
+    } catch (error) {
+      console.error(error);
+      setError('An unexpected error occurred.');
+    }
     setChangingIncludeNoRights(false);
-    if (res.status === 200) {
-      setSuccessMsg('Succesfully changed rights inclusion.');
-    } else await handleError(res);
   };
 
   const downloadErrorFile = async () => {
@@ -266,10 +307,15 @@ export default function FileModificationSection(props) {
     setDownloadingErrorFile(true);
 
     try {
-      const res = await fetch(`${apiRoute}/admin/error-log-download`);
+      const res = await fetch(
+        `${apiRoute}/admin/error-log-download?adminKey=${sessionStorage.getItem(
+          'adminKey'
+        )}`
+      );
+      if (res.status !== 200) throw new Error('Unauthorized');
       res
         .blob()
-        .then((blob) => downloadFileToClient(blob, 'upload-errors.csv'));
+        .then((blob) => downloadFileToClient(blob, 'upload-errors.tsv'));
     } catch (error) {
       setError(`Unable to fetch upload error file.`);
     }

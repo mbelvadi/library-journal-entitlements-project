@@ -6,6 +6,10 @@
 
   $data = json_decode(file_get_contents("php://input"));
   http_response_code(400);
+  if (!$data) {
+    echo json_encode(array("error" => "Invalid request."));
+    return;
+  }
   
   if ($config->adminSetup) {
     echo json_encode(array("error" => "Admin is already setup."));
@@ -14,7 +18,7 @@
   
   // 1. Password validation
   if ($data->password !== $data->confirmPassword) {
-    echo json_encode(array("error" => "Passwords do not match"));
+    echo json_encode(array("error" => "Passwords do not match."));
     return;
   }
   

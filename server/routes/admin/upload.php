@@ -15,6 +15,11 @@
 
   $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
+  if (!isset($_FILES["file"])) {
+    http_response_code(400);
+    echo json_encode(array("error" => "Invalid request."));
+    return;
+  }
 
   $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
 
@@ -113,8 +118,8 @@
   }
   lockDatabase();
 
-  $errorFile = fopen("../../upload-errors.csv", 'w');
-  fwrite($errorFile, "filename,row,error\n");
+  $errorFile = fopen("../../upload-errors.tsv", 'w');
+  fwrite($errorFile, "filename\trow\terror\n");
   fclose($errorFile);
   ingestSpreadsheet($newFilePath, basename($newFilePath), 0);
 

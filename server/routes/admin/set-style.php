@@ -10,6 +10,11 @@
   }
   $isValidAdmin = validAdmin($_POST["adminKey"], '../../database/admin.db');
   if(!$isValidAdmin) return;
+  if (!isset($_POST["color"]) || !isset($_POST["pageTitle"]) || !isset($_POST["favicon"]) || !isset($_POST["logo"])) {
+    http_response_code(400);
+    echo json_encode(array("error" => "Invalid request."));
+    return;
+  }
 
   $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config.json'));
 
