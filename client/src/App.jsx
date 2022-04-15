@@ -10,6 +10,7 @@ import { changeAntdTheme } from 'dynamic-antd-theme';
 export default function App() {
   const [styleConfig, setStyleConfig] = React.useState(null);
   const [appRoute, setAppRoute] = React.useState(null);
+  const [helpUrl, setHelpUrl] = React.useState('');
 
   React.useEffect(() => {
     const getConfig = async () => {
@@ -27,6 +28,11 @@ export default function App() {
         favicon.href = style?.favicon;
         setStyleConfig(style);
 
+        const configOptions = await (
+          await fetch(`${envAppRoute}/admin/config-options`)
+        ).json();
+        setHelpUrl(configOptions.helpURL);
+
         if (style.color) {
           changeAntdTheme(style.color);
         }
@@ -38,7 +44,9 @@ export default function App() {
   }, []);
 
   return (
-    <AppContext.Provider value={{ apiRoute: appRoute, style: styleConfig }}>
+    <AppContext.Provider
+      value={{ apiRoute: appRoute, style: styleConfig, helpUrl }}
+    >
       <HashRouter>
         <Routes>
           <Route path='/' element={<Home />}></Route>

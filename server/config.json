@@ -1,6 +1,7 @@
 {
   "school": "Univ. of Prince Edward Island",
   "crknURL": "https://www.crkn-rcdr.ca/en/perpetual-access-rights-reports-storage",
+  "helpURL": "https://github.com/UPEI-Android/library-journal-entitlements-project/wiki",
   "adminSetup": false,
   "adminPassword": "",
   "style": {
