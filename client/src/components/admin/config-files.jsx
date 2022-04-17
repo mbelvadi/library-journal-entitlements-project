@@ -31,6 +31,8 @@ export default function FileModificationSection(props) {
   const [changingSchool, setChangingSchool] = React.useState(false);
   const [crknURL, setCrknURL] = React.useState('');
   const [changingCrknURL, setChangingCrknURL] = React.useState('');
+  const [helpURL, setHelpURL] = React.useState('');
+  const [changingHelpURL, setChangingHelpURL] = React.useState('');
   const [includeNoRights, setIncludeNoRights] = React.useState(false);
   const [changingIncludeNoRights, setChangingIncludeNoRights] =
     React.useState(false);
@@ -51,6 +53,7 @@ export default function FileModificationSection(props) {
         setCrknURL(data.url);
         setSchool(data.school);
         setIncludeNoRights(data.includeNoRights);
+        setHelpURL(data.helpURL);
         setServerFiles(files);
       } catch (error) {
         setError('An unexpected error occured.');
@@ -278,6 +281,37 @@ export default function FileModificationSection(props) {
     });
   };
 
+  const confirmChangeHelpURL = () => {
+    Modal.confirm({
+      title: `Are you sure you want to change the help URL?`,
+      icon: <ExclamationCircleOutlined />,
+      content: 'This will change the URL that the help button links to.',
+      async onOk() {
+        try {
+          setError(undefined);
+          setSuccessMsg(undefined);
+          setChangingHelpURL(true);
+          const formData = new FormData();
+          formData.append('url', helpURL);
+          formData.append('adminKey', sessionStorage.getItem('adminKey'));
+          const res = await fetch(`${apiRoute}/admin/change-help-url`, {
+            method: 'Post',
+            body: formData,
+          });
+
+          setChangingHelpURL(false);
+          if (res.status === 200) {
+            setSuccessMsg('Succesfully changed help URL.');
+          } else await handleError(res);
+        } catch (error) {
+          console.error(error);
+          setChangingCrknURL(false);
+          setError('An unexpected error occurred.');
+        }
+      },
+    });
+  };
+
   const handleRightsChange = async (value) => {
     setError(undefined);
     setSuccessMsg(undefined);
@@ -420,7 +454,7 @@ export default function FileModificationSection(props) {
             onClick={confirmChangeURL}
             style={{ marginTop: '10px' }}
           >
-            Change URL
+            Change CRKN URL
           </Button>
         </Col>
         <Col style={{ marginBottom: '20px' }} span={24} md={12}>
@@ -454,6 +488,25 @@ export default function FileModificationSection(props) {
             Download Upload Error log
           </Button>
         </Col>
+        <Col style={{ marginBottom: '20px' }} span={24} md={12}>
+          <h3>Change Help URL:</h3>
+          <Input
+            size='large'
+            value={helpURL}
+            onChange={(e) => setHelpURL(e.target.value)}
+          />
+          <Button
+            type='primary'
+            size='large'
+            loading={changingHelpURL}
+            onClick={confirmChangeHelpURL}
+            style={{ marginTop: '10px' }}
+          >
+            Change Help URL
+          </Button>
+        </Col>
+      </Row>
+      <Row>
         <Col style={{ marginBottom: '20px' }} span={24} md={12}>
           <h3>Delete Files:</h3>
           <Row>

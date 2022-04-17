@@ -58,7 +58,7 @@ export default function SearchResults() {
   }, [search, apiRoute]);
 
   const onClickDownload = () => {
-    const unwantedColumns = ['key', 'created_at'];
+    const unwantedColumns = ['key', 'created_at', 'id'];
     const delimeter = '\t';
     const fileExtension = 'tsv';
 
