@@ -57,11 +57,7 @@ export default function SearchResults() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, apiRoute]);
 
-  const onClickDownload = () => {
-    const unwantedColumns = ['key', 'created_at', 'id'];
-    const delimeter = '\t';
-    const fileExtension = 'tsv';
-
+  const generateExportFileContent = (delimeter, unwantedColumns) => {
     const resultsToExport = displayedData.map((row) => {
       for (const [oldKey, oldValue] of Object.entries(row)) {
         const key = oldKey.trim();
@@ -85,24 +81,27 @@ export default function SearchResults() {
 
       // remove unwanted columns from each row
       for (const prop of unwantedColumns) {
-        row[prop] = undefined;
+        delete row[prop];
       }
 
       return row;
     });
 
-    // remove unwanted columns that were undefined from header of columns
-    const firstRow = resultsToExport[0];
-    Object.keys(resultsToExport[0]).forEach(
-      (key) => firstRow[key] === undefined && delete firstRow[key]
-    );
-    const header = Object.keys(firstRow).join(delimeter);
+    const header = Object.keys(resultsToExport[0]).join(delimeter);
 
     const values = resultsToExport
       .map((row) => Object.values(row).join(delimeter))
       .join('\n');
 
-    const fileContent = header + '\n' + values;
+    return header + '\n' + values;
+  }
+
+  const onClickDownload = () => {
+    const unwantedColumns = ['key', 'created_at', 'id'];
+    const delimeter = '\t';
+    const fileExtension = 'tsv';
+
+    const fileContent = generateExportFileContent(delimeter, unwantedColumns);
 
     downloadFileToClient(
       new Blob([fileContent], { type: 'text/' + fileExtension }),
