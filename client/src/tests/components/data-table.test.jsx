@@ -1,5 +1,3 @@
-import React from 'react';
-
 import '@testing-library/jest-dom';
 import { screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,7 +5,7 @@ import { renderWithRouter } from '../helper-functions/renderWithRouter';
 
 import DataTable from '../../components/data-table';
 
-import testData from '../resources/test-datatable-data.json';
+import testData from '../resources/test-search-result-data.json';
 
 const testId = 'datatable-testId';
 
@@ -87,6 +85,20 @@ describe('<DataTable />', () => {
       return element;
     };
 
+    const getIndexOfColumn = (column) => {
+      const columns = []
+
+      const collection = document.getElementsByClassName(
+        'ant-table-cell ant-table-column-has-sorters'
+      );
+
+      for (let i = 0; i < collection.length; ++i) {
+        columns.push(collection.item(i));
+      }
+
+      return columns.findIndex((element) => element === column);
+    };
+
     const clickSorter = (sorter) => {
       userEvent.click(sorter);
       expect(setDisplayedData).toBeCalled();
@@ -98,29 +110,32 @@ describe('<DataTable />', () => {
         screen.getByText('Title'),
         4
       );
+      const index = getIndexOfColumn(titleColumnSorter);
+
       clickSorter(titleColumnSorter);
 
       const firstSortFirstCellText =
-        getNthCellInFirstRow(0).textContent.toLowerCase();
+        getNthCellInFirstRow(index).textContent.toLowerCase();
 
       clickSorter(titleColumnSorter);
 
       const secondSortFirstCellText =
-        getNthCellInFirstRow(0).textContent.toLowerCase();
+        getNthCellInFirstRow(index).textContent.toLowerCase();
 
       expect(firstSortFirstCellText.localeCompare(secondSortFirstCellText) < 1);
     });
 
     it('sorts data numerically', () => {
       const yearColumnSorter = getNthParentElement(screen.getByText('Year'), 4);
+      const index = getIndexOfColumn(yearColumnSorter);
 
       clickSorter(yearColumnSorter);
 
-      const firstSortFirstYearCell = getNthCellInFirstRow(3).textContent;
+      const firstSortFirstYearCell = getNthCellInFirstRow(index).textContent;
 
       clickSorter(yearColumnSorter);
 
-      const secondSortFirstYearCell = getNthCellInFirstRow(3).textContent;
+      const secondSortFirstYearCell = getNthCellInFirstRow(index).textContent;
 
       expect(firstSortFirstYearCell < secondSortFirstYearCell);
     });
