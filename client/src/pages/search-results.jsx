@@ -19,6 +19,45 @@ const parseParams = (querystring) => {
   return obj;
 };
 
+export const generateExportFileContent = (data, delimeter, unwantedColumns) => {
+  const resultsToExport = data.map((row) => {
+    for (const [oldKey, oldValue] of Object.entries(row)) {
+      const key = oldKey.trim();
+      row[oldKey] = undefined;
+
+      if (key.toLowerCase() === 'is_crkn_record') {
+        row[key] = oldValue ? 'Y' : 'N';
+        continue;
+      }
+
+      if (typeof oldValue === 'string') {
+        // trim out white space
+        row[key] = oldValue.trim();
+      } else if (oldValue === null || oldValue === undefined) {
+        // convert empty entries to empty strings
+        row[key] = '';
+      } else {
+        row[key] = oldValue;
+      }
+    }
+
+    // remove unwanted columns from each row
+    for (const prop of unwantedColumns) {
+      delete row[prop];
+    }
+
+    return row;
+  });
+
+  const header = Object.keys(resultsToExport[0]).join(delimeter);
+
+  const values = resultsToExport
+    .map((row) => Object.values(row).join(delimeter))
+    .join('\n');
+
+  return header + '\n' + values + '\n';
+};
+
 export default function SearchResults() {
   const [searchResults, setSearchResults] = React.useState(null);
   const [displayedData, setDisplayedData] = React.useState([]);
@@ -62,47 +101,7 @@ export default function SearchResults() {
     const delimeter = '\t';
     const fileExtension = 'tsv';
 
-    const resultsToExport = displayedData.map((row) => {
-      for (const [oldKey, oldValue] of Object.entries(row)) {
-        const key = oldKey.trim();
-        row[oldKey] = undefined;
-
-        if (key.toLowerCase() === 'is_crkn_record') {
-          row[key] = oldValue ? 'Y' : 'N';
-          continue;
-        }
-
-        if (typeof oldValue === 'string') {
-          // trim out white space
-          row[key] = oldValue.trim();
-        } else if (oldValue === null || oldValue === undefined) {
-          // convert empty entries to empty strings
-          row[key] = '';
-        } else {
-          row[key] = oldValue;
-        }
-      }
-
-      // remove unwanted columns from each row
-      for (const prop of unwantedColumns) {
-        row[prop] = undefined;
-      }
-
-      return row;
-    });
-
-    // remove unwanted columns that were undefined from header of columns
-    const firstRow = resultsToExport[0];
-    Object.keys(resultsToExport[0]).forEach(
-      (key) => firstRow[key] === undefined && delete firstRow[key]
-    );
-    const header = Object.keys(firstRow).join(delimeter);
-
-    const values = resultsToExport
-      .map((row) => Object.values(row).join(delimeter))
-      .join('\n');
-
-    const fileContent = header + '\n' + values;
+    const fileContent = generateExportFileContent(displayedData, delimeter, unwantedColumns);
 
     downloadFileToClient(
       new Blob([fileContent], { type: 'text/' + fileExtension }),
