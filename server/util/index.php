@@ -1,7 +1,9 @@
 <?php
   function validAdmin ($adminKey, $dbRoute) {
     $db = new SQLite3($dbRoute);
-    $results = $db->query("SELECT * FROM ADMIN_TOKENS WHERE token = '$adminKey' AND valid_till >= strftime('%s', 'now')");
+    $sqlStatement = $db->prepare("SELECT * FROM ADMIN_TOKENS WHERE token = :adminKey AND valid_till >= strftime('%s', 'now')");
+    $sqlStatement->bindParam(':adminKey', $adminKey);
+    $results = $sqlStatement->execute();
     $resultsArray = array();
     while ($res= $results->fetchArray(1)) {
       array_push($resultsArray, $res);
