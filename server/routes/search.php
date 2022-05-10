@@ -32,8 +32,11 @@
 
   $rightsFilterQuery = $config->includeNoRightsInSearchResults ? "" : "AND (has_rights = 'Y' OR has_rights = 'YBut')";
 
+  $sqlStatement = $db->prepare("SELECT * from PA_RIGHTS WHERE (title LIKE :cleanedQuery OR print_issn LIKE :cleanedQuery OR online_issn LIKE :cleanedQuery) $rightsFilterQuery $filterSQL ORDER BY CASE has_rights WHEN 'Y' THEN 0 WHEN 'YBut' THEN 1 WHEN 'NBut' THEN 2 WHEN 'N' THEN 3 END, title, year DESC");
   $cleanedQuery = str_replace("'", "''", $data->query);
-  $results = $db->query("SELECT * from PA_RIGHTS WHERE (title LIKE '%$cleanedQuery%' OR print_issn LIKE '%$cleanedQuery%' OR online_issn LIKE '%$cleanedQuery%') $rightsFilterQuery $filterSQL ORDER BY CASE has_rights WHEN 'Y' THEN 0 WHEN 'YBut' THEN 1 WHEN 'NBut' THEN 2 WHEN 'N' THEN 3 END, title, year DESC");
+  $cleanedSQLQuery = "%$cleanedQuery%";
+  $sqlStatement->bindParam(':cleanedQuery', $cleanedSQLQuery);
+  $results = $sqlStatement->execute();
   $resultsArray = array();
   while ($res= $results->fetchArray(1)) {
     array_push($resultsArray, $res);
