@@ -1,6 +1,6 @@
 # Library Journal Entitlements Project
 
-For a complete overview of the project please refer to the [wiki](https://github.com/UPEI-Android/library-journal-entitlements-project/wiki).
+For a complete overview of the project and presentation links about it please refer to the [wiki](https://github.com/UPEI-Android/library-journal-entitlements-project/wiki).
 
 This project is licensed under GPLv3. See [`LICENSE`](./LICENSE).
 
