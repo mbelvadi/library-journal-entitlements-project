@@ -80,7 +80,7 @@
           }
 
           $yearInt = (int) $cells[$dbProperties->year]->getValue();
-          if ($yearInt < 1900 || $yearInt > 2100) {
+          if ($yearInt < 1000 || $yearInt > 3000) {
             fwrite($errorFile, "{$filename}\t{$rowIndex}\tinvalid year\n");
             continue;
           }
